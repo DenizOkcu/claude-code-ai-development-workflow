@@ -13,7 +13,14 @@ Comprehensive slash commands for a complete software development lifecycle - fro
 
 **All commands automatically update `STATUS.md`** - your centralized progress tracker that shows exactly where you are in the workflow.
 
-## Commands Overview
+## Command Organization
+
+Commands are organized into categories:
+
+- **Workflow Commands** - Core development lifecycle commands (research, planning, execution, review)
+- **Language Commands** (`language/`) - Language-specific expert commands (TypeScript, etc.)
+
+## Workflow Commands
 
 ### 1. `/research-code` - Codebase Research
 
@@ -203,7 +210,13 @@ Comprehensive slash commands for a complete software development lifecycle - fro
 
 ---
 
-### 5. `/typescript-pro` - TypeScript Expert
+## Language Commands
+
+Language-specific expert commands for advanced development patterns.
+
+### `/typescript-pro` - TypeScript Expert
+
+**Location:** `language/typescript-pro.md`
 
 **Purpose:** Advanced TypeScript development and architecture
 
