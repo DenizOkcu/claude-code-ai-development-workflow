@@ -4,12 +4,35 @@ Comprehensive slash commands for a complete software development lifecycle - fro
 
 ## Quick Start
 
+### 1. Copy Commands to Your Project
+
 ```bash
+# Copy the .claude directory to your project root
+cp -r .claude /path/to/your/project/
+```
+
+### 2. Run Commands in Fresh Sessions
+
+**IMPORTANT:** Exit Claude Code and start a **new session** after each command to prevent context-rot.
+
+```bash
+# In Claude Code, run each command in a fresh session:
 /research-code "your feature description"  # Creates CODE_RESEARCH.md + STATUS.md
+# Exit session (Ctrl+D or /exit)
+
+# Start new session, then:
 /issue-planner "your feature description"  # Creates plans + updates STATUS.md
+# Exit session
+
+# Start new session, then:
 /execute-plan                             # Implements + updates STATUS.md
+# Exit session
+
+# Start new session, then:
 /review-code                              # Reviews + updates STATUS.md
 ```
+
+**Why fresh sessions?** Each command produces substantial context (research findings, plans, code). Starting fresh sessions prevents token exhaustion and keeps Claude focused on the current phase.
 
 **All commands automatically update `STATUS.md`** - your centralized progress tracker that shows exactly where you are in the workflow.
 
