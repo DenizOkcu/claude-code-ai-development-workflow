@@ -13,6 +13,12 @@ Comprehensive slash commands for a complete software development lifecycle - fro
 
 **All commands automatically update `STATUS.md`** - your centralized progress tracker that shows exactly where you are in the workflow.
 
+## ⚠️ Important: Delete Example Before Using
+
+**If you're using this workflow in your own repository, delete the `.claude/planning/fix-terminal-flicker/` directory first.**
+
+This directory contains example artifacts to help you understand what the workflow produces. It should NOT be used as part of your actual workflow. The commands will create new planning directories automatically for your real features/issues.
+
 ## Command Organization
 
 Commands are organized into categories:
