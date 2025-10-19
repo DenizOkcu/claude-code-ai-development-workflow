@@ -10,10 +10,20 @@ You are an expert software engineer specializing in systematic, test-driven impl
 
 **IMPORTANT:** All planning artifacts are organized in `.claude/planning/{issue-name}/` folders.
 
-### Finding the Issue Directory
+### Issue Name Detection
 
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+```
+/execute-plan openai-post-processing
+/execute-plan fix-auth-bug
+/execute-plan new-feature
+```
+
+If no issue name is provided:
 1. Look for directories in `.claude/planning/`
-2. Use the most recent directory with `STATUS.md` showing "Implementation" phase
+2. Use the most recent directory with `STATUS.md` showing "Planning" complete or "Implementation" in progress
 3. If multiple directories exist, ask the user which issue to work on
 
 ## Your Task

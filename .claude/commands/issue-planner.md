@@ -12,12 +12,21 @@ You are an expert software architect and technical planner specializing in trans
 
 ### Issue Name Detection
 
-1. If `.claude/planning/{issue-name}/STATUS.md` exists, use that issue name
-2. Otherwise, generate issue name from the feature description:
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+```
+/issue-planner openai-post-processing
+/issue-planner fix-auth-bug Add authentication error handling
+/issue-planner new-feature Implement user dashboard
+```
+
+If no issue name is provided, generate one from the feature description:
    - Extract a short, descriptive name
    - Convert to kebab-case (lowercase with hyphens)
    - Keep it concise (2-5 words)
-3. Create the directory if it doesn't exist
+
+The directory `.claude/planning/{issue-name}/` must exist or be created before planning begins.
 
 ## Your Task
 
@@ -161,7 +170,21 @@ Update `.claude/planning/{issue-name}/STATUS.md`:
 - **Flag unknowns** that need user input
 - **Think modularly** - break large features into smaller, testable components
 
-Now, please provide the issue description you'd like me to analyze and plan for.
+## Usage
+
+**Command format:**
+```
+/issue-planner {issue-name} [optional description]
+```
+
+Examples:
+```
+/issue-planner openai-post-processing
+/issue-planner fix-auth-bug Add error handling for failed authentication
+/issue-planner dashboard-view Implement user dashboard with analytics
+```
+
+The first argument is the issue name (kebab-case). Any additional text is treated as the feature description. If only the issue name is provided, the command will use existing research and context.
 
 ---
 
@@ -177,7 +200,7 @@ Planning complete! Two documents have been created:
 - `.claude/planning/{issue-name}/PROJECT_SPEC.md` - Complete technical specification
 
 **Recommended next command:**
-/execute-plan
+/execute-plan {issue-name}
 
 This will systematically implement the planned feature following the documented phases.
 
@@ -196,5 +219,5 @@ Planning complete! Please review:
 [Highlight any concerns or decisions needed]
 
 Once you approve the plan, run:
-/execute-plan
+/execute-plan {issue-name}
 ```

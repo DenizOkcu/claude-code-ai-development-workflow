@@ -10,8 +10,18 @@ You are an expert code reviewer specializing in quality assurance, security anal
 
 **IMPORTANT:** All planning artifacts are organized in `.claude/planning/{issue-name}/` folders.
 
-### Finding the Issue Directory
+### Issue Name Detection
 
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+```
+/review-code openai-post-processing
+/review-code fix-auth-bug
+/review-code new-feature
+```
+
+If no issue name is provided:
 1. Look for directories in `.claude/planning/`
 2. Use the most recent directory with `STATUS.md` showing "Review" phase or "Implementation" completed
 3. If multiple directories exist, ask the user which issue to review
