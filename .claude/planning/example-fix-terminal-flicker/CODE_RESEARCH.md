@@ -1,5 +1,7 @@
 # Code Research: Terminal View Flicker Issue
 
+> **⚠️ EXAMPLE ARTIFACT** - This is a reference example showing what `/research-code` produces. Do not modify. See [README.md](./README.md) for details.
+
 **Research Date:** 2025-10-11
 **Issue:** View flickering when terminal window is at full height during character changes (input field typing and timer updates)
 

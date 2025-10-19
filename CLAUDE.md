@@ -158,11 +158,34 @@ Every issue directory contains a `STATUS.md` file that:
 - Can iterate: run planning again, re-implement, re-review
 - `STATUS.md` tracks all iterations
 
-## Important: Ignore Example Directory
+## Example Artifacts
 
-**The `.claude/planning/fix-terminal-flicker/` directory should be IGNORED.** It's an example for repository readers and should be deleted before using this workflow system in your own repository.
+**The `.claude/planning/example-fix-terminal-flicker/` directory contains EXAMPLE ARTIFACTS** for reference and learning.
 
-When you run the workflow commands, they will create new planning directories automatically for your actual features/issues. Start fresh - don't try to read or use the example artifacts.
+### What It Is
+- Complete workflow example from research through review
+- Shows what each command produces (old verbose format)
+- Demonstrates the full development lifecycle
+- Includes README.md explaining its purpose
+
+### How to Use
+- **Learn** - See what good artifacts look like
+- **Reference** - Compare your outputs against these examples
+- **Understand** - Follow the progression through all phases
+
+### Important Notes
+- **DO NOT modify** - these are read-only reference examples
+- **DO NOT use as working directory** - create your own issue folders
+- **Note**: Examples use old verbose format; new artifacts will be more concise
+
+### Your Workflow
+When you run commands, they create **new directories**:
+```
+.claude/planning/
+├── example-fix-terminal-flicker/  ← Example (reference only)
+├── your-feature-name/             ← Your actual work
+└── another-feature/               ← Your actual work
+```
 
 ## Relationship Between Commands and Artifacts
 

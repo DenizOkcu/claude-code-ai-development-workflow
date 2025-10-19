@@ -1,5 +1,7 @@
 # Implementation Plan: Fix Terminal View Flickering
 
+> **⚠️ EXAMPLE ARTIFACT** - This is a reference example showing what `/issue-planner` produces. Do not modify. See [README.md](./README.md) for details.
+
 **Issue:** Terminal view flickering when at full height during timer and input updates
 **Created:** 2025-10-11
 **Status:** Ready for Implementation

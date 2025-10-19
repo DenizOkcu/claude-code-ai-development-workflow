@@ -1,5 +1,7 @@
 # Code Review: Terminal Flicker Fix
 
+> **⚠️ EXAMPLE ARTIFACT** - This is a reference example showing what `/review-code` produces. Do not modify. See [README.md](./README.md) for details.
+
 **Feature:** Fix terminal view flickering when at full height
 **Branch:** `fix/reduce-terminal-jitter-streaming`
 **Review Date:** 2025-10-11

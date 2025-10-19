@@ -1,5 +1,7 @@
 # Development Status
 
+> **⚠️ EXAMPLE ARTIFACT** - This is a reference example showing what `STATUS.md` looks like throughout the workflow. Do not modify. See [README.md](./README.md) for details.
+
 **Feature:** Fix terminal view flickering when at full height
 **Started:** 2025-10-11
 **Last Updated:** 2025-10-11

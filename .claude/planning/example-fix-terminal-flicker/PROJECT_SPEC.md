@@ -1,5 +1,7 @@
 # Project Specification: Terminal View Flicker Fix
 
+> **⚠️ EXAMPLE ARTIFACT** - This is a reference example showing what `/issue-planner` produces. Do not modify. See [README.md](./README.md) for details.
+
 **Project:** Nanocoder CLI Application
 **Feature:** Eliminate terminal view flickering at full height
 **Version:** 1.0
