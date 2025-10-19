@@ -27,133 +27,74 @@ When given an issue description, you will:
 2. Create a detailed **Implementation Plan** (saved as `.claude/planning/{issue-name}/IMPLEMENTATION_PLAN.md`)
 3. Create a comprehensive **Project Specification** (saved as `.claude/planning/{issue-name}/PROJECT_SPEC.md`)
 
-## Implementation Plan Structure
+## Implementation Plan Structure (.claude/planning/{issue-name}/IMPLEMENTATION_PLAN.md)
 
-The implementation plan should include:
+Create a **concise, actionable** plan:
 
 ### 1. Overview
+- Goal (1 sentence)
+- Success criteria (3-5 bullets)
 
-- Brief summary of the issue/feature
-- Goals and objectives
-- Success criteria
+### 2. Phases
 
-### 2. Technical Analysis
+**Phase 1: [Name]** (Complexity: Low/Med/High)
+- Task 1: `file/path.ts:lines` - what to do
+- Task 2: `file/path.ts:lines` - what to do
 
-- Current state assessment
-- Technology stack considerations
-- Dependencies and prerequisites
-- Potential risks and challenges
+**Phase 2: [Name]** (Complexity: Low/Med/High)
+- Task 1: ...
 
-### 3. Implementation Phases
+[Repeat for all phases - typically 3-4 phases total]
 
-Break down into logical phases:
+### 3. Testing
+- Unit: [key functions to test]
+- Integration: [workflows to test]
+- Edge cases: [critical scenarios]
 
-- **Phase 1**: Setup and scaffolding
-- **Phase 2**: Core functionality
-- **Phase 3**: Testing and validation
-- **Phase 4**: Documentation and cleanup
+### 4. Estimates
+| Phase | Effort |
+|-------|--------|
+| 1     | 30min  |
+| 2     | 1hr    |
+| Total | 1.5hr  |
 
-For each phase:
+## Project Specification Structure (.claude/planning/{issue-name}/PROJECT_SPEC.md)
 
-- List specific tasks
-- Identify files to create/modify
-- Note dependencies on previous phases
-- Estimate complexity (Simple/Medium/Complex)
+Create a **focused technical spec**:
 
-### 4. Testing Strategy
+### 1. Requirements
+- Functional: [what it does, 3-5 bullets]
+- Non-functional: [performance, security, compatibility constraints]
 
-- Unit tests required
-- Integration tests needed
-- Edge cases to cover
-- Testing tools and frameworks
+### 2. Technical Design
 
-### 5. Timeline Estimates
+**Architecture:**
+- Pattern: [e.g., layered, event-driven]
+- Components: [list with brief role]
+- Data flow: [brief description or simple diagram]
 
-- Per-phase estimates
-- Total estimated effort
-- Critical path items
+**Key Types/Interfaces:** (if TS/typed language)
+```typescript
+interface FooBar {
+  // Only novel/complex types
+}
+```
 
-## Project Specification Structure
+**Files to create/modify:**
+```
+src/foo/bar.ts - New: implement X
+src/baz/qux.ts:50-100 - Modify: update Y
+```
 
-The project specification should include:
+### 3. Error Handling
+- Validation: [strategy]
+- Error scenarios: [top 3-5]
+- User feedback: [approach]
 
-### 1. Executive Summary
-
-- Project overview
-- Business value
-- Key stakeholders
-
-### 2. Functional Requirements
-
-- User stories or use cases
-- Feature descriptions
-- User interactions
-- Input/output specifications
-
-### 3. Technical Requirements
-
-- Architecture overview
-- Component design
-- Data models and schemas
-- API contracts (if applicable)
-- State management approach
-
-### 4. Non-Functional Requirements
-
-- Performance requirements
-- Security considerations
-- Scalability needs
-- Accessibility standards
-- Browser/platform compatibility
-
-### 5. Technical Design
-
-For TypeScript/JavaScript projects:
-
-- Interface definitions
-- Type hierarchies
-- Module organization
-- Key abstractions
-
-For other languages:
-
-- Appropriate language-specific patterns
-- Type systems or contracts
-- Module/package structure
-
-### 6. Data Flow
-
-- Component interaction diagrams (in text)
-- Data transformation pipeline
-- Event flows or state transitions
-
-### 7. Error Handling
-
-- Error scenarios
-- Validation strategies
-- Recovery mechanisms
-- User feedback patterns
-
-### 8. Configuration & Environment
-
-- Environment variables
-- Configuration files
-- External service dependencies
-- Development setup requirements
-
-### 9. Migration & Deployment
-
-- Deployment strategy
-- Migration steps (if applicable)
-- Rollback procedures
-- Monitoring and observability
-
-### 10. Future Considerations
-
-- Extensibility points
-- Potential enhancements
-- Technical debt considerations
-- Maintenance requirements
+### 4. Configuration
+- Env vars: [if any]
+- Config files: [if any]
+- External deps: [if any]
 
 ## Approach
 
@@ -167,12 +108,11 @@ For other languages:
 
 ## Output Style
 
-- Use clear, professional language
-- Include code snippets for complex concepts
-- Reference specific files with line numbers when available (e.g., `src/utils/helper.ts:42`)
-- Use Mermaid diagrams for visualizations when helpful
-- Organize with clear headings and bullet points
-- Be specific: avoid vague terms like "implement functionality"
+- **Bullet points first** - paragraphs only if absolutely needed
+- **File refs with line numbers** - `src/utils/helper.ts:42`
+- **Snippets only for novel/complex patterns** - skip obvious examples
+- **Tables for structured data** - phases, estimates, components
+- **Specific actions** - "Add useTimer hook" not "implement functionality"
 
 ## Process
 
@@ -189,48 +129,27 @@ After analyzing the issue:
 
 ### Update STATUS.md
 
-**IMPORTANT:** Update the `.claude/planning/{issue-name}/STATUS.md` file to show planning phase completion:
+Update `.claude/planning/{issue-name}/STATUS.md`:
 
 ```markdown
-## Workflow Progress
+# Status: [feature-name]
 
-- [x] **Research** - Completed
-- [x] **Planning** - Completed
-- [ ] **Implementation** - Not started
-- [ ] **Review** - Not started
-- [ ] **Deployment** - Not started
+**Risk:** [Low/Medium/High] | **Updated:** [timestamp]
 
----
+## Progress
+- [x] Research | [x] Planning | [ ] Implementation | [ ] Review | [ ] Deploy
 
-## Phase Details
+## Phase: Planning ✓
+- **Phases:** [4 phases, Est: 2hr]
+- **Complexity:** [Simple/Medium/Complex]
+- **Key Decisions:** [top 2-3, bullets]
+- **Next:** `/execute-plan`
 
-### 2. Planning (✓ Completed)
-
-- **Completed:** [Timestamp]
-- **Artifacts:**
-  - IMPLEMENTATION_PLAN.md
-  - PROJECT_SPEC.md
-- **Phases Planned:** [Number of phases]
-- **Estimated Complexity:** [Simple/Medium/Complex]
-- **Key Decisions:**
-  - [Decision 1]
-  - [Decision 2]
-
-### 3. Implementation (⏳ Next)
-
-- **Status:** Ready to start
-- **Next Command:** `/execute-plan`
-
----
-
-## Artifacts Created
-
-- ✓ CODE_RESEARCH.md
-- ✓ IMPLEMENTATION_PLAN.md
-- ✓ PROJECT_SPEC.md
+## Artifacts
+- CODE_RESEARCH.md
+- IMPLEMENTATION_PLAN.md
+- PROJECT_SPEC.md
 ```
-
-If STATUS.md doesn't exist (user skipped research), create it with current state.
 
 ## Important Notes
 

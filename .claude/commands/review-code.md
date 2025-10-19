@@ -37,25 +37,14 @@ Then identify:
 - What the changes are supposed to accomplish
 - What the acceptance criteria are
 
-**Update `.claude/planning/{issue-name}/STATUS.md`** when starting review:
+**Update `.claude/planning/{issue-name}/STATUS.md`** when starting:
 
 ```markdown
-## Workflow Progress
+## Progress
+- [x] Research | [x] Planning | [x] Implementation | [~] Review | [ ] Deploy
 
-- [x] **Research** - Completed
-- [x] **Planning** - Completed
-- [x] **Implementation** - Completed
-- [~] **Review** - In Progress
-- [ ] **Deployment** - Not started
-
----
-
-## Phase Details
-
-### 4. Review (🔄 In Progress)
-
-- **Started:** [Timestamp]
-- **Status:** Running automated checks and manual review
+## Phase: Review 🔄
+- **Status:** Running checks and manual review
 ```
 
 ### 2. Automated Checks
@@ -208,114 +197,51 @@ Compare implementation against IMPLEMENTATION_PLAN.md and PROJECT_SPEC.md:
 
 ## Output: .claude/planning/{issue-name}/CODE_REVIEW.md
 
-Create a comprehensive review report in `.claude/planning/{issue-name}/CODE_REVIEW.md`:
+Create a **focused** review report in `.claude/planning/{issue-name}/CODE_REVIEW.md`:
 
-### 1. Review Summary
+### 1. Summary
+- **Status:** APPROVED / APPROVED WITH NOTES / NEEDS REVISION
+- **Risk:** Low/Medium/High
 
-- Overall assessment (Ready/Needs Work/Needs Significant Revision)
-- Key findings in 2-3 paragraphs
-- Risk level (Low/Medium/High)
-
-### 2. Automated Checks Results
-
+### 2. Automated Checks
 ```
-✓ Linting: Passed
-✓ Type Checking: Passed
-✓ Tests: 45/45 passing, 85% coverage
-✓ Build: Success
-⚠ Security Audit: 2 low-severity vulnerabilities
+✓/✗ Linting: [status]
+✓/✗ Type Checking: [status]
+✓/✗ Tests: [N/M passing, X% coverage]
+✓/✗ Build: [status]
+✓/⚠ Security: [vulnerabilities if any]
 ```
 
-### 3. Code Quality Assessment
+### 3. Code Quality
+| Area | Rating | Notes |
+|------|--------|-------|
+| Structure | Good | [brief note] |
+| Naming | Excellent | - |
+| Error Handling | Needs Work | [brief note] |
+| Type Safety | Good | - |
+| Testing | Good | [brief note] |
 
-Rate each area (Excellent/Good/Needs Improvement/Poor):
+### 4. Issues
 
-- Code structure and organization: Good
-- Naming and readability: Excellent
-- Error handling: Needs Improvement
-- Type safety: Good
-- Test coverage: Good
-- Documentation: Needs Improvement
+**❌ CRITICAL** (must fix before deploy):
+- `file.ts:line` - Issue description + fix
 
-### 4. Detailed Findings
+**⚠ IMPORTANT** (should fix):
+- `file.ts:line` - Issue description + fix
 
-#### Critical Issues (Must Fix)
+**💡 SUGGESTIONS** (optional):
+- `file.ts:line` - Improvement suggestion
 
-List any issues that block production:
+### 5. Compliance
+- ✓/✗ All planned features implemented
+- ✓/✗ Design followed
+- ✓/✗ Success criteria met
+- Deviations: [list or "None"]
 
-```
-❌ CRITICAL: Authentication bypass in src/auth/middleware.ts:45
-   Risk: High - Security vulnerability
-   Fix: Add proper token validation before allowing access
-```
-
-#### Important Issues (Should Fix)
-
-Issues that should be addressed:
-
-```
-⚠ IMPORTANT: Missing error handling in src/api/users.ts:120
-   Risk: Medium - Unhandled exceptions could crash the service
-   Fix: Add try-catch and proper error response
-```
-
-#### Suggestions (Nice to Have)
-
-Improvements that enhance quality:
-
-```
-💡 SUGGESTION: Extract validation logic in src/utils/validator.ts:30
-   Benefit: Improved reusability and testability
-   Fix: Create separate validation functions
-```
-
-### 5. Security Review
-
-- Vulnerabilities found
-- Security best practices violations
-- Recommended fixes
-
-### 6. Performance Notes
-
-- Performance concerns identified
-- Optimization opportunities
-- Load testing recommendations
-
-### 7. Testing Assessment
-
-- Coverage analysis
-- Missing test scenarios
-- Test quality issues
-
-### 8. Documentation Review
-
-- Documentation completeness
-- Areas needing better docs
-- API documentation quality
-
-### 9. Compliance with Plan
-
-- Features implemented vs planned
-- Design deviations (justified or not)
-- Success criteria status
-
-### 10. Recommendations
-
-Prioritized list of actions:
-
-1. Fix critical security issue in auth middleware
-2. Add missing error handling
-3. Improve test coverage for edge cases
-4. Update API documentation
-5. Consider extracting validation logic
-
-### 11. Approval Status
-
-```
-[ ] APPROVED - Ready for deployment
-[ ] APPROVED WITH NOTES - Minor issues, can deploy with follow-up tasks
-[ ] NEEDS REVISION - Must address issues before deployment
-```
+### 6. Recommendations
+1. [Top priority action]
+2. [Second priority]
+3. [Third priority]
 
 ## Review Guidelines
 
@@ -420,65 +346,31 @@ cargo build
 
 ### Update STATUS.md After Review
 
-**Update `.claude/planning/{issue-name}/STATUS.md`** based on review outcome:
+**Update `.claude/planning/{issue-name}/STATUS.md`** based on outcome:
 
 **If Approved:**
-
 ```markdown
-## Workflow Progress
+## Progress
+- [x] Research | [x] Planning | [x] Implementation | [x] Review | [ ] Deploy
 
-- [x] **Research** - Completed
-- [x] **Planning** - Completed
-- [x] **Implementation** - Completed
-- [x] **Review** - Completed ✓ APPROVED
-- [ ] **Deployment** - Not started
-
----
-
-## Phase Details
-
-### 4. Review (✓ Completed - APPROVED)
-
-- **Completed:** [Timestamp]
-- **Artifact:** CODE_REVIEW.md
-- **Status:** APPROVED - Ready for deployment
-- **Automated Checks:** All passing
+## Phase: Review ✓ APPROVED
 - **Critical Issues:** 0
 - **Important Issues:** 0
-- **Suggestions:** [Number]
+- **Suggestions:** [N]
+- **Next:** Deploy or commit changes
 
-### 5. Deployment (⏳ Next)
-
-- **Status:** Ready to deploy
-- **Next Command:** `/deploy-release` or manual git commit
-
----
-
-## Artifacts Created
-
-- ✓ CODE_RESEARCH.md
-- ✓ IMPLEMENTATION_PLAN.md
-- ✓ PROJECT_SPEC.md
-- ✓ Implementation code
-- ✓ Tests
-- ✓ CODE_REVIEW.md
+## Artifacts
+- CODE_RESEARCH.md, IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md
+- Implementation code + tests
+- CODE_REVIEW.md
 ```
 
 **If Needs Revision:**
-
 ```markdown
-### 4. Review (⚠ Needs Revision)
-
-- **Completed:** [Timestamp]
-- **Artifact:** CODE_REVIEW.md
-- **Status:** NEEDS REVISION
-- **Critical Issues:** [Number]
-- **Important Issues:** [Number]
-- **Action Required:** Fix issues and re-run `/review-code`
-
-### 5. Deployment
-
-- **Status:** Blocked pending issue resolution
+## Phase: Review ⚠ NEEDS REVISION
+- **Critical:** [N issues]
+- **Important:** [M issues]
+- **Action:** Fix issues, re-run `/review-code`
 ```
 
 ---

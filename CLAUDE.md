@@ -105,14 +105,14 @@ Every issue directory contains a `STATUS.md` file that:
 - Investigates codebase architecture and patterns
 - Identifies integration points and dependencies
 - Assesses risks and technical debt
-- Creates `CODE_RESEARCH.md` with findings
-- Initializes `STATUS.md` with workflow tracking
+- Creates **concise** `CODE_RESEARCH.md` (6 sections: Summary, Integration, Context, Risks, Key Files, Questions)
+- Initializes compact `STATUS.md` with workflow tracking
 
 ### Planning Phase
 - Reads `CODE_RESEARCH.md` (if exists) for context
 - Reads `STATUS.md` for current state
-- Creates detailed `IMPLEMENTATION_PLAN.md` with phases
-- Creates complete `PROJECT_SPEC.md` with technical design
+- Creates **actionable** `IMPLEMENTATION_PLAN.md` (phases with specific file:line tasks)
+- Creates **focused** `PROJECT_SPEC.md` (requirements, design, error handling, config)
 - Updates `STATUS.md` to show planning completion
 
 ### Implementation Phase
@@ -121,13 +121,13 @@ Every issue directory contains a `STATUS.md` file that:
 - Systematically implements code phase by phase
 - Marks todos as in_progress → completed in real-time
 - Updates `STATUS.md` showing current phase and progress
-- Updates `STATUS.md` with final implementation summary
+- Provides brief completion summary
 
 ### Review Phase
 - Reads all artifacts for context: `STATUS.md`, plans, research docs
 - Runs automated checks: linting, type checking, tests, build
 - Performs manual code review for quality, security, performance
-- Creates `CODE_REVIEW.md` with detailed findings
+- Creates **focused** `CODE_REVIEW.md` (table-based quality assessment, prioritized issues)
 - Updates `STATUS.md` with approval status (APPROVED / NEEDS REVISION)
 
 ## Key Principles
@@ -138,9 +138,17 @@ Every issue directory contains a `STATUS.md` file that:
 - All related artifacts stay together
 - `STATUS.md` is the single source of truth
 
+### Document Philosophy: Concise & Actionable
+- **Bullet points over paragraphs** - maximize information density
+- **Tables for structured data** - easier to scan
+- **File references with line numbers** - enable quick navigation
+- **Only novel/complex code snippets** - skip obvious examples
+- **Focus on what matters** - actionable insights over exhaustive documentation
+
 ### STATUS.md Management
 - Commands automatically read and update `STATUS.md`
-- Shows complete workflow state at all times
+- Compact format: single-line progress indicators
+- Shows complete workflow state at a glance
 - Check `STATUS.md` first to understand project status
 - Use to resume work after interruptions
 
@@ -160,10 +168,28 @@ When you run the workflow commands, they will create new planning directories au
 
 | Command | Reads | Creates/Updates |
 |---------|-------|-----------------|
-| `/research-code` | Codebase files | `CODE_RESEARCH.md`, `STATUS.md` (new) |
-| `/issue-planner` | `CODE_RESEARCH.md`, `STATUS.md` | `IMPLEMENTATION_PLAN.md`, `PROJECT_SPEC.md`, updates `STATUS.md` |
+| `/research-code` | Codebase files | **Concise** `CODE_RESEARCH.md` (6 sections), `STATUS.md` (new) |
+| `/issue-planner` | `CODE_RESEARCH.md`, `STATUS.md` | **Actionable** `IMPLEMENTATION_PLAN.md`, **focused** `PROJECT_SPEC.md`, updates `STATUS.md` |
 | `/execute-plan` | All planning docs, `STATUS.md` | Implementation code, tests, updates `STATUS.md` |
-| `/review-code` | All docs, implementation, `STATUS.md` | `CODE_REVIEW.md`, updates `STATUS.md` |
+| `/review-code` | All docs, implementation, `STATUS.md` | **Focused** `CODE_REVIEW.md` (table-based), updates `STATUS.md` |
+
+### Document Size Comparison
+
+**Before optimization:**
+- CODE_RESEARCH.md: ~500 lines (10 comprehensive sections with examples)
+- IMPLEMENTATION_PLAN.md: ~300 lines (detailed prose explanations)
+- PROJECT_SPEC.md: ~400 lines (10 extensive sections)
+- CODE_REVIEW.md: ~350 lines (11 detailed sections)
+- STATUS.md: ~70 lines (verbose progress tracking)
+
+**After optimization:**
+- CODE_RESEARCH.md: ~100-150 lines (6 focused sections, bullets)
+- IMPLEMENTATION_PLAN.md: ~80-120 lines (phases with file:line tasks)
+- PROJECT_SPEC.md: ~80-100 lines (4 focused sections)
+- CODE_REVIEW.md: ~60-100 lines (tables, prioritized issues)
+- STATUS.md: ~20-30 lines (compact single-line indicators)
+
+**Token savings: ~60-70% reduction while maintaining essential information**
 
 ## Best Practices
 

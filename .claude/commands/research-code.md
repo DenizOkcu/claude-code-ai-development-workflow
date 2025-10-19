@@ -167,118 +167,51 @@ Document what works well and what could be improved.
 
 ## Output: .claude/planning/{issue-name}/CODE_RESEARCH.md
 
-Create a comprehensive research document in `.claude/planning/{issue-name}/CODE_RESEARCH.md` with these sections:
+Create a **concise** research document in `.claude/planning/{issue-name}/CODE_RESEARCH.md`:
 
-### 1. Executive Summary
+### 1. Summary
+- Risk level: Low/Medium/High
+- Key findings (3-5 bullets)
+- Top recommendations (3-5 bullets)
 
-- Quick overview of findings (2-3 paragraphs)
-- Key recommendations
-- Risk level assessment (Low/Medium/High)
-
-### 2. Project Architecture
-
-- Technology stack details
-- Architectural patterns
-- Module organization
-- Build and tooling setup
-
-### 3. Relevant Existing Code
-
-- Similar implementations found
-- Reusable components identified
-- Patterns to follow
+### 2. Integration Points
+- Files to modify (with line refs)
+- Reusable patterns/code
 - Anti-patterns to avoid
 
-### 4. Integration Points
+### 3. Technical Context
+- Stack: [framework, language, key libs]
+- Patterns: [architecture style, state mgmt]
+- Conventions: [naming, structure, testing]
 
-- Where new code should be added
-- Files that will need modification
-- Configuration changes needed
-- Dependency relationships
-
-### 5. Code Conventions
-
-- Coding style guidelines observed
-- Naming conventions
-- TypeScript patterns (if applicable)
-- Testing patterns
-- Documentation style
-
-### 6. Dependencies & Data Flow
-
-- Key dependencies and their roles
-- Data models and schemas
-- API contracts
-- State management approach
-- Event flow or communication patterns
-
-### 7. Risks & Challenges
-
-- Technical debt in affected areas
+### 4. Risks
+- Technical debt areas
 - Breaking change risks
-- Performance concerns
-- Security considerations
-- Testing gaps
+- Performance/security concerns
 
-### 8. Recommendations
-
-- Refactoring opportunities
-- Code to reuse or extract
-- Testing strategy suggestions
-- Implementation approach recommendations
-- Areas requiring careful attention
-
-### 9. Key Files Reference
-
-List of important files with descriptions:
-
+### 5. Key Files
 ```
-src/core/engine.ts:1-200 - Main processing engine
-src/utils/helpers.ts:45-80 - Relevant utility functions
-config/settings.json - Configuration structure
+path/to/file.ts:10-50 - Brief description
+path/to/other.ts:100 - Brief description
 ```
 
-### 10. Questions for Planning
-
-- Open questions that need answers
-- Clarifications needed
-- Decisions to be made
-- Trade-offs to consider
+### 6. Open Questions
+- Critical decisions needed
+- Clarifications required
 
 ## Research Depth Guidelines
 
-### Quick Research (Simple features/changes)
-
-- Focus on immediate integration points
-- Check for similar existing code
-- Document key conventions
-- 5-10 files examined
-
-### Standard Research (Medium complexity)
-
-- Full architectural understanding
-- Multiple similar implementations reviewed
-- Comprehensive convention documentation
-- Dependency mapping
-- 15-30 files examined
-
-### Deep Research (Complex features/major changes)
-
-- Complete architecture analysis
-- Historical code evolution review
-- Performance and security analysis
-- Extensive pattern documentation
-- Refactoring recommendations
-- 30+ files examined
+**Quick** (simple changes): 5-10 files, focus on integration points and conventions
+**Standard** (medium complexity): 15-30 files, full architecture + dependency mapping
+**Deep** (complex/major): 30+ files, include history, performance, security analysis
 
 ## Communication Style
 
-- Be thorough but concise
-- Use code references with line numbers
-- Include code snippets for important patterns
-- Use diagrams (text-based) for complex relationships
-- Flag uncertainties clearly
-- Prioritize actionable insights
+- **Bullet points over paragraphs** - maximize density
+- **Code refs with line numbers** - enable quick navigation
+- **Snippets only for novel patterns** - avoid obvious examples
+- **Flag uncertainties** - be explicit about unknowns
+- **Actionable over exhaustive** - focus on what matters for planning
 
 ## Important Guidelines
 
@@ -292,81 +225,31 @@ config/settings.json - Configuration structure
 
 ## After Research Completion
 
-Present a summary including:
-
-1. Key findings (2-3 paragraphs)
-2. Risk assessment (Low/Medium/High with justification)
-3. Main recommendations (3-5 key points)
-4. Critical questions that need answers before planning
-
-The CODE_RESEARCH.md file will serve as crucial context for the planning phase, ensuring decisions are based on solid understanding of the existing codebase.
+Present a **brief** summary (3-5 sentences max) with:
+- Risk level + why
+- Top 3 findings
+- Top 3 recommendations
+- Blocking questions (if any)
 
 ### Update STATUS.md
 
-**IMPORTANT:** Create or update `.claude/planning/{issue-name}/STATUS.md` with the following structure:
+Create/update `.claude/planning/{issue-name}/STATUS.md`:
 
 ```markdown
-# Development Status
+# Status: [feature-name]
 
-**Feature:** [Feature description]
-**Started:** [Timestamp]
-**Last Updated:** [Timestamp]
+**Risk:** [Low/Medium/High] | **Updated:** [timestamp]
 
----
+## Progress
+- [x] Research | [~] Planning | [ ] Implementation | [ ] Review | [ ] Deploy
 
-## Workflow Progress
+## Phase: Research ✓
+- **Key Findings:** [top 3, bullets]
+- **Recommendations:** [top 3, bullets]
+- **Next:** `/issue-planner [description]`
 
-- [x] **Research** - Completed
-- [ ] **Planning** - Not started
-- [ ] **Implementation** - Not started
-- [ ] **Review** - Not started
-- [ ] **Deployment** - Not started
-
----
-
-## Phase Details
-
-### 1. Research (✓ Completed)
-
-- **Completed:** [Timestamp]
-- **Artifact:** CODE_RESEARCH.md
-- **Risk Level:** [Low/Medium/High]
-- **Key Findings:**
-  - [Finding 1]
-  - [Finding 2]
-  - [Finding 3]
-- **Recommendations:**
-  - [Recommendation 1]
-  - [Recommendation 2]
-
-### 2. Planning (⏳ Next)
-
-- **Status:** Ready to start
-- **Next Command:** `/issue-planner [feature description]`
-
-### 3. Implementation
-
-- **Status:** Pending planning
-
-### 4. Review
-
-- **Status:** Pending implementation
-
-### 5. Deployment
-
-- **Status:** Pending review
-
----
-
-## Artifacts Created
-
-- ✓ CODE_RESEARCH.md
-
----
-
-## Notes
-
-[Any important notes or decisions]
+## Artifacts
+- CODE_RESEARCH.md
 ```
 
 ## Getting Started

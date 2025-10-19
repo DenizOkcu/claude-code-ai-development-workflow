@@ -32,27 +32,16 @@ First, locate and read the planning documents in `.claude/planning/{issue-name}/
 
 If IMPLEMENTATION_PLAN.md or PROJECT_SPEC.md don't exist, inform the user and suggest running `/issue-planner` first.
 
-**Update `.claude/planning/{issue-name}/STATUS.md`** when starting implementation:
+**Update `.claude/planning/{issue-name}/STATUS.md`** when starting:
 
 ```markdown
-## Workflow Progress
+## Progress
+- [x] Research | [x] Planning | [~] Implementation | [ ] Review | [ ] Deploy
 
-- [x] **Research** - Completed
-- [x] **Planning** - Completed
-- [~] **Implementation** - In Progress
-- [ ] **Review** - Not started
-- [ ] **Deployment** - Not started
-
----
-
-## Phase Details
-
-### 3. Implementation (🔄 In Progress)
-
-- **Started:** [Timestamp]
-- **Current Phase:** [Phase name]
-- **Progress:** [X/Y phases completed]
-- **Status:** Working on [current task]
+## Phase: Implementation 🔄
+- **Current:** Phase [N] - [name]
+- **Progress:** [X/Y phases done]
+- **Status:** [current task]
 ```
 
 ### 2. Research Codebase
@@ -121,44 +110,21 @@ After completing all phases:
 - Note any deviations from the original plan
 - **Update `.claude/planning/{issue-name}/STATUS.md`** with completion details
 
-**Update `.claude/planning/{issue-name}/STATUS.md`** when implementation is complete:
+**Update `.claude/planning/{issue-name}/STATUS.md`** when complete:
 
 ```markdown
-## Workflow Progress
+## Progress
+- [x] Research | [x] Planning | [x] Implementation | [ ] Review | [ ] Deploy
 
-- [x] **Research** - Completed
-- [x] **Planning** - Completed
-- [x] **Implementation** - Completed
-- [ ] **Review** - Not started
-- [ ] **Deployment** - Not started
+## Phase: Implementation ✓
+- **Files:** [list key files modified/created]
+- **Tests:** [N tests, passing/failing]
+- **Deviations:** [any changes from plan, or "None"]
+- **Next:** `/review-code`
 
----
-
-## Phase Details
-
-### 3. Implementation (✓ Completed)
-
-- **Completed:** [Timestamp]
-- **Phases Completed:** [All phases]
-- **Files Modified/Created:** [List key files]
-- **Tests Written:** [Number of tests]
-- **Test Status:** [All passing/Some failing]
-- **Deviations from Plan:** [Any deviations or "None"]
-
-### 4. Review (⏳ Next)
-
-- **Status:** Ready to start
-- **Next Command:** `/review-code`
-
----
-
-## Artifacts Created
-
-- ✓ CODE_RESEARCH.md
-- ✓ IMPLEMENTATION_PLAN.md
-- ✓ PROJECT_SPEC.md
-- ✓ Implementation code
-- ✓ Tests
+## Artifacts
+- CODE_RESEARCH.md, IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md
+- Implementation code + tests
 ```
 
 ## Implementation Strategy
@@ -259,13 +225,12 @@ When implementing TypeScript projects:
 
 ### Completion Summary
 
-When finished, provide:
-
-- ✓ List of all completed tasks
-- ✓ Files created or modified
-- ✓ Test results
-- ✓ Any deviations from the plan
-- ✓ Next steps or recommendations
+Provide a **brief** summary (5-8 bullets max):
+- Tasks completed
+- Files modified/created
+- Test results (N passing, M failing)
+- Deviations from plan (if any)
+- Next: `/review-code`
 
 ## Important Reminders
 
