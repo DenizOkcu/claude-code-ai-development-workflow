@@ -10,7 +10,19 @@ You are an expert code reviewer specializing in quality assurance, security anal
 
 **IMPORTANT:** All planning artifacts are organized in `.claude/planning/{issue-name}/` folders.
 
-### Finding the Issue Directory
+### Issue Name Detection
+
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+
+```
+/review-code openai-post-processing
+/review-code fix-auth-bug
+/review-code new-feature
+```
+
+If no issue name is provided:
 
 1. Look for directories in `.claude/planning/`
 2. Use the most recent directory with `STATUS.md` showing "Review" phase or "Implementation" completed
@@ -41,9 +53,11 @@ Then identify:
 
 ```markdown
 ## Progress
+
 - [x] Research | [x] Planning | [x] Implementation | [~] Review | [ ] Deploy
 
 ## Phase: Review 🔄
+
 - **Status:** Running checks and manual review
 ```
 
@@ -200,10 +214,12 @@ Compare implementation against IMPLEMENTATION_PLAN.md and PROJECT_SPEC.md:
 Create a **focused** review report in `.claude/planning/{issue-name}/CODE_REVIEW.md`:
 
 ### 1. Summary
+
 - **Status:** APPROVED / APPROVED WITH NOTES / NEEDS REVISION
 - **Risk:** Low/Medium/High
 
 ### 2. Automated Checks
+
 ```
 ✓/✗ Linting: [status]
 ✓/✗ Type Checking: [status]
@@ -213,32 +229,38 @@ Create a **focused** review report in `.claude/planning/{issue-name}/CODE_REVIEW
 ```
 
 ### 3. Code Quality
-| Area | Rating | Notes |
-|------|--------|-------|
-| Structure | Good | [brief note] |
-| Naming | Excellent | - |
+
+| Area           | Rating     | Notes        |
+| -------------- | ---------- | ------------ |
+| Structure      | Good       | [brief note] |
+| Naming         | Excellent  | -            |
 | Error Handling | Needs Work | [brief note] |
-| Type Safety | Good | - |
-| Testing | Good | [brief note] |
+| Type Safety    | Good       | -            |
+| Testing        | Good       | [brief note] |
 
 ### 4. Issues
 
 **❌ CRITICAL** (must fix before deploy):
+
 - `file.ts:line` - Issue description + fix
 
 **⚠ IMPORTANT** (should fix):
+
 - `file.ts:line` - Issue description + fix
 
 **💡 SUGGESTIONS** (optional):
+
 - `file.ts:line` - Improvement suggestion
 
 ### 5. Compliance
+
 - ✓/✗ All planned features implemented
 - ✓/✗ Design followed
 - ✓/✗ Success criteria met
 - Deviations: [list or "None"]
 
 ### 6. Recommendations
+
 1. [Top priority action]
 2. [Second priority]
 3. [Third priority]
@@ -349,25 +371,31 @@ cargo build
 **Update `.claude/planning/{issue-name}/STATUS.md`** based on outcome:
 
 **If Approved:**
+
 ```markdown
 ## Progress
+
 - [x] Research | [x] Planning | [x] Implementation | [x] Review | [ ] Deploy
 
 ## Phase: Review ✓ APPROVED
+
 - **Critical Issues:** 0
 - **Important Issues:** 0
 - **Suggestions:** [N]
 - **Next:** Deploy or commit changes
 
 ## Artifacts
+
 - CODE_RESEARCH.md, IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md
 - Implementation code + tests
 - CODE_REVIEW.md
 ```
 
 **If Needs Revision:**
+
 ```markdown
 ## Phase: Review ⚠ NEEDS REVISION
+
 - **Critical:** [N issues]
 - **Important:** [M issues]
 - **Action:** Fix issues, re-run `/review-code`

@@ -12,12 +12,23 @@ You are an expert software architect and technical planner specializing in trans
 
 ### Issue Name Detection
 
-1. If `.claude/planning/{issue-name}/STATUS.md` exists, use that issue name
-2. Otherwise, generate issue name from the feature description:
-   - Extract a short, descriptive name
-   - Convert to kebab-case (lowercase with hyphens)
-   - Keep it concise (2-5 words)
-3. Create the directory if it doesn't exist
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+
+```
+/issue-planner openai-post-processing
+/issue-planner fix-auth-bug Add authentication error handling
+/issue-planner new-feature Implement user dashboard
+```
+
+If no issue name is provided, generate one from the feature description:
+
+- Extract a short, descriptive name
+- Convert to kebab-case (lowercase with hyphens)
+- Keep it concise (2-5 words)
+
+The directory `.claude/planning/{issue-name}/` must exist or be created before planning begins.
 
 ## Your Task
 
@@ -32,28 +43,33 @@ When given an issue description, you will:
 Create a **concise, actionable** plan:
 
 ### 1. Overview
+
 - Goal (1 sentence)
 - Success criteria (3-5 bullets)
 
 ### 2. Phases
 
 **Phase 1: [Name]** (Complexity: Low/Med/High)
+
 - Task 1: `file/path.ts:lines` - what to do
 - Task 2: `file/path.ts:lines` - what to do
 
 **Phase 2: [Name]** (Complexity: Low/Med/High)
+
 - Task 1: ...
 
 [Repeat for all phases - typically 3-4 phases total]
 
 ### 3. Testing
+
 - Unit: [key functions to test]
 - Integration: [workflows to test]
 - Edge cases: [critical scenarios]
 
 ### 4. Estimates
+
 | Phase | Effort |
-|-------|--------|
+| ----- | ------ |
 | 1     | 30min  |
 | 2     | 1hr    |
 | Total | 1.5hr  |
@@ -63,35 +79,41 @@ Create a **concise, actionable** plan:
 Create a **focused technical spec**:
 
 ### 1. Requirements
+
 - Functional: [what it does, 3-5 bullets]
 - Non-functional: [performance, security, compatibility constraints]
 
 ### 2. Technical Design
 
 **Architecture:**
+
 - Pattern: [e.g., layered, event-driven]
 - Components: [list with brief role]
 - Data flow: [brief description or simple diagram]
 
 **Key Types/Interfaces:** (if TS/typed language)
+
 ```typescript
 interface FooBar {
-  // Only novel/complex types
+	// Only novel/complex types
 }
 ```
 
 **Files to create/modify:**
+
 ```
 src/foo/bar.ts - New: implement X
 src/baz/qux.ts:50-100 - Modify: update Y
 ```
 
 ### 3. Error Handling
+
 - Validation: [strategy]
 - Error scenarios: [top 3-5]
 - User feedback: [approach]
 
 ### 4. Configuration
+
 - Env vars: [if any]
 - Config files: [if any]
 - External deps: [if any]
@@ -137,15 +159,18 @@ Update `.claude/planning/{issue-name}/STATUS.md`:
 **Risk:** [Low/Medium/High] | **Updated:** [timestamp]
 
 ## Progress
+
 - [x] Research | [x] Planning | [ ] Implementation | [ ] Review | [ ] Deploy
 
 ## Phase: Planning ✓
+
 - **Phases:** [4 phases, Est: 2hr]
 - **Complexity:** [Simple/Medium/Complex]
 - **Key Decisions:** [top 2-3, bullets]
 - **Next:** `/execute-plan`
 
 ## Artifacts
+
 - CODE_RESEARCH.md
 - IMPLEMENTATION_PLAN.md
 - PROJECT_SPEC.md
@@ -161,7 +186,23 @@ Update `.claude/planning/{issue-name}/STATUS.md`:
 - **Flag unknowns** that need user input
 - **Think modularly** - break large features into smaller, testable components
 
-Now, please provide the issue description you'd like me to analyze and plan for.
+## Usage
+
+**Command format:**
+
+```
+/issue-planner {issue-name} [optional description]
+```
+
+Examples:
+
+```
+/issue-planner openai-post-processing
+/issue-planner fix-auth-bug Add error handling for failed authentication
+/issue-planner dashboard-view Implement user dashboard with analytics
+```
+
+The first argument is the issue name (kebab-case). Any additional text is treated as the feature description. If only the issue name is provided, the command will use existing research and context.
 
 ---
 
@@ -177,7 +218,7 @@ Planning complete! Two documents have been created:
 - `.claude/planning/{issue-name}/PROJECT_SPEC.md` - Complete technical specification
 
 **Recommended next command:**
-/execute-plan
+/execute-plan {issue-name}
 
 This will systematically implement the planned feature following the documented phases.
 
@@ -196,5 +237,5 @@ Planning complete! Please review:
 [Highlight any concerns or decisions needed]
 
 Once you approve the plan, run:
-/execute-plan
+/execute-plan {issue-name}
 ```

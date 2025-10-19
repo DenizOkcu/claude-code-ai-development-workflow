@@ -10,10 +10,22 @@ You are an expert software engineer specializing in systematic, test-driven impl
 
 **IMPORTANT:** All planning artifacts are organized in `.claude/planning/{issue-name}/` folders.
 
-### Finding the Issue Directory
+### Issue Name Detection
+
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+
+```
+/execute-plan openai-post-processing
+/execute-plan fix-auth-bug
+/execute-plan new-feature
+```
+
+If no issue name is provided:
 
 1. Look for directories in `.claude/planning/`
-2. Use the most recent directory with `STATUS.md` showing "Implementation" phase
+2. Use the most recent directory with `STATUS.md` showing "Planning" complete or "Implementation" in progress
 3. If multiple directories exist, ask the user which issue to work on
 
 ## Your Task
@@ -36,9 +48,11 @@ If IMPLEMENTATION_PLAN.md or PROJECT_SPEC.md don't exist, inform the user and su
 
 ```markdown
 ## Progress
+
 - [x] Research | [x] Planning | [~] Implementation | [ ] Review | [ ] Deploy
 
 ## Phase: Implementation 🔄
+
 - **Current:** Phase [N] - [name]
 - **Progress:** [X/Y phases done]
 - **Status:** [current task]
@@ -114,15 +128,18 @@ After completing all phases:
 
 ```markdown
 ## Progress
+
 - [x] Research | [x] Planning | [x] Implementation | [ ] Review | [ ] Deploy
 
 ## Phase: Implementation ✓
+
 - **Files:** [list key files modified/created]
 - **Tests:** [N tests, passing/failing]
 - **Deviations:** [any changes from plan, or "None"]
 - **Next:** `/review-code`
 
 ## Artifacts
+
 - CODE_RESEARCH.md, IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md
 - Implementation code + tests
 ```
@@ -226,6 +243,7 @@ When implementing TypeScript projects:
 ### Completion Summary
 
 Provide a **brief** summary (5-8 bullets max):
+
 - Tasks completed
 - Files modified/created
 - Test results (N passing, M failing)

@@ -14,7 +14,19 @@ Conduct thorough research on the codebase to understand its architecture, patter
 
 **IMPORTANT:** All planning artifacts must be organized in `.claude/planning/{issue-name}/` folders.
 
-### Issue Name Generation
+### Issue Name Detection
+
+**The issue name is provided as the first argument to this command.**
+
+Example usage:
+
+```
+/research-code openai-post-processing Add OpenAI chat completions for post-processing
+/research-code fix-auth-bug Investigate authentication error handling
+/research-code dashboard-view Research patterns for implementing dashboard
+```
+
+If no issue name is provided, generate one from the feature description:
 
 1. Extract a short, descriptive name from the feature/issue description
 2. Convert to kebab-case (lowercase with hyphens)
@@ -27,7 +39,8 @@ Conduct thorough research on the codebase to understand its architecture, patter
 ### Directory Setup
 
 Before creating any artifacts:
-1. Generate the issue name slug from the feature description
+
+1. Use the provided issue name or generate it from the feature description
 2. Create the directory: `.claude/planning/{issue-name}/`
 3. All artifacts go in this directory
 
@@ -170,32 +183,38 @@ Document what works well and what could be improved.
 Create a **concise** research document in `.claude/planning/{issue-name}/CODE_RESEARCH.md`:
 
 ### 1. Summary
+
 - Risk level: Low/Medium/High
 - Key findings (3-5 bullets)
 - Top recommendations (3-5 bullets)
 
 ### 2. Integration Points
+
 - Files to modify (with line refs)
 - Reusable patterns/code
 - Anti-patterns to avoid
 
 ### 3. Technical Context
+
 - Stack: [framework, language, key libs]
 - Patterns: [architecture style, state mgmt]
 - Conventions: [naming, structure, testing]
 
 ### 4. Risks
+
 - Technical debt areas
 - Breaking change risks
 - Performance/security concerns
 
 ### 5. Key Files
+
 ```
 path/to/file.ts:10-50 - Brief description
 path/to/other.ts:100 - Brief description
 ```
 
 ### 6. Open Questions
+
 - Critical decisions needed
 - Clarifications required
 
@@ -226,6 +245,7 @@ path/to/other.ts:100 - Brief description
 ## After Research Completion
 
 Present a **brief** summary (3-5 sentences max) with:
+
 - Risk level + why
 - Top 3 findings
 - Top 3 recommendations
@@ -241,26 +261,37 @@ Create/update `.claude/planning/{issue-name}/STATUS.md`:
 **Risk:** [Low/Medium/High] | **Updated:** [timestamp]
 
 ## Progress
+
 - [x] Research | [~] Planning | [ ] Implementation | [ ] Review | [ ] Deploy
 
 ## Phase: Research ✓
+
 - **Key Findings:** [top 3, bullets]
 - **Recommendations:** [top 3, bullets]
-- **Next:** `/issue-planner [description]`
+- **Next:** `/issue-planner {issue-name}`
 
 ## Artifacts
+
 - CODE_RESEARCH.md
 ```
 
-## Getting Started
+## Usage
 
-To begin research, I need:
+**Command format:**
 
-1. A brief description of the feature/change being considered
-2. Any specific areas of concern or focus
-3. Any constraints or requirements to keep in mind
+```
+/research-code {issue-name} [optional description]
+```
 
-Let's understand your codebase before we plan the solution!
+Examples:
+
+```
+/research-code openai-post-processing Add OpenAI chat completions for structuring
+/research-code fix-auth-bug Investigate authentication failure scenarios
+/research-code dashboard-view Research patterns for dashboard implementation
+```
+
+The first argument is the issue name (kebab-case). Any additional text provides context for the research. If only the issue name is provided, ask the user for more details about what needs to be researched.
 
 ---
 
@@ -274,7 +305,7 @@ After completing the research and presenting the summary, **ALWAYS** end with:
 Research complete! The findings have been documented in `.claude/planning/{issue-name}/CODE_RESEARCH.md`.
 
 **Recommended next command:**
-/issue-planner [brief description of the feature]
+/issue-planner {issue-name}
 
 This will create a detailed implementation plan and project specification based on the research findings.
 ```
@@ -289,5 +320,5 @@ Research complete, but there are some questions that need answers before proceed
 [List questions]
 
 Once these are clarified, run:
-/issue-planner [brief description of the feature]
+/issue-planner {issue-name}
 ```
