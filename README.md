@@ -1,199 +1,228 @@
 # AI Development Workflow with Claude Code
 
-Structured slash commands for complete software development lifecycle: Research → Planning → Implementation → Review.
+A modern autonomous software development lifecycle (SDLC) system using the `/sdlc` unified command for complete feature development: Research → Planning → Implementation → Review.
 
 ## Quick Start
 
 ```bash
-# 1. Research - generates issue name (e.g., "add-oauth-auth")
-/research-code Research OAuth2 authentication patterns with Google and GitHub
+# Execute complete SDLC autonomously
+/sdlc add-oauth-login "Implement OAuth2 authentication with Google"
 
-# 2. Plan - use the generated issue name
-/issue-planner add-oauth-auth
-
-# 3. Implement
-/execute-plan add-oauth-auth
-
-# 4. Review
-/review-code add-oauth-auth
+# Check progress anytime
+cat docs/add-oauth-login/STATUS.md
 ```
 
-**All commands automatically update `STATUS.md`** - your centralized progress tracker.
+**The `/sdlc` command autonomously executes all phases:**
+1. **Research** - Analyzes codebase architecture and patterns
+2. **Planning** - Creates implementation plans and specifications
+3. **Implementation** - Builds the feature phase-by-phase
+4. **Review** - Runs automated checks and manual review
+5. **Review-Fix Loop** (if needed) - Addresses issues automatically
 
 ---
 
-## ⚠️ Delete Example Before Using
+## Architecture
 
-The `.claude/planning/fix-terminal-flicker/` directory contains **example artifacts** for learning. Delete it before using this workflow in your own repository. Commands will create new directories automatically for your real features.
+### 2026 Claude Code Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│              USER INTERFACE                 │
+│           ┌──────────────────┐              │
+│           │  Unified Command │              │
+│           │      /sdlc       │              │
+│           │  (Recommended)   │              │
+│           └────────┬─────────┘              │
+│                    │                        │
+└────────────────────┼────────────────────────┘
+                     │
+                     │ Invoke Agent
+                     ▼
+┌─────────────────────────────────────────────┐
+│         SDLC Orchestrator Agent             │
+│  ┌───────────────────────────────────────┐  │
+│  │ • Phase state machine                 │  │
+│  │ • Gate enforcement                    │  │
+│  │ • Review-fix loop (max 3)             │  │
+│  │ • State persistence (STATUS.md)       │  │
+│  │ • Diagnostic output                   │  │
+│  └───────────────────────────────────────┘  │
+└───────────────────┬─────────────────────────┘
+                    │
+                    │ Invokes Skills (sequentially)
+                    │
+    ┌───────────────┼───────────────┐
+    │               │               │
+    ▼               ▼               ▼
+┌──────────────┐ ┌──────────┐ ┌──────────────┐
+│ code-research│ │solution- │ │ code-        │
+│              │ │planning  │ │implementation│
+└──────────────┘ └──────────┘ └──────────────┘
+                                        │
+        ┌───────────────┐               │
+        ▼               ▼               ▼
+┌──────────────┐ ┌──────────┐ ┌──────────────┐
+│ code-review  │ │review-fix│ │   State      │
+│              │ │          │ │ STATUS.md    │
+└──────────────┘ └──────────┘ └──────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────┐
+│         Artifacts (Persistent)          │
+│  docs/{issue-name}/                     │
+│  ├── STATUS.md                          │
+│  ├── CODE_RESEARCH.md                   │
+│  ├── IMPLEMENTATION_PLAN.md             │
+│  ├── PROJECT_SPEC.md                    │
+│  └── CODE_REVIEW.md                     │
+└─────────────────────────────────────────┘
+```
+
+### Component Responsibilities
+
+**User Interface Layer**
+- **Unified Command (`/sdlc`):** Parse arguments, invoke SDLC Orchestrator Agent, no workflow logic
+
+**Orchestration Layer**
+- **SDLC Orchestrator Agent:** Execute full SDLC autonomously, invoke skills, enforce gates, manage state
+
+**Capabilities Layer**
+- **Skills (Stateless Procedures):**
+  - `code-research`: Investigate codebase, create CODE_RESEARCH.md
+  - `solution-planning`: Create IMPLEMENTATION_PLAN.md and PROJECT_SPEC.md
+  - `code-implementation`: Execute plan phase-by-phase
+  - `code-review`: QA checks, create CODE_REVIEW.md
+  - `review-fix`: Address review issues
+
+**Data Layer**
+- **Artifacts:** Research, plans, specs, implementations, reviews
+- **State:** STATUS.md (progress), STATE.json (machine-readable)
 
 ---
 
-## Workflow Commands
+## Usage
 
-### 1. `/research-code [description]`
+### `/sdlc <issue-name> [description] [--from-<phase>]`
 
-Deep codebase analysis before planning. **Generates issue name** from description.
+**Unified SDLC command** - Executes the entire software development lifecycle autonomously.
 
-**What it does:**
-- Generates issue name from your description (e.g., `add-oauth-auth`)
-- Investigates architecture, patterns, conventions
-- Identifies integration points and dependencies
-- Assesses risks and technical debt
-- Creates recommendations
-- **Creates STATUS.md** to track workflow progress
+#### Syntax
 
-**Output:** Issue name (auto-generated), `CODE_RESEARCH.md`, `STATUS.md`
-
-**Example:**
 ```bash
-/research-code Research OAuth2 authentication patterns for implementation
+/sdlc <issue-name> [feature-description] [--from-<phase>]
 ```
-→ Generates issue name: `add-oauth-auth`
 
-**When to use:** Before implementing new features, unfamiliar code areas, complex features
+#### Arguments
 
-**STATUS.md after:**
+- `issue-name` (required): Kebab-case identifier
+  - Example: `add-oauth-auth`, `fix-memory-leak`, `refactor-api-layer`
+
+- `feature-description` (optional when resuming): What to build
+  - Example: "Implement OAuth2 with Google and GitHub"
+
+- `--from-<phase>` (optional): Resume from specific phase
+  - `--from-start`: Execute full SDLC (default)
+  - `--from-plan`: Resume from planning phase
+  - `--from-implement`: Resume from implementation phase
+  - `--from-review`: Resume from review phase
+
+#### Examples
+
+```bash
+# Full workflow from start
+/sdlc add-oauth-auth Implement OAuth2 with Google and GitHub
+
+# Resume from planning (research already done)
+/sdlc add-oauth-auth --from-plan
+
+# Resume from implementation (plans exist)
+/sdlc add-oauth-auth --from-implement
+
+# Resume from review (implementation done)
+/sdlc add-oauth-auth --from-review
 ```
-- [x] Research - Completed
-- [ ] Planning - Not started
+
+#### What It Creates
+
+All artifacts organized in `docs/{issue-name}/`:
+- `STATUS.md` - Progress tracker (single source of truth)
+- `CODE_RESEARCH.md` - Research findings
+- `IMPLEMENTATION_PLAN.md` - Phased implementation strategy
+- `PROJECT_SPEC.md` - Technical specification
+- `CODE_REVIEW.md` - Review findings
+
+#### How It Works
+
+1. **Research Phase**: Investigates codebase architecture and patterns
+2. **Planning Phase**: Creates implementation plans and specs
+3. **Implementation Phase**: Executes code following the plan
+4. **Review Phase**: Runs automated checks and manual review
+5. **Review-Fix Loop** (if needed): Addresses issues (max 3 iterations)
+
+Each phase must pass validation before progressing. The agent manages all state transitions automatically.
+
+#### Check Progress
+
+```bash
+cat docs/{issue-name}/STATUS.md
+```
+
+STATUS.md shows:
+- Current phase
+- Progress indicators
+- Artifacts created
+- Next steps
+
+#### Issue Name Format
+
+**Rules:**
+- kebab-case (lowercase-with-hyphens)
+- Concise (2-5 words)
+- Descriptive
+
+**Examples:**
+- ✅ `add-oauth-auth`, `fix-memory-leak`, `refactor-api-layer`
+- ❌ `AddOAuthAuth` (not kebab-case), `fix` (too vague), `add-new-auth-system-with-oauth2` (too long)
+
+#### Complete Workflow Example
+
+```bash
+# Start to finish - one command
+/sdlc add-oauth-auth Implement OAuth2 with Google and GitHub
+
+# The agent will:
+# 1. Research authentication patterns in codebase
+# 2. Create implementation plan and technical spec
+# 3. Implement the feature phase by phase
+# 4. Run automated checks and manual review
+# 5. Fix any issues (up to 3 iterations if needed)
+# 6. Report completion with deployment guidance
+
+# Check progress anytime
+cat docs/add-oauth-auth/STATUS.md
 ```
 
 ---
 
-### 2. `/issue-planner {issue-name}`
+## Benefits
 
-Transform requirements into actionable plans. **Uses issue name** generated by research-code.
-
-**What it does:**
-- Reads CODE_RESEARCH.md (if exists) and STATUS.md
-- Creates detailed implementation plan with phases
-- Designs technical architecture and specifications
-- Plans testing strategy
-- **Updates STATUS.md** with planning completion
-
-**Output:** `IMPLEMENTATION_PLAN.md`, `PROJECT_SPEC.md` | **Updates:** `STATUS.md`
-
-**Example:**
-```bash
-/issue-planner add-oauth-auth  # Issue name from research-code
-```
-
-**When to use:** After research phase, non-trivial features, structured planning needed
-
-**STATUS.md after:**
-```
-- [x] Research - Completed
-- [x] Planning - Completed
-- [ ] Implementation - Not started
-```
-
----
-
-### 3. `/execute-plan {issue-name}`
-
-Systematically implement the planned feature. **Uses issue name** from previous commands.
-
-**What it does:**
-- Reads IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md, STATUS.md
-- Creates comprehensive todo list
-- **Updates STATUS.md** to "In Progress" with current phase
-- Implements code phase by phase
-- Writes tests alongside implementation
-- Tracks progress with todo list
-- **Updates STATUS.md** when complete
-
-**Output:** Implementation code, tests | **Updates:** `STATUS.md`
-
-**Example:**
-```bash
-/execute-plan add-oauth-auth  # Issue name from research-code
-```
-
-**When to use:** After planning phase, when IMPLEMENTATION_PLAN.md exists
-
-**STATUS.md during execution:**
-```
-- [x] Research - Completed
-- [x] Planning - Completed
-- [~] Implementation - In Progress (Phase 2/4)
-- [ ] Review - Not started
-```
-
-**STATUS.md after completion:**
-```
-- [x] Research - Completed
-- [x] Planning - Completed
-- [x] Implementation - Completed (8 files, 23 tests)
-- [ ] Review - Not started
-```
-
----
-
-### 4. `/review-code {issue-name}`
-
-Comprehensive code review and quality assurance. **Uses issue name** from previous commands.
-
-**What it does:**
-- Reads STATUS.md, plans, research docs for context
-- **Updates STATUS.md** to "Review In Progress"
-- Runs automated checks (linting, types, tests, build)
-- Performs manual code review
-- Security and performance assessment
-- Creates detailed review report
-- **Updates STATUS.md** with approval status
-
-**Output:** `CODE_REVIEW.md` | **Updates:** `STATUS.md`
-
-**Example:**
-```bash
-/review-code add-oauth-auth  # Issue name from research-code
-```
-
-**When to use:** After implementation, before committing/deploying, after fixing issues
-
-**STATUS.md after (if approved):**
-```
-- [x] Research - Completed
-- [x] Planning - Completed
-- [x] Implementation - Completed
-- [x] Review - Completed ✓ APPROVED
-- [ ] Deployment - Ready
-```
-
-**STATUS.md if needs work:**
-```
-- [x] Research - Completed
-- [x] Planning - Completed
-- [x] Implementation - Completed
-- [x] Review - ⚠ NEEDS REVISION (2 critical, 3 important issues)
-```
-
----
-
-## Language Commands
-
-### `/typescript-pro [description]`
-
-**Location:** `.claude/commands/language/typescript-pro.md`
-
-**Purpose:** Advanced TypeScript development with strict type safety, generics, and enterprise patterns.
-
-**Example:**
-```bash
-/typescript-pro Design a type-safe event system with typed handlers
-```
-
-**When to use:** Complex TypeScript challenges, type system design, advanced typing patterns
+- **Single command** - Execute entire SDLC with one invocation
+- **Autonomous execution** - No manual command switching required
+- **Multi-feature support** - Work on multiple issues simultaneously
+- **Organized artifacts** - All docs for a feature in one directory
+- **Progress tracking** - STATUS.md shows complete workflow state
+- **Quality gates** - Automated validation at each phase
+- **Self-healing** - Automatic review-fix loop for issues
 
 ---
 
 ## File Organization
 
-All artifacts are organized by issue name in `.claude/planning/{issue-name}/`:
+All artifacts are organized by issue name in `docs/{issue-name}/`:
 
 ```
-.claude/planning/
-├── add-oauth-auth/          # Issue directory
+docs/
+├── add-oauth-auth/         # Issue directory
 │   ├── STATUS.md           # ⭐ Central progress tracker
 │   ├── CODE_RESEARCH.md    # Research findings
 │   ├── IMPLEMENTATION_PLAN.md
@@ -204,85 +233,13 @@ All artifacts are organized by issue name in `.claude/planning/{issue-name}/`:
     └── CODE_RESEARCH.md
 ```
 
-**STATUS.md** = Single source of truth for workflow state, updated by all commands.
-
----
-
-## Issue Name Format
-
-**Auto-generated by `/research-code`** from your feature description.
-
-**Rules:**
-- **kebab-case** (lowercase-with-hyphens)
-- **Concise** (2-5 words)
-- **Descriptive** of feature/fix
-
-**Examples:**
-- ✅ `add-oauth-auth`, `fix-memory-leak`, `refactor-api-layer`
-- ❌ `AddOAuthAuth` (not kebab-case), `fix` (too vague), `add-new-auth-with-oauth2` (too long)
-
-**How it works:**
-1. `/research-code Research OAuth2 patterns` → generates `add-oauth-auth`
-2. Use generated name in all subsequent commands: `/issue-planner add-oauth-auth`
-
----
-
-## Complete Workflow Example
-
-**Scenario:** Add JWT authentication with refresh tokens
-
-```bash
-# Step 1: Research - generates issue name "add-jwt-auth"
-/research-code Research existing JWT authentication patterns with refresh token support
-
-# Output:
-#   - Issue name generated: add-jwt-auth
-#   - CODE_RESEARCH.md (findings about existing auth/)
-#   - STATUS.md created
-# STATUS.md: [x] Research | [ ] Planning | [ ] Implementation | [ ] Review
-
-# Step 2: Plan - use generated issue name
-/issue-planner add-jwt-auth
-
-# Output:
-#   - IMPLEMENTATION_PLAN.md (4 phases)
-#   - PROJECT_SPEC.md (technical design)
-#   - STATUS.md updated
-# STATUS.md: [x] Research | [x] Planning | [ ] Implementation | [ ] Review
-
-# Step 3: Check progress (anytime)
-cat .claude/planning/add-jwt-auth/STATUS.md
-
-# Step 4: Implement - use same issue name
-/execute-plan add-jwt-auth
-
-# During execution:
-# STATUS.md: [x] Research | [x] Planning | [~] Implementation (Phase 2/4) | [ ] Review
-# After completion:
-# STATUS.md: [x] Research | [x] Planning | [x] Implementation | [ ] Review
-
-# Step 5: Review - use same issue name
-/review-code add-jwt-auth
-
-# Output:
-#   - CODE_REVIEW.md (comprehensive review)
-#   - STATUS.md updated
-# STATUS.md: [x] Research | [x] Planning | [x] Implementation | [x] Review ✓ APPROVED
-
-# Step 6: Check final status
-cat .claude/planning/add-jwt-auth/STATUS.md
-
-# Step 7: Commit and deploy
-git add .
-git commit -m "feat: add JWT authentication with refresh tokens"
-git push
-```
+**STATUS.md** = Single source of truth for workflow state, updated by all phases.
 
 ---
 
 ## STATUS.md - Your Progress Dashboard
 
-**All commands update `STATUS.md`** to track workflow progress:
+**All phases update `STATUS.md`** to track workflow progress:
 
 - ✓ Which phases are completed
 - 🔄 What phase is currently in progress
@@ -332,119 +289,31 @@ git push
 
 **Quick status check:**
 ```bash
-cat .claude/planning/{issue-name}/STATUS.md
+cat docs/{issue-name}/STATUS.md
 ```
 
 ---
 
-## Tips & Best Practices
+## Quality Invariants
 
-### Always Check STATUS.md First
-```bash
-cat .claude/planning/add-jwt-auth/STATUS.md
-# Shows: where you are, what's done, what's next
-```
-
-### When to Skip Research
-- Trivial changes (typo fixes)
-- Very familiar code areas
-- Clear implementation path
-
-### When Research is Critical
-- New features in unfamiliar areas
-- Complex architectural changes
-- Integration with existing systems
-
-### Iterative Workflow
-```bash
-# Update plans if needed
-/issue-planner add-jwt-auth  # Re-plan
-/execute-plan add-jwt-auth   # Re-implement
-
-# Fix issues after review
-# Fix the code manually
-/review-code add-jwt-auth     # Re-verify
-
-# STATUS.md tracks all iterations
-```
-
-### Multiple Features
-```bash
-# Work on multiple features simultaneously
-/research-code Research OAuth2 authentication patterns  # → generates: add-oauth-auth
-/research-code Research memory leak in data processor   # → generates: fix-memory-leak
-
-# Each gets its own directory and STATUS.md
-.claude/planning/add-oauth-auth/STATUS.md
-.claude/planning/fix-memory-leak/STATUS.md
-
-# Continue each workflow independently
-/issue-planner add-oauth-auth
-/issue-planner fix-memory-leak
-```
-
----
-
-## Command Selection Guide
-
-**Simple Change?**
-- Just code it directly
-
-**Medium Complexity?**
-```bash
-/issue-planner {issue-name}  # Plan it (skip research)
-/execute-plan {issue-name}   # Build it
-/review-code {issue-name}    # Check it
-```
-
-**Complex/Unfamiliar?**
-```bash
-/research-code [description]  # Understand it (generates issue name)
-/issue-planner {issue-name}   # Plan it
-/execute-plan {issue-name}    # Build it
-/review-code {issue-name}     # Check it
-```
-
-**TypeScript Challenge?**
-```bash
-/typescript-pro [description]  # Get expert guidance
-```
-
----
-
-## Artifacts Reference
-
-| Command          | Creates                  | Contains                                      |
-| ---------------- | ------------------------ | --------------------------------------------- |
-| `/research-code` | Issue name (generated)   | Auto-generated from description (e.g., `add-oauth-auth`) |
-| `/research-code` | `CODE_RESEARCH.md`       | Architecture, patterns, integration, risks    |
-| `/research-code` | `STATUS.md`              | **Progress tracker (updated by all)**         |
-| `/issue-planner` | `IMPLEMENTATION_PLAN.md` | Phased strategy, tasks, timeline              |
-| `/issue-planner` | `PROJECT_SPEC.md`        | Requirements, design, architecture            |
-| `/execute-plan`  | Code + tests             | Implementation following plan                 |
-| `/review-code`   | `CODE_REVIEW.md`         | Review findings, issues, approval             |
-
----
-
-## Workflow Benefits
-
-✅ **Structured** - Clear phases prevent getting lost
-✅ **Documented** - All decisions preserved in STATUS.md
-✅ **Quality** - Built-in review and testing
-✅ **Traceable** - STATUS.md + todo lists track progress
-✅ **Informed** - Research ensures good integration
-✅ **Maintainable** - Following existing patterns
-✅ **Resumable** - STATUS.md enables easy resume
-✅ **Transparent** - Complete workflow state visible
-✅ **Collaborative** - Share STATUS.md for team visibility
+1. **No logic in command**: Command only parses and invokes agent
+2. **Stateless skills**: Skills contain procedures, not state
+3. **Agent orchestrates**: Only agent manages workflow state
+4. **Persistent artifacts**: All progress in `docs/`
+5. **Deterministic gates**: Clear validation before progression
+6. **Max iterations**: Review-fix limited to 3 attempts
+7. **Clear separation**: UX, orchestration, capabilities, data
 
 ---
 
 ## Additional Documentation
 
 - **Command syntax reference:** `.claude/commands/COMMAND_USAGE.md`
-- **Example artifacts:** `.claude/planning/fix-terminal-flicker/` (reference only, delete before using)
-- **Individual command details:** `.claude/commands/*.md`
+- **Architecture overview:** `.claude/ARCHITECTURE.md`
+- **State management:** `.claude/STATE_MANAGEMENT.md`
+- **Migration report:** `.claude/MIGRATION_REPORT.md`
+- **Artifact templates:** `.claude/templates/ARTIFACT_TEMPLATES.md`
+- **Example artifacts:** `.claude/examples/` (reference only)
 
 ---
 
@@ -453,13 +322,14 @@ cat .claude/planning/add-jwt-auth/STATUS.md
 Try the workflow with a simple feature:
 
 ```bash
-/research-code Research patterns for implementing a health check endpoint
+/sdlc add-health-check "Implement a health check endpoint"
 ```
 
 This will:
-1. Generate an issue name (e.g., `add-health-check`)
-2. Create `.claude/planning/add-health-check/` directory
-3. Research your codebase and create CODE_RESEARCH.md
-4. Guide you to run: `/issue-planner add-health-check`
+1. Research your codebase for health check patterns
+2. Create an implementation plan
+3. Implement the health check endpoint
+4. Run automated checks and review
+5. Report completion with deployment guidance
 
 **Check STATUS.md anytime to see where you are!**

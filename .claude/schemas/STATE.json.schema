@@ -1,0 +1,495 @@
+# STATE.json Schema Reference
+
+**Version:** 1.0.0
+**Purpose:** Reference schema for STATE.json file
+**Location:** `docs/{issue-name}/STATE.json`
+
+---
+
+## Schema
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SDLC Workflow State",
+  "description": "State tracking for SDLC workflow execution",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "issue_name",
+    "current_phase",
+    "phase_status",
+    "created_at",
+    "updated_at",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version for migration support",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "example": "1.0.0"
+    },
+    "issue_name": {
+      "type": "string",
+      "description": "Kebab-case issue identifier",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 1,
+      "maxLength": 50,
+      "examples": ["add-oauth-login", "fix-memory-leak", "refactor-api-layer"]
+    },
+    "current_phase": {
+      "type": "string",
+      "description": "Current workflow phase",
+      "enum": [
+        "start",
+        "research",
+        "planning",
+        "implementation",
+        "review",
+        "fix",
+        "complete",
+        "blocked"
+      ]
+    },
+    "phase_status": {
+      "type": "string",
+      "description": "Status of current phase",
+      "enum": ["pending", "in_progress", "complete", "failed"]
+    },
+    "review_iteration": {
+      "type": "integer",
+      "description": "Current review-fix iteration (0-3)",
+      "minimum": 0,
+      "maximum": 3,
+      "default": 0
+    },
+    "created_at": {
+      "type": "string",
+      "description": "Workflow creation timestamp (ISO 8601)",
+      "format": "date-time",
+      "example": "2026-01-12T10:30:00Z"
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "Last state update timestamp (ISO 8601)",
+      "format": "date-time",
+      "example": "2026-01-12T14:45:30Z"
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "All artifacts created during workflow",
+      "patternProperties": {
+        ".+": {
+          "type": "object",
+          "required": ["name", "status", "path"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Artifact filename",
+              "examples": [
+                "CODE_RESEARCH.md",
+                "IMPLEMENTATION_PLAN.md",
+                "CODE_REVIEW.md"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "description": "Artifact creation status",
+              "enum": ["pending", "in_progress", "complete", "failed"]
+            },
+            "path": {
+              "type": "string",
+              "description": "Relative path from issue directory",
+              "examples": ["CODE_RESEARCH.md", "src/component.ts"]
+            },
+            "created_at": {
+              "type": "string",
+              "description": "Artifact creation timestamp",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "description": "Artifact last update timestamp",
+              "format": "date-time"
+            },
+            "size_bytes": {
+              "type": "integer",
+              "description": "Artifact file size in bytes",
+              "minimum": 0
+            },
+            "checksum": {
+              "type": "string",
+              "description": "SHA256 checksum of artifact",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional workflow metadata",
+      "properties": {
+        "risk_level": {
+          "type": "string",
+          "description": "Assessed risk level",
+          "enum": ["Low", "Medium", "High"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Feature description"
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## Example STATE.json Files
+
+### Initial State (Created at workflow start)
+
+```json
+{
+  "schema_version": "1.0.0",
+  "issue_name": "add-oauth-login",
+  "current_phase": "start",
+  "phase_status": "pending",
+  "review_iteration": 0,
+  "created_at": "2026-01-12T10:00:00Z",
+  "updated_at": "2026-01-12T10:00:00Z",
+  "artifacts": {},
+  "metadata": {
+    "risk_level": "Unknown",
+    "description": "Add OAuth2 login with Google and GitHub"
+  }
+}
+```
+
+### After Research Phase
+
+```json
+{
+  "schema_version": "1.0.0",
+  "issue_name": "add-oauth-login",
+  "current_phase": "planning",
+  "phase_status": "in_progress",
+  "review_iteration": 0,
+  "created_at": "2026-01-12T10:00:00Z",
+  "updated_at": "2026-01-12T11:30:00Z",
+  "artifacts": {
+    "CODE_RESEARCH.md": {
+      "name": "CODE_RESEARCH.md",
+      "status": "complete",
+      "path": "CODE_RESEARCH.md",
+      "created_at": "2026-01-12T11:00:00Z",
+      "updated_at": "2026-01-12T11:00:00Z",
+      "size_bytes": 5420,
+      "checksum": "a1b2c3d4e5f6..."
+    },
+    "RESEARCH_SUMMARY.md": {
+      "name": "RESEARCH_SUMMARY.md",
+      "status": "complete",
+      "path": "RESEARCH_SUMMARY.md",
+      "created_at": "2026-01-12T11:25:00Z",
+      "updated_at": "2026-01-12T11:25:00Z",
+      "size_bytes": 3200,
+      "checksum": "f6e5d4c3b2a1..."
+    }
+  },
+  "metadata": {
+    "risk_level": "Medium",
+    "description": "Add OAuth2 login with Google and GitHub"
+  }
+}
+```
+
+### After Implementation Phase
+
+```json
+{
+  "schema_version": "1.0.0",
+  "issue_name": "add-oauth-login",
+  "current_phase": "review",
+  "phase_status": "in_progress",
+  "review_iteration": 0,
+  "created_at": "2026-01-12T10:00:00Z",
+  "updated_at": "2026-01-12T15:45:00Z",
+  "artifacts": {
+    "CODE_RESEARCH.md": {
+      "name": "CODE_RESEARCH.md",
+      "status": "complete",
+      "path": "CODE_RESEARCH.md",
+      "created_at": "2026-01-12T11:00:00Z",
+      "updated_at": "2026-01-12T11:00:00Z",
+      "size_bytes": 5420,
+      "checksum": "a1b2c3d4e5f6..."
+    },
+    "RESEARCH_SUMMARY.md": {
+      "name": "RESEARCH_SUMMARY.md",
+      "status": "complete",
+      "path": "RESEARCH_SUMMARY.md",
+      "created_at": "2026-01-12T11:25:00Z",
+      "updated_at": "2026-01-12T11:25:00Z",
+      "size_bytes": 3200,
+      "checksum": "f6e5d4c3b2a1..."
+    },
+    "IMPLEMENTATION_PLAN.md": {
+      "name": "IMPLEMENTATION_PLAN.md",
+      "status": "complete",
+      "path": "IMPLEMENTATION_PLAN.md",
+      "created_at": "2026-01-12T12:00:00Z",
+      "updated_at": "2026-01-12T12:00:00Z",
+      "size_bytes": 4800,
+      "checksum": "b2c3d4e5f6a7..."
+    },
+    "PROJECT_SPEC.md": {
+      "name": "PROJECT_SPEC.md",
+      "status": "complete",
+      "path": "PROJECT_SPEC.md",
+      "created_at": "2026-01-12T12:30:00Z",
+      "updated_at": "2026-01-12T12:30:00Z",
+      "size_bytes": 3500,
+      "checksum": "c3d4e5f6a7b8..."
+    },
+    "PLAN_SUMMARY.md": {
+      "name": "PLAN_SUMMARY.md",
+      "status": "complete",
+      "path": "PLAN_SUMMARY.md",
+      "created_at": "2026-01-12T12:45:00Z",
+      "updated_at": "2026-01-12T12:45:00Z",
+      "size_bytes": 4100,
+      "checksum": "d4e5f6a7b8c9..."
+    },
+    "IMPLEMENTATION_SUMMARY.md": {
+      "name": "IMPLEMENTATION_SUMMARY.md",
+      "status": "complete",
+      "path": "IMPLEMENTATION_SUMMARY.md",
+      "created_at": "2026-01-12T15:40:00Z",
+      "updated_at": "2026-01-12T15:40:00Z",
+      "size_bytes": 2800,
+      "checksum": "e5f6a7b8c9d0..."
+    }
+  },
+  "metadata": {
+    "risk_level": "Medium",
+    "description": "Add OAuth2 login with Google and GitHub"
+  }
+}
+```
+
+### Complete State (After successful review)
+
+```json
+{
+  "schema_version": "1.0.0",
+  "issue_name": "add-oauth-login",
+  "current_phase": "complete",
+  "phase_status": "complete",
+  "review_iteration": 0,
+  "created_at": "2026-01-12T10:00:00Z",
+  "updated_at": "2026-01-12T16:30:00Z",
+  "artifacts": {
+    "CODE_RESEARCH.md": {
+      "name": "CODE_RESEARCH.md",
+      "status": "complete",
+      "path": "CODE_RESEARCH.md",
+      "created_at": "2026-01-12T11:00:00Z",
+      "updated_at": "2026-01-12T11:00:00Z",
+      "size_bytes": 5420,
+      "checksum": "a1b2c3d4e5f6..."
+    },
+    "RESEARCH_SUMMARY.md": {
+      "name": "RESEARCH_SUMMARY.md",
+      "status": "complete",
+      "path": "RESEARCH_SUMMARY.md",
+      "created_at": "2026-01-12T11:25:00Z",
+      "updated_at": "2026-01-12T11:25:00Z",
+      "size_bytes": 3200,
+      "checksum": "f6e5d4c3b2a1..."
+    },
+    "IMPLEMENTATION_PLAN.md": {
+      "name": "IMPLEMENTATION_PLAN.md",
+      "status": "complete",
+      "path": "IMPLEMENTATION_PLAN.md",
+      "created_at": "2026-01-12T12:00:00Z",
+      "updated_at": "2026-01-12T12:00:00Z",
+      "size_bytes": 4800,
+      "checksum": "b2c3d4e5f6a7..."
+    },
+    "PROJECT_SPEC.md": {
+      "name": "PROJECT_SPEC.md",
+      "status": "complete",
+      "path": "PROJECT_SPEC.md",
+      "created_at": "2026-01-12T12:30:00Z",
+      "updated_at": "2026-01-12T12:30:00Z",
+      "size_bytes": 3500,
+      "checksum": "c3d4e5f6a7b8..."
+    },
+    "PLAN_SUMMARY.md": {
+      "name": "PLAN_SUMMARY.md",
+      "status": "complete",
+      "path": "PLAN_SUMMARY.md",
+      "created_at": "2026-01-12T12:45:00Z",
+      "updated_at": "2026-01-12T12:45:00Z",
+      "size_bytes": 4100,
+      "checksum": "d4e5f6a7b8c9..."
+    },
+    "IMPLEMENTATION_SUMMARY.md": {
+      "name": "IMPLEMENTATION_SUMMARY.md",
+      "status": "complete",
+      "path": "IMPLEMENTATION_SUMMARY.md",
+      "created_at": "2026-01-12T15:40:00Z",
+      "updated_at": "2026-01-12T15:40:00Z",
+      "size_bytes": 2800,
+      "checksum": "e5f6a7b8c9d0..."
+    },
+    "CODE_REVIEW.md": {
+      "name": "CODE_REVIEW.md",
+      "status": "complete",
+      "path": "CODE_REVIEW.md",
+      "created_at": "2026-01-12T16:15:00Z",
+      "updated_at": "2026-01-12T16:15:00Z",
+      "size_bytes": 6200,
+      "checksum": "f6a7b8c9d0e1..."
+    }
+  },
+  "metadata": {
+    "risk_level": "Medium",
+    "description": "Add OAuth2 login with Google and GitHub"
+  }
+}
+```
+
+---
+
+## State Transitions
+
+### Valid Phase Transitions
+
+```
+[start] → [research] → [planning] → [implementation] → [review] → [complete]
+                                       ↓
+                                    [fix] → [review] (max 3 iterations)
+                                       ↓
+                                    [blocked]
+```
+
+### Transition Rules
+
+| From Phase | Valid To Phases | Condition |
+|------------|-----------------|-----------|
+| `start` | `research` | Always valid |
+| `research` | `planning`, `blocked` | `planning`: Requires CODE_RESEARCH.md + RESEARCH_SUMMARY.md |
+| `planning` | `implementation`, `blocked` | `implementation`: Requires IMPLEMENTATION_PLAN.md + PROJECT_SPEC.md + PLAN_SUMMARY.md |
+| `implementation` | `review`, `blocked` | `review`: Requires IMPLEMENTATION_SUMMARY.md |
+| `review` | `complete`, `fix`, `blocked` | `complete`: APPROVED status<br>`fix`: NEEDS_REVISION status<br>`blocked`: After 3 fix iterations |
+| `fix` | `review`, `blocked` | `review`: Fix iteration < 3<br>`blocked`: Fix iteration >= 3 |
+| `complete` | - | Terminal state |
+| `blocked` | - | Terminal state |
+
+---
+
+## Validation Checklist
+
+When creating or updating STATE.json, verify:
+
+### Structure Validation
+- [ ] All required fields present (`schema_version`, `issue_name`, `current_phase`, `phase_status`, `created_at`, `updated_at`, `artifacts`)
+- [ ] `issue_name` matches kebab-case pattern
+- [ ] `current_phase` is valid enum value
+- [ ] `phase_status` is valid enum value
+- [ ] `review_iteration` is between 0 and 3
+- [ ] Timestamps are valid ISO 8601 format
+
+### Artifact Validation
+- [ ] Each artifact has `name`, `status`, `path`
+- [ ] Artifact `status` is valid enum value
+- [ ] Artifact `path` is relative to issue directory
+- [ ] For `status: complete`: `created_at`, `size_bytes`, `checksum` present
+
+### Phase Transition Validation
+- [ ] Transition is valid per transition rules
+- [ ] All required artifacts for source phase are registered
+- [ ] Source phase `status` is `complete` (unless transitioning to `blocked`)
+
+### Consistency Validation
+- [ ] `updated_at` >= `created_at`
+- [ ] Artifact `created_at` <= `updated_at`
+- [ ] Artifacts listed match actual files in issue directory
+
+---
+
+## Usage in Skills
+
+### When to Create STATE.json
+
+**Research Phase:**
+- Create at start of phase
+- Update after CODE_RESEARCH.md and RESEARCH_SUMMARY.md created
+- Set `current_phase: "planning"`, `phase_status: "in_progress"`
+
+**Planning Phase:**
+- Load existing STATE.json
+- Update after IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md, PLAN_SUMMARY.md created
+- Set `current_phase: "implementation"`, `phase_status: "in_progress"`
+
+**Implementation Phase:**
+- Load existing STATE.json
+- Update after IMPLEMENTATION_SUMMARY.md created
+- Set `current_phase: "review"`, `phase_status: "in_progress"`
+
+**Review Phase:**
+- Load existing STATE.json
+- Update after CODE_REVIEW.md created
+- If APPROVED: Set `current_phase: "complete"`, `phase_status: "complete"`
+- If NEEDS_REVISION: Increment `review_iteration`, set `current_phase: "fix"`, `phase_status: "in_progress"`
+
+**Fix Phase:**
+- Load existing STATE.json
+- Check `review_iteration < 3`
+- After fixes: Set `current_phase: "review"`, `phase_status: "in_progress"`
+
+---
+
+## Common Issues
+
+### Issue: Missing required fields
+**Solution:** Ensure all required fields are present in STATE.json
+
+### Issue: Invalid issue_name format
+**Solution:** Validate issue_name is kebab-case before creating STATE.json
+
+### Issue: Invalid phase transition
+**Solution:** Check transition rules before updating `current_phase`
+
+### Issue: Artifact checksum missing
+**Solution:** Compute SHA256 checksum for artifacts when status is `complete`
+
+### Issue: Timestamp format incorrect
+**Solution:** Use ISO 8601 format: `YYYY-MM-DDTHH:MM:SSZ`
+
+---
+
+## Integration with STATUS.md
+
+**STATE.json** (machine-readable):
+- Used for programmatic access
+- Validated against schema
+- Contains artifact metadata
+
+**STATUS.md** (human-readable):
+- Generated from STATE.json
+- User-friendly progress display
+- Quick status reference
+
+**Relationship:**
+```yaml
+STATE.json → source of truth
+STATUS.md → derived from STATE.json
+```
+
+When STATE.json updates, STATUS.md should be regenerated to reflect changes.

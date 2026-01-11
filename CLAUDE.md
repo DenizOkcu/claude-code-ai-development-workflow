@@ -2,239 +2,270 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repository Overview
+## Overview
 
-This repository contains a structured workflow system for software development using Claude slash commands. It implements a complete development lifecycle: Research → Planning → Implementation → Review.
+This is a **Claude Code configuration repository** that implements an autonomous Software Development Lifecycle (SDLC) system. It's not a traditional software application with dependencies or build processes - it's a workflow orchestration system using Claude Code commands, agents, and skills.
+
+**Key Concept:** The `/sdlc` unified command executes complete feature development autonomously: Research → Planning → Implementation → Review.
 
 ## Architecture
 
-### Slash Command System
+### Four-Layer System
 
-The repository uses `.claude/commands/` to define custom slash commands that form a development workflow:
+1. **User Interface Layer** (`.claude/commands/`)
+   - `sdlc.md` - Unified SDLC command (single entry point)
+   - Only parses arguments and invokes agent (NO workflow logic)
 
-**Core Workflow Commands:**
-- `/research-code` - Deep codebase analysis and architecture research
-- `/issue-planner` - Transform requirements into implementation plans
-- `/execute-plan` - Systematic implementation following documented plans
-- `/review-code` - Code review, quality checks, and approval
+2. **Orchestration Layer** (`.claude/agents/`)
+   - `sdlc-orchestrator.md` - Manages complete SDLC workflow
+   - Phase state machine, gate enforcement, review-fix loops (max 3 iterations)
+   - State persistence via STATUS.md and STATE.json
 
-**Language-Specific Commands:**
-- `/typescript-pro` (in `language/` subdirectory) - TypeScript expert guidance
+3. **Capabilities Layer** (`.claude/skills/`)
+   - `code-research.md` - Investigate codebase architecture and patterns
+   - `solution-planning.md` - Create implementation plans and specs
+   - `code-implementation.md` - Execute code phase-by-phase
+   - `code-review.md` - QA checks and review
+   - `review-fix.md` - Address review issues
 
-### File Organization Structure
+4. **Data Layer** (`docs/{issue-name}/`)
+   - Persistent artifacts: STATUS.md, CODE_RESEARCH.md, IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md, CODE_REVIEW.md
+   - Summary artifacts for phase transitions: RESEARCH_SUMMARY.md, PLAN_SUMMARY.md, IMPLEMENTATION_SUMMARY.md
 
-When you execute workflow commands, they automatically create planning artifacts in `.claude/planning/{issue-name}/` directories:
+## Essential Commands
 
-```
-.claude/
-├── commands/           # Slash command definitions
-│   ├── research-code.md
-│   ├── issue-planner.md
-│   ├── execute-plan.md
-│   ├── review-code.md
-│   ├── language/
-│   │   └── typescript-pro.md
-│   └── README.md       # Comprehensive workflow documentation
-└── planning/
-    └── {issue-name}/   # Created automatically per feature/issue
-        ├── STATUS.md            # Workflow progress tracker
-        ├── CODE_RESEARCH.md     # Research findings
-        ├── IMPLEMENTATION_PLAN.md
-        ├── PROJECT_SPEC.md
-        └── CODE_REVIEW.md
-```
-
-**Note:** The commands create these directories automatically. You don't need to create them manually.
-
-### Issue Name Convention
-
-Issue names are generated from feature descriptions using kebab-case:
-- "Fix terminal flickering" → `fix-terminal-flickering`
-- "Add user authentication" → `add-user-authentication`
-- Keep concise (2-5 words)
-
-### STATUS.md - The Central Progress Tracker
-
-Every issue directory contains a `STATUS.md` file that:
-- Tracks workflow progress through all phases
-- Shows which artifacts have been created
-- Documents key findings and decisions from each phase
-- Indicates next recommended command
-- Updates automatically as commands execute
-
-## Development Workflow
-
-### Standard Process
+### Main Workflow Command
 
 ```bash
-# 1. Research (optional for simple changes)
-/research-code "feature description"
-# Creates: .claude/planning/{issue-name}/CODE_RESEARCH.md + STATUS.md
+# Execute complete SDLC autonomously
+/sdlc add-oauth-auth "Implement OAuth2 with Google and GitHub"
 
-# 2. Plan
-/issue-planner "feature description"
-# Creates: IMPLEMENTATION_PLAN.md + PROJECT_SPEC.md
-# Updates: STATUS.md
+# Resume from specific phase
+/sdlc add-oauth-auth --from-plan      # Resume from planning
+/sdlc add-oauth-auth --from-implement  # Resume from implementation
+/sdlc add-oauth-auth --from-review    # Resume from review
 
-# 3. Implement
-/execute-plan
-# Implements code following the plan
-# Updates: STATUS.md with progress
-
-# 4. Review
-/review-code
-# Creates: CODE_REVIEW.md
-# Updates: STATUS.md with approval status
+# Check progress
+cat docs/add-oauth-auth/STATUS.md
 ```
 
-### When to Use Each Command
+### Issue Name Format
 
-**Skip Research for:**
-- Simple changes or bug fixes
-- Very familiar code areas
-- Trivial updates
+**Rules:**
+- Kebab-case (lowercase-with-hyphens)
+- 1-50 characters
+- Cannot start/end with hyphen
+- No path traversal sequences (`..`, `/`, `\`)
 
-**Always Research for:**
-- New features in unfamiliar areas
-- Complex architectural changes
-- Integration with existing systems
+**Examples:**
+- ✅ `add-oauth-auth`, `fix-memory-leak`, `refactor-api-layer`
+- ❌ `AddOAuthAuth` (not kebab-case), `../etc/passwd` (path traversal)
 
-## Workflow Command Behavior
+## Quality Invariants
 
-### Research Phase
-- Investigates codebase architecture and patterns
-- Identifies integration points and dependencies
-- Assesses risks and technical debt
-- Creates **concise** `CODE_RESEARCH.md` (6 sections: Summary, Integration, Context, Risks, Key Files, Questions)
-- Initializes compact `STATUS.md` with workflow tracking
+When modifying this codebase, maintain these core principles:
 
-### Planning Phase
-- Reads `CODE_RESEARCH.md` (if exists) for context
-- Reads `STATUS.md` for current state
-- Creates **actionable** `IMPLEMENTATION_PLAN.md` (phases with specific file:line tasks)
-- Creates **focused** `PROJECT_SPEC.md` (requirements, design, error handling, config)
-- Updates `STATUS.md` to show planning completion
+1. **No logic in command** - Commands only parse and invoke agents
+2. **Stateless skills** - Skills contain procedures, not state
+3. **Agent orchestrates** - Only agent manages workflow state
+4. **Persistent artifacts** - All progress in `docs/`
+5. **Deterministic gates** - Clear validation before progression
+6. **Max iterations** - Review-fix limited to 3 attempts
+7. **Clear separation** - UX, orchestration, capabilities, data layers
 
-### Implementation Phase
-- Reads all planning artifacts: `IMPLEMENTATION_PLAN.md`, `PROJECT_SPEC.md`, `STATUS.md`
-- Creates comprehensive TodoWrite list from implementation phases
-- Systematically implements code phase by phase
-- Marks todos as in_progress → completed in real-time
-- Updates `STATUS.md` showing current phase and progress
-- Provides brief completion summary
+## State Management
 
-### Review Phase
-- Reads all artifacts for context: `STATUS.md`, plans, research docs
-- Runs automated checks: linting, type checking, tests, build
-- Performs manual code review for quality, security, performance
-- Creates **focused** `CODE_REVIEW.md` (table-based quality assessment, prioritized issues)
-- Updates `STATUS.md` with approval status (APPROVED / NEEDS REVISION)
+### STATE.json (Machine-Readable Index)
 
-## Key Principles
+Tracks workflow state, artifacts created, and phase transitions. Schema: `.claude/schemas/STATE.json.schema`
 
-### Artifact Organization
-- **Always** use `.claude/planning/{issue-name}/` structure
-- Each feature/issue gets its own directory
-- All related artifacts stay together
-- `STATUS.md` is the single source of truth
+### STATUS.md (Human-Readable Progress)
 
-### Document Philosophy: Concise & Actionable
-- **Bullet points over paragraphs** - maximize information density
-- **Tables for structured data** - easier to scan
-- **File references with line numbers** - enable quick navigation
-- **Only novel/complex code snippets** - skip obvious examples
-- **Focus on what matters** - actionable insights over exhaustive documentation
+Single source of truth for workflow progress. Shows:
+- Which phases are completed
+- Current phase status
+- Artifacts created
+- Next steps
+- Review iteration count
 
-### STATUS.md Management
-- Commands automatically read and update `STATUS.md`
-- Compact format: single-line progress indicators
-- Shows complete workflow state at a glance
-- Check `STATUS.md` first to understand project status
-- Use to resume work after interruptions
+### Artifact Strategy
 
-### Progressive Workflow
-- Each phase builds on previous artifacts
-- Commands read context from prior phase documents
-- Can iterate: run planning again, re-implement, re-review
-- `STATUS.md` tracks all iterations
+**Critical:** Artifacts ARE the communication mechanism between phases. They must be comprehensive, not minimized.
 
-## Example Artifacts
+- **Full Artifacts:** Complete research findings, plans, specs, reviews (for reference)
+- **Summary Artifacts:** Comprehensive summaries for next phase input (150-200 lines)
+- **Phase Transitions:** Clear ephemeral context (chat), preserve files, load on-demand
 
-**The `.claude/planning/example-fix-terminal-flicker/` directory contains EXAMPLE ARTIFACTS** for reference and learning.
+## Key File Locations
 
-### What It Is
-- Complete workflow example from research through review
-- Shows what each command produces (old verbose format)
-- Demonstrates the full development lifecycle
-- Includes README.md explaining its purpose
+### Core Configuration
+- `.claude/commands/sdlc.md` - Main command (UX interface)
+- `.claude/agents/sdlc-orchestrator.md` - Workflow orchestration
+- `.claude/skills/` - Five atomic skills (stateless procedures)
+- `.claude/settings.local.json` - Permissions (WebSearch, Bash)
 
-### How to Use
-- **Learn** - See what good artifacts look like
-- **Reference** - Compare your outputs against these examples
-- **Understand** - Follow the progression through all phases
+### Documentation
+- `README.md` - Complete usage guide (336 lines)
+- `.claude/ARCHITECTURE.md` - Architecture overview (226 lines)
+- `.claude/STATE_MANAGEMENT.md` - State persistence strategy
+- `.claude/TROUBLESHOOTING.md` - Problem resolution guide
+- `.claude/USER_COMMUNICATION.md` - Communication patterns
 
-### Important Notes
-- **DO NOT modify** - these are read-only reference examples
-- **DO NOT use as working directory** - create your own issue folders
-- **Note**: Examples use old verbose format; new artifacts will be more concise
+### Templates and Examples
+- `.claude/templates/ARTIFACT_TEMPLATES.md` - Standard templates
+- `.claude/examples/` - Reference artifacts
 
-### Your Workflow
-When you run commands, they create **new directories**:
+## Workflow Mechanics
+
+### Phase State Machine
+
 ```
-.claude/planning/
-├── example-fix-terminal-flicker/  ← Example (reference only)
-├── your-feature-name/             ← Your actual work
-└── another-feature/               ← Your actual work
+[START] → research → plan → implement → review → [COMPLETE]
+                                      ↓
+                                  fix_loop (max 3)
+                                      ↓
+                                   review
 ```
 
-## Relationship Between Commands and Artifacts
+### Entry Point Validation
 
-| Command | Reads | Creates/Updates |
-|---------|-------|-----------------|
-| `/research-code` | Codebase files | **Concise** `CODE_RESEARCH.md` (6 sections), `STATUS.md` (new) |
-| `/issue-planner` | `CODE_RESEARCH.md`, `STATUS.md` | **Actionable** `IMPLEMENTATION_PLAN.md`, **focused** `PROJECT_SPEC.md`, updates `STATUS.md` |
-| `/execute-plan` | All planning docs, `STATUS.md` | Implementation code, tests, updates `STATUS.md` |
-| `/review-code` | All docs, implementation, `STATUS.md` | **Focused** `CODE_REVIEW.md` (table-based), updates `STATUS.md` |
+Before resuming with `--from-*`, required artifacts must exist:
 
-### Document Size Comparison
+- `--from-plan`: Requires CODE_RESEARCH.md, RESEARCH_SUMMARY.md
+- `--from-implement`: Requires all research + planning artifacts
+- `--from-review`: Requires all research + planning + implementation artifacts
 
-**Before optimization:**
-- CODE_RESEARCH.md: ~500 lines (10 comprehensive sections with examples)
-- IMPLEMENTATION_PLAN.md: ~300 lines (detailed prose explanations)
-- PROJECT_SPEC.md: ~400 lines (10 extensive sections)
-- CODE_REVIEW.md: ~350 lines (11 detailed sections)
-- STATUS.md: ~70 lines (verbose progress tracking)
+**Cannot skip phases** - The orchestrator validates artifacts before allowing resume.
 
-**After optimization:**
-- CODE_RESEARCH.md: ~100-150 lines (6 focused sections, bullets)
-- IMPLEMENTATION_PLAN.md: ~80-120 lines (phases with file:line tasks)
-- PROJECT_SPEC.md: ~80-100 lines (4 focused sections)
-- CODE_REVIEW.md: ~60-100 lines (tables, prioritized issues)
-- STATUS.md: ~20-30 lines (compact single-line indicators)
+### Review-Fix Loop
 
-**Token savings: ~60-70% reduction while maintaining essential information**
+- Max 3 iterations to fix issues
+- Each iteration loads minimal context (issues + changed files only)
+- After 3 failed iterations, workflow blocks with diagnostic
 
-## Best Practices
+### Context Management
 
-### Using STATUS.md Effectively
-- Always check `STATUS.md` before starting work
-- Use it to understand where you are in the workflow
-- Share it to communicate progress
-- Rely on it to resume after interruptions
+**Cleared at phase transition:**
+- Chat history from previous phases
+- Agent conversation memory
+- Temporary working context
 
-### Todo List Management
-- `/execute-plan` creates comprehensive todo lists via TodoWrite
-- Exactly ONE task should be in_progress at a time
-- Mark tasks completed immediately after finishing
-- Don't batch completions
+**Preserved (files on disk):**
+- All artifact files (comprehensive)
+- STATE.json (index)
+- STATUS.md (human progress tracker)
 
-### Iterative Development
-- Can re-run any command to update/refine
-- Re-plan if requirements change
-- Re-implement if approach changes
-- Re-review after fixing issues
-- `STATUS.md` tracks all iterations
+**Loading strategy:**
+1. STATE.json (index, always)
+2. Required summary artifact (comprehensive, always)
+3. Full artifacts (on-demand, as needed)
 
-## Command Documentation
+## Agent Behavior
 
-Complete workflow documentation with detailed examples is in `.claude/commands/README.md`.
+### Critical Workflow Rule
+
+The orchestrator MUST continue through ALL phases sequentially. Do NOT terminate until:
+1. Research phase is complete
+2. Planning phase is complete
+3. Implementation phase is complete
+4. **Review phase is complete** (REQUIRED, not optional)
+
+The workflow is ONLY complete when STATE.json shows `current_phase: "complete"` after review.
+
+### User Notification Requirements
+
+**ALWAYS notify:**
+- Workflow start with issue details and estimated duration
+- Phase transitions with duration and artifacts created
+- Gate validation results (passed/failed)
+- Review-fix iteration count and issues found
+- Workflow completion with summary and next steps
+
+**NEVER:**
+- Proceed without informing user
+- Hide errors or failures
+- Complete silently without summary
+- Terminate before all phases complete
+
+### Skill Coordination
+
+When running autonomously, **IGNORE** any "Next:" commands in skill outputs. Skills may suggest manual commands, but the orchestrator must automatically continue to the next phase.
+
+## Testing the Workflow
+
+```bash
+# Try a simple feature
+/sdlc add-health-check "Implement a health check endpoint"
+
+# Monitor progress
+cat docs/add-health-check/STATUS.md
+
+# Review artifacts
+ls docs/add-health-check/
+```
+
+## Important Constraints
+
+1. **No traditional build system** - This is a configuration repository, not an application
+2. **No package.json or dependencies** - Uses Claude Code's native capabilities
+3. **No npm/pip/build commands** - Workflow orchestration via agents and skills only
+4. **No production deployment** - Creates artifacts and documentation, not deployable code
+5. **Issue directory organization** - All artifacts organized by issue name in `docs/`
+
+## Modifying the System
+
+When editing agents, skills, or commands:
+
+1. **Maintain separation** - Don't add logic to commands, don't add state to skills
+2. **Preserve determinism** - Same inputs should produce same outputs
+3. **Update gate validation** - If adding phases, update gate checklists
+4. **Test autonomous flow** - Ensure orchestrator continues through all phases
+5. **Document changes** - Update relevant documentation files
+6. **Validate artifacts** - Ensure both full and summary artifacts are created
+
+## Common Patterns
+
+### Adding a New Phase
+
+1. Create skill in `.claude/skills/`
+2. Add state transitions to orchestrator
+3. Update gate validation checklists
+4. Add artifact templates to templates/
+5. Update STATE.json schema if needed
+
+### Modifying Artifact Structure
+
+1. Update templates in `.claude/templates/`
+2. Update skill instructions to create new artifacts
+3. Update gate validation to check new artifacts
+4. Update STATE.json schema
+5. Update summary artifact loading strategy
+
+### Debugging Workflow Issues
+
+1. Check STATUS.md for current phase and status
+2. Check STATE.json for artifact tracking
+3. Review relevant phase artifacts in `docs/{issue-name}/`
+4. Check `.claude/TROUBLESHOOTING.md` for common issues
+5. Review gate validation checklists in orchestrator
+
+## Security Considerations
+
+### Input Validation (Command Layer)
+
+- Issue names: kebab-case, max 50 chars, no path traversal
+- Feature descriptions: max 1000 chars, HTML stripped, command injection removed
+- Shell metacharacters escaped: `;`, `|`, `&`, `$`, `(`, `)`, `<`, `>`
+
+### Path Traversal Prevention
+
+- Reject issue names containing `..`
+- Reject issue names starting with `/` or `\\`
+- Reject issue names containing null bytes
+- Resolve paths and verify within expected directory
+
+## Related Files
+
+- `.claude/commands/COMMAND_USAGE.md` - Complete command reference
+- `.claude/MIGRATION_REPORT.md` - Architecture migration history
+- `.claude/examples/` - Reference artifacts for each phase
