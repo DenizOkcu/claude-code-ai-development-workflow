@@ -7,10 +7,25 @@ description: Autonomous SDLC workflow orchestrator managing research, planning, 
 
 Autonomous execution of the complete Software Development Lifecycle with phase gates, comprehensive artifacts, and deterministic information flow.
 
+## AUTONOMOUS EXECUTION MANDATE
+
+**THIS WORKFLOW RUNS AUTONOMOUSLY FROM START TO FINISH.**
+
+When you execute this workflow:
+1. **DO NOT STOP** after Research phase - automatically continue to Planning
+2. **DO NOT STOP** after Planning phase - automatically continue to Implementation
+3. **DO NOT STOP** after Implementation phase - automatically continue to Review
+4. **DO NOT STOP** if only Phase 1 of Implementation is complete - continue until ALL phases are complete
+5. **ONLY STOP** when Review phase completes (APPROVED/APPROVED_WITH_NOTES) OR a blocker is encountered
+
+**NEVER output "Next steps" requiring the user to run another /sdlc command. The workflow continues AUTOMATICALLY.**
+
 ## Purpose
 Execute full SDLC autonomously: Research → Planning → Implementation → Review. Enforce phase gates, manage review-fix loop, create comprehensive artifacts, clear ephemeral context.
 
 **CRITICAL: The workflow MUST NOT terminate until ALL phases (Research, Planning, Implementation, AND Review) are complete.**
+
+**AUTONOMOUS EXECUTION: This workflow runs WITHOUT user intervention between phases. When a phase completes, you MUST automatically continue to the next phase. DO NOT stop and ask the user to run another command. DO NOT output "Next steps" that require manual commands. The workflow continues AUTOMATICALLY until review phase completes or a blocker is encountered.**
 
 ## Core Principles
 
@@ -23,188 +38,77 @@ Execute full SDLC autonomously: Research → Planning → Implementation → Rev
 
 ## User Notification Requirements
 
-### Workflow Start Notification
+**Minimal communication at key touchpoints:**
 
-When the orchestrator starts, ALWAYS inform the user:
+1. **Workflow start** - issue name, entry point
+2. **Phase start** - phase name, goal
+3. **Phase complete** - duration, artifacts, key result
+4. **Gate validation** - pass or fail with missing items
+5. **Review-fix loop** - iteration N/3 with issue counts
+6. **Workflow complete** - summary, artifacts, next steps
+7. **Errors** - immediate notification with recovery
 
+### Templates
+
+**Start:**
 ```markdown
-## 🚀 Starting SDLC Workflow
-
-**Issue:** {issue-name}
-**Description:** {feature-description}
-**Entry Point:** {start | planning | implementation | review}
-
-**Workflow:**
-1. Research → Analyze codebase and patterns
-2. Planning → Create implementation plan ({N} phases)
-3. Implementation → Build the feature
-4. Review → Quality checks and approval
-
-**Estimated Duration:** {estimate}
-
-Starting...
+🚀 **SDLC: {issue-name}**
+{description}
+Starting: {phase}
 ```
 
-### Phase Transition Notifications
-
-Before transitioning to ANY phase, notify the user:
-
+**Phase Start:**
 ```markdown
-## 📍 Phase Transition: {from} → {to}
-
-**Completing:** {from-phase}
-**Duration:** {time spent}
-**Artifacts:** {count} created
-
-**Starting:** {to-phase}
-**Goal:** {brief goal}
-**Estimated Time:** {time estimate}
+📍 **{Phase}**
+{goal}
 ```
 
-### Progress Tracking
-
-During long-running phases, show progress:
-
+**Phase Complete:**
 ```markdown
-**Workflow Progress:** [████████░░░░░] 50% (2/4 phases)
-
-✓ Research (complete)
-✓ Planning (complete)
-→ Implementation (in progress - Phase 2/4)
-  → Phase 1: Foundation (complete)
-  → Phase 2: Routes (in progress)
-○ Review (pending)
+✅ **{Phase} Complete** ({duration})
+Artifacts: {count}
+Key: {finding}
 ```
 
-### Gate Validation Notifications
-
-When validating phase gates, show results:
-
+**Gate Failed:**
 ```markdown
-## 🔍 Gate Validation: {phase} → {next-phase}
-
-**Checking:** {gate description}
-
-**Validation:**
-✓ {Required artifact 1}: Present
-✓ {Required artifact 2}: Present
-✓ {Required artifact 3}: Present
-✓ Content validation: Passed
-
-**Gate:** PASSED ✓
-
-Proceeding to: {next-phase}
+⚠️ **Gate Failed:** {gate}
+Missing: {items}
 ```
 
-If validation fails:
-
+**Review-Fix:**
 ```markdown
-## ⚠️ Gate Validation Failed
-
-**Gate:** {gate description}
-
-**Issues:**
-✗ {Required artifact}: Missing
-✗ {Validation check}: Failed
-
-**Action Required:** {what needs to be fixed}
-
-**Blocking:** Cannot proceed until gate passes
+🔄 **Fix Iteration {N}/3**
+Issues: {N} critical, {M} important
 ```
 
-### Review-Fix Loop Notifications
-
-When entering review-fix loop:
-
+**Complete:**
 ```markdown
-## 🔄 Review-Fix Loop Iteration {N}/3
+## 🎉 Complete: {issue-name}
 
-**Status:** Review identified issues requiring fixes
+**Status:** {complete | blocked} | **Time:** {total}
 
-**Issues Found:**
-- **Critical:** {N} must fix
-- **Important:** {M} should fix
-- **Suggestions:** {K} optional
+**Summary:**
+- ✓ Research, Planning, Implementation, Review
+- Artifacts: {N} docs, {M} code files
+- Review: {status}
 
-**Fix Scope:** Minimal context (issues + changed files only)
-
-**Estimated Time:** {estimate}
-
-Starting fixes...
+**Artifacts Location:** docs/{issue-name}/
+**Status File:** cat docs/{issue-name}/STATUS.md
 ```
 
-### Workflow Completion Notification
-
-When workflow completes (successfully or blocked):
-
+**Error:**
 ```markdown
-## 🎉 Workflow {Complete | Blocked}
-
-**Issue:** {issue-name}
-**Status:** {complete | blocked}
-**Total Duration:** {total time}
-
----
-
-### Summary
-
-**Phases Completed:** {N}/4
-- ✓ Research ({time})
-- ✓ Planning ({time})
-- ✓ Implementation ({time})
-- {✓ | ⚠️} Review ({time})
-
-**Review Iterations:** {N} (if any)
-
----
-
-### Artifacts Created
-
-**Documentation:** {N} artifacts
-- {artifact-1}
-- {artifact-2}
-
-**Code:** {N} files
-- {file-1}
-- {file-2}
-
----
-
-### Quality Metrics
-
-**Automated Checks:**
-- Linting: ✓ | ✗ {result}
-- Type Check: ✓ | ✗ {result}
-- Tests: ✓ {N}/{N} ({X%})
-- Build: ✓ | ✗ {result}
-
-**Review Status:** {APPROVED | NEEDS_REVISION | BLOCKED}
-
----
-
-### Next Steps
-
-{If complete:}
-1. Review artifacts: `ls docs/{issue-name}/`
-2. Check status: `cat docs/{issue-name}/STATUS.md`
-3. Deploy or integrate changes
-
-{If blocked:}
-1. Review diagnostic: `cat docs/{issue-name}/ERROR_DIAGNOSTIC.md`
-2. Fix blocking issues
-3. Resume: `/sdlc {issue-name} --from-{phase}`
+❌ **{Phase}: {error}**
+{message}
+Recover: {how}
 ```
 
----
-
-**Communication Requirements:**
-- ALWAYS notify on phase transitions
-- ALWAYS show gate validation results
-- ALWAYS notify on workflow completion
-- ALWAYS show review-fix iteration count
-- NEVER proceed without informing user
-- NEVER hide errors or failures
-- NEVER complete silently without summary
+**Requirements:**
+- Always notify before phase transitions
+- Always show gate validation results
+- Never proceed silently
+- Never hide errors
 
 
 
@@ -547,18 +451,25 @@ if entry_point == "review":
 
 **Gate:** Implementation complete + summary created
 
-**CRITICAL:** The implementation plan typically contains MULTIPLE phases (Phase 1 MVP, Phase 2, Phase 3, etc.). The implementation is ONLY complete when ALL phases in IMPLEMENTATION_PLAN.md have been implemented. Do NOT accept completion if only Phase 1 is done.
+**CRITICAL: The implementation plan typically contains MULTIPLE phases (Phase 1 MVP, Phase 2, Phase 3, etc.). The implementation is ONLY complete when ALL phases in IMPLEMENTATION_PLAN.md have been implemented.**
 
-**Before marking implementation complete, verify:**
-- [ ] All phases from IMPLEMENTATION_PLAN.md are implemented
-- [ ] IMPLEMENTATION_SUMMARY.md lists all completed phases (e.g., "Phase 1 ✓, Phase 2 ✓, Phase 3 ✓")
+**DO NOT accept completion if only Phase 1 is done. DO NOT let the skill stop early. If the skill reports completion but only completed Phase 1 of 4 phases, you MUST continue the implementation phase until ALL phases are complete.**
+
+**Verification Checklist Before Accepting Implementation as Complete:**
+- [ ] Read IMPLEMENTATION_PLAN.md and counted total phases (e.g., 4 phases)
+- [ ] Read IMPLEMENTATION_SUMMARY.md and verified ALL phases are listed as complete
+- [ ] Verified that Phase 1, Phase 2, Phase 3, Phase 4 (etc.) are ALL marked as complete
 - [ ] No tasks remain in "pending" or "in_progress" status
+- [ ] All tests pass
+- [ ] Build succeeds
+
+**If ANY phase is incomplete, the implementation is NOT complete. Continue the implementation phase or invoke the skill again to complete remaining phases.**
 
 **Pass:** Update STATE.json, clear ephemeral context, **PROCEED TO REVIEW PHASE** (do NOT terminate workflow)
 
 **Fail:** Report blocker, await user input
 
-**IMPORTANT:** After implementation completes, you MUST continue to the Review phase. The workflow is NOT complete at this point.
+**IMPORTANT: After implementation completes, you MUST continue to the Review phase. The workflow is NOT complete at this point. DO NOT output any "Next steps" requiring manual user intervention.**
 
 ### 5. Review Phase
 
@@ -685,7 +596,19 @@ Update STATE.json and STATUS.md with blocked status. Output diagnostic with fail
 
 ## Coordination with Skills
 
-**IMPORTANT: When running autonomously, IGNORE any "Next:" commands in skill outputs.** Skills may suggest manual commands like `/sdlc {issue_name} --phase review`, but the orchestrator must automatically continue to the next phase without user intervention.
+**CRITICAL: When running autonomously, you MUST IGNORE any "Next:", "Next Steps", or manual command suggestions in skill outputs.** Skills may include templates suggesting manual commands like `/sdlc {issue_name} --from-review`, but the orchestrator MUST automatically continue to the next phase without user intervention.
+
+**The workflow is AUTONOMOUS - it does NOT stop between phases. When a phase completes, you immediately proceed to the next phase. DO NOT output any "Next steps" that require the user to run another command.**
+
+### Automatic Continuation Rules
+
+1. **After Research completes** → AUTOMATICALLY transition to Planning (no user action needed)
+2. **After Planning completes** → AUTOMATICALLY transition to Implementation (no user action needed)
+3. **After Implementation completes** → AUTOMATICALLY transition to Review (no user action needed)
+4. **After Review passes** → Transition to Complete state (workflow finished)
+5. **After Review fails** → AUTOMATICALLY enter fix loop (no user action needed)
+
+**NEVER stop the workflow between phases. NEVER ask the user to run another /sdlc command.**
 
 ### Skill Invocation Pattern
 1. Update STATE.json to "entering {phase}"

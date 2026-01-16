@@ -249,7 +249,7 @@ See recommendations for optional improvements.
 ## Phase: Review Fix 🔄
 - **Fixed:** [N critical, M important]
 - **Context:** Minimal mode (issues + changed files only)
-- **Next:** `/sdlc {issue_name} --phase review`
+- **Status:** Fixes complete, returning to review
 ```
 
 ### 8. Prepare for Next Review

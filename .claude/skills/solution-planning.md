@@ -275,7 +275,7 @@ src/baz/qux.ts:50-100 - Modify: update Y
 - **Phases:** [4 phases, Est: 2hr]
 - **Complexity:** [Simple/Medium/Complex]
 - **Key Decisions:** [top 2-3 bullets]
-- **Next:** `/sdlc {issue_name} --from-implement`
+- **Status:** Planning complete, ready for implementation
 ```
 
 ### 11. Create PLAN_SUMMARY.md

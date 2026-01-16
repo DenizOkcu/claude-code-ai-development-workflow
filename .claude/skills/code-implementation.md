@@ -11,6 +11,8 @@ Execute implementation from plans and specifications systematically.
 
 **CRITICAL: You MUST implement ALL phases defined in IMPLEMENTATION_PLAN.md.** Do NOT stop after Phase 1, MVP, or any intermediate phase. The implementation is ONLY complete when EVERY phase in the plan has been implemented.
 
+**AUTONOMOUS EXECUTION: When all phases are complete, output the completion summary and STOP. Do NOT output "Next:" or "Next Steps" suggesting manual commands. The orchestrator will automatically continue to the review phase.**
+
 ## LLM Parameters
 
 **For consistent, deterministic code generation:**
@@ -119,9 +121,7 @@ When ALL phases are complete:
 
 **Deviations from Plan:** {None | description}
 
-**Next Phase:** Review
-
-Proceeding automatically...
+**Status:** Implementation complete - proceeding to review phase
 ```
 
 ### Error Notifications
@@ -293,6 +293,10 @@ Read all planning artifacts:
 - `PROJECT_SPEC.md` - technical requirements and design
 - `STATUS.md` - current workflow status
 
+**IMMEDIATELY count and document the total phases in IMPLEMENTATION_PLAN.md. For example: "I have read the implementation plan and it contains 4 phases. I will implement all 4 phases before stopping."**
+
+**WARNING: Do NOT stop after completing only Phase 1. You MUST complete ALL phases in the plan.**
+
 Update STATUS.md:
 ```markdown
 ## Phase: Implementation 🔄
@@ -449,7 +453,6 @@ Use TodoWrite with tasks from **ALL phases in IMPLEMENTATION_PLAN.md**. **Exactl
 - Files modified/created: [count]
 - Test results (N passing, M failing)
 - Deviations from plan (if any)
-- Next: `/sdlc {issue_name} --from-review`
 
 ### 10. Create IMPLEMENTATION_SUMMARY.md
 
@@ -539,7 +542,7 @@ Create a comprehensive summary document for the review phase:
 - **Files:** [list key files]
 - **Tests:** [N tests, passing/failing]
 - **Deviations:** [any changes from plan, or "None"]
-- **Next:** `/sdlc {issue_name} --phase review`
+- **Status:** Implementation complete, ready for review
 ```
 
 ## Error Handling
@@ -622,9 +625,10 @@ Before marking implementation complete, verify:
 
 ## Important Reminders
 
-- **CRITICAL: Implement ALL phases in IMPLEMENTATION_PLAN.md - stopping early is a failure**
+- **CRITICAL: Implement ALL phases in IMPLEMENTATION_PLAN.md - stopping early is a FAILURE**
+- **CRITICAL: The plan contains MULTIPLE phases (e.g., Phase 1, Phase 2, Phase 3, Phase 4). You MUST implement ALL of them, not just Phase 1**
 - ALWAYS read IMPLEMENTATION_PLAN.md and PROJECT_SPEC.md first
-- Count the total phases in the plan before starting
+- Count the total phases in the plan before starting (e.g., "I see 4 phases in the plan")
 - Use TodoWrite tool to track ALL tasks from ALL phases
 - Mark todos as completed immediately after finishing each task
 - Don't skip testing - it's part of each phase
@@ -632,6 +636,16 @@ Before marking implementation complete, verify:
 - Communicate clearly about progress and blockers
 - Write production-quality code from the start
 - Keep commits atomic if user requests git commits
+- **After completing the last task of the last phase, verify ALL phases are complete before stopping**
+
+**STOPPING CRITERIA: You are ONLY done when:**
+- [ ] ALL phases from IMPLEMENTATION_PLAN.md are complete (Phase 1, Phase 2, Phase 3, Phase 4, etc.)
+- [ ] All tasks in all phases are marked "completed"
+- [ ] No tasks remain in "pending" or "in_progress"
+- [ ] All tests pass
+- [ ] IMPLEMENTATION_SUMMARY.md lists ALL phases as complete
+
+**If ANY of these are not true, you are NOT done. Continue implementing.**
 
 ## Quality Checks
 - [ ] All planning artifacts read

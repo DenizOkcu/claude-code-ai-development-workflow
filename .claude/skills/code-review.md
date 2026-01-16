@@ -328,7 +328,7 @@ Compare implementation against plans:
 - **Critical:** 0
 - **Important:** 0
 - **Suggestions:** [N]
-- **Next:** Deploy or commit
+- **Status:** Review complete, workflow finished
 ```
 
 **Needs Revision:**
@@ -336,7 +336,7 @@ Compare implementation against plans:
 ## Phase: Review ⚠ NEEDS REVISION
 - **Critical:** [N]
 - **Important:** [M]
-- **Action:** Fix issues, re-run review
+- **Status:** Issues found, entering fix loop
 ```
 
 ## Error Handling

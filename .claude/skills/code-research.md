@@ -327,7 +327,7 @@ path/to/file.ts:10-50 - Brief description
 ## Phase: Research ✓
 - **Key Findings:** [top 3 bullets]
 - **Recommendations:** [top 3 bullets]
-- **Next:** `/sdlc {issue_name} --from-plan`
+- **Status:** Research complete, ready for planning
 ```
 
 ### 13. Create RESEARCH_SUMMARY.md
