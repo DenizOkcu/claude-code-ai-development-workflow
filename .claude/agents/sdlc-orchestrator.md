@@ -95,6 +95,10 @@ Issues: {N} critical, {M} important
 
 **Artifacts Location:** docs/{issue-name}/
 **Status File:** cat docs/{issue-name}/STATUS.md
+
+**Suggested Commit Message:**
+```{commit_message_line_1}
+{commit_message_line_2}```
 ```
 
 **Error:**
@@ -518,17 +522,76 @@ if entry_point == "review":
 
 Update STATE.json and STATUS.md with complete status. Output summary and deployment guidance.
 
+**Generate Suggested Commit Message:**
+- Read the issue description and implementation summary
+- Create a clear 2-line commit message for the user to copy-paste:
+  - **Line 1:** Concise summary (50 chars or less) describing what was implemented
+  - **Line 2:** Brief context with key changes and issue reference
+- Display in the completion output under "Suggested Commit Message:"
+- **DO NOT run git commands** - only display the message
+
+**Commit Message Format:**
+```
+feat: add OAuth2 authentication with Google and GitHub
+
+Implements OAuth2 flow with secure token storage and session management. Issue: add-oauth-auth
+```
+
 **Completion Criteria (ALL must be true):**
 - [x] Research phase complete
 - [x] Planning phase complete
 - [x] Implementation phase complete
 - [x] Review phase complete (with APPROVED or APPROVED_WITH_NOTES status)
+- [x] Commit message suggested in output
 - [x] STATE.json shows `"current_phase": "complete"`
 
 **If any phase is incomplete, the workflow is NOT complete and MUST continue.**
 
 ### 8. Blocked State
 Update STATE.json and STATUS.md with blocked status. Output diagnostic with failure details and resume options.
+
+### Commit Message Guidelines
+
+When generating the suggested commit message for the user:
+
+**Line 1 (Subject):**
+- Use conventional commit prefix: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`, etc.
+- Keep under 50 characters
+- Use imperative mood ("add" not "added" or "adds")
+- Describe WHAT was done, not HOW or WHY
+
+**Line 2 (Body):**
+- Provide context: WHAT problem was solved, key changes, approach
+- Reference the issue name for traceability
+- Keep it concise (1 sentence or 2 short ones)
+
+**Commit Types:**
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `refactor:` - Code refactoring
+- `docs:` - Documentation changes
+- `test:` - Test changes
+- `chore:` - Maintenance tasks
+
+**Examples:**
+
+```
+feat: implement user authentication with JWT
+
+Adds secure login, registration, and password reset. Issue: add-user-auth
+```
+
+```
+fix: resolve memory leak in data processing
+
+Fixed unclosed connections causing memory exhaustion. Issue: fix-memory-leak
+```
+
+```
+refactor: extract validation logic to shared module
+
+Centralizes validation rules across API endpoints. Issue: refactor-api-layer
+```
 
 ## Error Handling
 
@@ -688,6 +751,7 @@ Before terminating, verify:
 - [ ] Review phase has been executed
 - [ ] CODE_REVIEW.md exists with approval status
 - [ ] Approval status is APPROVED or APPROVED_WITH_NOTES (not NEEDS_REVISION)
+- [ ] Commit message has been suggested in output
 - [ ] No active fix-loop iteration is in progress
 - [ ] STATE.json shows `"current_phase": "complete"` or `"current_phase": "blocked"`
 - [ ] Ignored any "Next:" commands in skill outputs (orchestrator continues automatically)
