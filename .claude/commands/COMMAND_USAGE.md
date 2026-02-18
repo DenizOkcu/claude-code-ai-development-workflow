@@ -1,65 +1,69 @@
 # Command Usage Reference
 
-Quick reference for the SDLC workflow command.
+Quick reference for the SDLC workflow.
 
-## `/sdlc <issue-name> [description] [--from-<phase>]`
+## `/sdlc <issue-name> [description] [flags]`
 
-**Unified SDLC command** - Executes the entire software development lifecycle autonomously.
+Execute complete SDLC: Research → Plan → Implement → Review
 
 ### Syntax
 
 ```bash
-/sdlc <issue-name> [feature-description] [--from-<phase>]
+/sdlc <issue-name> [description] [--resume | --plan | --implement | --review]
 ```
 
 ### Arguments
 
-- `issue-name` (required): Kebab-case identifier
-  - Example: `add-oauth-auth`, `fix-memory-leak`, `refactor-api-layer`
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `issue-name` | Yes | Kebab-case identifier (1-50 chars) |
+| `description` | No* | What to build (max 1000 chars) |
+| `--resume` | No | Continue from STATUS.md |
+| `--plan` | No | Start from Planning (needs RESEARCH.md) |
+| `--implement` | No | Start from Implementation (needs PLAN.md) |
+| `--review` | No | Start from Review (needs IMPLEMENTATION.md) |
 
-- `feature-description` (optional): What to build
-  - Example: "Implement OAuth2 with Google and GitHub"
-
-- `--from-<phase>` (optional): Resume from specific phase
-  - `--from-start`: Execute full SDLC (default)
-  - `--from-plan`: Resume from planning phase
-  - `--from-implement`: Resume from implementation phase
-  - `--from-review`: Resume from review phase
+*Required for new workflows
 
 ### Examples
 
 ```bash
-# Full workflow from start
-/sdlc add-oauth-auth Implement OAuth2 with Google and GitHub
+# Full workflow
+/sdlc add-oauth-auth Implement OAuth2 with Google
 
-# Resume from planning (research already done)
-/sdlc add-oauth-auth --from-plan
+# Resume after interruption
+/sdlc add-oauth-auth --resume
 
-# Resume from implementation (plans exist)
-/sdlc add-oauth-auth --from-implement
-
-# Resume from review (implementation done)
-/sdlc add-oauth-auth --from-review
+# Start from specific phase
+/sdlc add-oauth-auth --plan
 ```
 
 ### What It Creates
 
-All artifacts organized in `docs/{issue-name}/`:
-- `STATUS.md` - Progress tracker (single source of truth)
-- `CODE_RESEARCH.md` - Research findings
-- `IMPLEMENTATION_PLAN.md` - Phased implementation strategy
-- `PROJECT_SPEC.md` - Technical specification
-- `CODE_REVIEW.md` - Review findings
+```
+docs/{issue-name}/
+├── STATUS.md           # Progress tracker
+├── RESEARCH.md         # What we found
+├── PLAN.md             # What we'll build
+├── IMPLEMENTATION.md   # What we built
+└── REVIEW.md           # Is it ready?
+```
 
-### How It Works
+### Issue Name Format
 
-1. **Research Phase**: Investigates codebase architecture and patterns
-2. **Planning Phase**: Creates implementation plans and specs
-3. **Implementation Phase**: Executes code following the plan
-4. **Review Phase**: Runs automated checks and manual review
-5. **Review-Fix Loop** (if needed): Addresses issues (max 3 iterations)
+- Kebab-case: `add-oauth-auth`
+- 1-50 characters
+- No path traversal
 
-Each phase must pass validation before progressing. The agent manages all state transitions automatically.
+**Good:**
+- `add-oauth-auth`
+- `fix-memory-leak`
+- `refactor-api-layer`
+
+**Bad:**
+- `AddOAuthAuth` (not kebab-case)
+- `fix` (too vague)
+- `../etc/passwd` (path traversal)
 
 ### Check Progress
 
@@ -67,76 +71,44 @@ Each phase must pass validation before progressing. The agent manages all state 
 cat docs/{issue-name}/STATUS.md
 ```
 
-STATUS.md shows:
-- Current phase
-- Progress indicators
-- Artifacts created
-- Next steps
+---
 
-### Issue Name Format
+## Workflow Phases
 
-**Rules:**
-- kebab-case (lowercase-with-hyphens)
-- Concise (2-5 words)
-- Descriptive
-
-**Examples:**
-- ✅ `add-oauth-auth`, `fix-memory-leak`, `refactor-api-layer`
-- ❌ `AddOAuthAuth` (not kebab-case), `fix` (too vague), `add-new-auth-system-with-oauth2` (too long)
-
-### Complete Workflow Example
-
-```bash
-# Start to finish - one command
-/sdlc add-oauth-auth Implement OAuth2 with Google and GitHub
-
-# The agent will:
-# 1. Research authentication patterns in codebase
-# 2. Create implementation plan and technical spec
-# 3. Implement the feature phase by phase
-# 4. Run automated checks and manual review
-# 5. Fix any issues (up to 3 iterations if needed)
-# 6. Report completion with deployment guidance
-
-# Check progress anytime
-cat docs/add-oauth-auth/STATUS.md
-```
+| Phase | Creates | Gate |
+|-------|---------|------|
+| Research | RESEARCH.md | 3 questions answered |
+| Planning | PLAN.md | Scope + phases + criteria |
+| Implementation | IMPLEMENTATION.md + code | All phases done + tests pass |
+| Review | REVIEW.md | APPROVED verdict |
+| Fix | Fixed code | Blocking issues resolved |
 
 ---
 
 ## Architecture
-
-The `/sdlc` command orchestrates the complete workflow:
 
 ```
 /sdlc command
     ↓
 SDLC Orchestrator Agent
     ↓
-Sequential skill execution:
-  • code-research
-  • solution-planning
-  • code-implementation
-  • code-review
-  • review-fix (if needed)
+Skills (sequential):
+  • researching-code
+  • planning-solutions
+  • implementing-code
+  • reviewing-code
+  • fixing-review-issues (if needed)
     ↓
-Complete artifacts + approval
+5 artifacts + code
 ```
-
-**Key features:**
-- Autonomous execution (no manual command switching)
-- Phase gate enforcement (validation before progression)
-- Automatic review-fix loop (max 3 iterations)
-- Persistent state tracking (STATUS.md)
-- Clear progress feedback
 
 ---
 
 ## Benefits
 
-- **Single command** - Execute entire SDLC with one invocation
-- **Multi-feature support** - Work on multiple issues simultaneously
-- **Organized artifacts** - All docs for a feature in one directory
-- **Progress tracking** - STATUS.md shows complete workflow state
-- **Quality gates** - Automated validation at each phase
-- **Self-healing** - Automatic review-fix loop for issues
+- **Single command** - Full SDLC in one invocation
+- **Autonomous** - No manual commands between phases
+- **Organized** - All artifacts in one directory
+- **Tracked** - STATUS.md shows progress
+- **Quality gates** - Validation at each phase
+- **Self-healing** - Auto fix loop (max 3)

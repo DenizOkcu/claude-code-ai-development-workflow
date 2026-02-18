@@ -1,225 +1,190 @@
-# Architecture Overview: 2026 Claude Code SDLC System
+# Architecture Overview
+
+Lean SDLC system aligned with Claude Code best practices.
 
 ## Visual Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           USER INTERFACE                                 │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │
-│  │ Legacy Commands  │  │  Unified Command │  │   Language       │      │
-│  │  /research-code  │  │      /sdlc       │  │  /typescript-pro │      │
-│  │  /issue-planner  │  │                  │  │                  │      │
-│  │  /execute-plan   │  │  (Recommended)   │  │  (Unchanged)     │      │
-│  │  /review-code    │  │                  │  │                  │      │
-│  └────────┬─────────┘  └────────┬─────────┘  └──────────────────┘      │
-│           │                     │                                       │
-└───────────┼─────────────────────┼───────────────────────────────────────┘
-            │                     │
-            │                     │ Invoke Agent
-            │                     ▼
-    ┌─────────────────────────────────────────────┐
-    │         SDLC Orchestrator Agent              │
-    │  ┌───────────────────────────────────────┐  │
-    │  │ • Phase state machine                 │  │
-    │  │ • Gate enforcement                    │  │
-    │  │ • Review-fix loop (max 3)             │  │
-    │  │ • State persistence (STATUS.md)       │  │
-    │  │ • Diagnostic output                   │  │
-    │  └───────────────────────────────────────┘  │
-    └───────────────────┬─────────────────────────┘
-                        │
-                        │ Invokes Skills (sequentially)
-                        │
-        ┌───────────────┼───────────────┐
-        │               │               │
-        ▼               ▼               ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│ code-research│ │solution- │ │ code-        │
-│              │ │planning  │ │implementation│
-└──────────────┘ └──────────┘ └──────────────┘
-                                        │
-        ┌───────────────┐               │
-        ▼               ▼               ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│ code-review  │ │review-fix│ │   State      │
-│              │ │          │ │ STATUS.md    │
-└──────────────┘ └──────────┘ └──────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                      USER INTERFACE                          │
+│                    /sdlc command                             │
+│              (parse input, invoke agent)                     │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   ORCHESTRATION LAYER                        │
+│                  SDLC Orchestrator Agent                     │
+│                                                              │
+│  • Phase state machine: Research → Plan → Implement → Review│
+│  • Gate enforcement                                          │
+│  • Review-fix loop (max 3)                                   │
+│  • State via STATUS.md                                       │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│researching-  │ │planning-     │ │implementing- │
+│code          │ │solutions     │ │code          │
+└──────────────┘ └──────────────┘ └──────────────┘
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+┌──────────────┐         ┌──────────────┐
+│reviewing-    │         │fixing-review │
+│code          │         │-issues       │
+└──────────────┘         └──────────────┘
         │
         ▼
-┌─────────────────────────────────────────┐
-│         Artifacts (Persistent)          │
-│  docs/{issue-name}/         │
-│  ├── STATUS.md                          │
-│  ├── CODE_RESEARCH.md                   │
-│  ├── IMPLEMENTATION_PLAN.md             │
-│  ├── PROJECT_SPEC.md                    │
-│  └── CODE_REVIEW.md                     │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                      ARTIFACTS                               │
+│                  docs/{issue-name}/                          │
+│                                                              │
+│  ├── STATUS.md           (progress tracker)                  │
+│  ├── RESEARCH.md         (what we found)                     │
+│  ├── PLAN.md             (what we'll build)                  │
+│  ├── IMPLEMENTATION.md   (what we built)                     │
+│  └── REVIEW.md           (is it ready?)                      │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Component Responsibilities
 
 ### User Interface Layer
 
-**Legacy Commands (Thin Wrappers):**
+**Command (`/sdlc`):**
 - Parse arguments
-- Invoke skills directly
+- Validate input
+- Invoke agent
 - No workflow logic
-- 30-60 lines each
-
-**Unified Command (`/sdlc`):**
-- Parse arguments and flags
-- Invoke SDLC Orchestrator Agent
-- No workflow logic
-- Single entry point
 
 ### Orchestration Layer
 
 **SDLC Orchestrator Agent:**
-- Execute full SDLC autonomously
-- Invoke skills in sequence
-- Enforce phase gates
+- Execute phases sequentially
+- Enforce gates between phases
 - Manage review-fix loop
-- Track state (STATUS.md)
-- Provide diagnostics
+- Track state in STATUS.md
+- Provide user notifications
 
 ### Capabilities Layer
 
-**Skills (Stateless Procedures):**
-- **code-research**: Investigate codebase, create CODE_RESEARCH.md
-- **solution-planning**: Create IMPLEMENTATION_PLAN.md and PROJECT_SPEC.md
-- **code-implementation**: Execute plan phase-by-phase
-- **code-review**: QA checks, create CODE_REVIEW.md
-- **review-fix**: Address review issues
+**Skills (stateless procedures):**
+
+| Skill | Mindset | Output |
+|-------|---------|--------|
+| researching-code | Understand minimum context | RESEARCH.md |
+| planning-solutions | Define WHAT, not HOW | PLAN.md |
+| implementing-code | Build working software | IMPLEMENTATION.md + code |
+| reviewing-code | Is this deployable? | REVIEW.md |
+| fixing-review-issues | Fix blocking issues only | Fixed code |
 
 ### Data Layer
 
-**Artifacts:**
-- STATUS.md: Progress tracking
-- CODE_RESEARCH.md: Research findings
-- IMPLEMENTATION_PLAN.md: Phased strategy
-- PROJECT_SPEC.md: Technical spec
-- CODE_REVIEW.md: Review findings
+**5 artifacts per issue:**
+
+| File | Purpose | Size |
+|------|---------|------|
+| STATUS.md | Progress tracking | ~30 lines |
+| RESEARCH.md | Research findings | ~50 lines |
+| PLAN.md | Implementation plan | ~80 lines |
+| IMPLEMENTATION.md | What was built | ~60 lines |
+| REVIEW.md | Review findings | ~40 lines |
 
 ---
 
-## Flow Diagrams
+## Design Principles
 
-### Legacy Workflow (Step-by-Step)
+### 1. Trust Claude Code
 
-```
-User → /research-code → code-research skill → CODE_RESEARCH.md
-       ↓
-User → /issue-planner → solution-planning skill → IMPLEMENTATION_PLAN.md
-                                               → PROJECT_SPEC.md
-       ↓
-User → /execute-plan → code-implementation skill → Code + Tests
-       ↓
-User → /review-code → code-review skill → CODE_REVIEW.md
-                                        ↓
-                                    [APPROVED?]
-                                        │
-                    ┌───────────────────┴───────────────────┐
-                   NO                                       YES
-                    │                                        │
-                    ↓                                        ↓
-            review-fix skill                         Deploy/Commit
-                    │
-                    ↓
-            /review-code (retry)
-```
+Claude Code handles:
+- Context management (200K window)
+- File reading on demand
+- Session resumption
 
-### New Workflow (Autonomous)
+We don't need:
+- Summary artifacts (removed)
+- Pseudo-code state machines (removed)
+- LLM parameter specs (removed)
 
-```
-User → /sdlc <issue-name> [description] [--from-phase]
-        ↓
-SDLC Orchestrator Agent
-        ↓
-┌─────────────────────────────────────┐
-│ research phase (code-research)      │ → CODE_RESEARCH.md
-├─────────────────────────────────────┤
-│ plan phase (solution-planning)      │ → IMPLEMENTATION_PLAN.md
-│                                     │ → PROJECT_SPEC.md
-├─────────────────────────────────────┤
-│ implement phase (code-implementation)│ → Code + Tests
-├─────────────────────────────────────┤
-│ review phase (code-review)          │ → CODE_REVIEW.md
-└─────────────────────────────────────┘
-        │
-        ▼
-   [APPROVED?]
-        │
-┌───────┴────────┐
-│                │
-NO               YES
-│                │
-▼                ▼
-fix_loop    Deploy/Commit
-(code-review)  (max 3 iterations)
-```
+### 2. Minimal Artifacts
+
+**Before:** 8+ files per issue
+**After:** 5 files per issue
+
+Consolidated:
+- CODE_RESEARCH.md + RESEARCH_SUMMARY.md → RESEARCH.md
+- IMPLEMENTATION_PLAN.md + PROJECT_SPEC.md + PLAN_SUMMARY.md → PLAN.md
+- IMPLEMENTATION_SUMMARY.md → IMPLEMENTATION.md
+- CODE_REVIEW.md → REVIEW.md
+
+### 3. Extended Thinking
+
+Skills use extended thinking for complex reasoning:
+- Research: "Think deeply about hidden dependencies"
+- Planning: "Think harder about edge cases"
+- Review: "Think a lot about security"
+
+### 4. Lean Communication
+
+Essential notifications only:
+- Phase start
+- Phase complete
+- Errors/blockers
+- Final completion
 
 ---
 
-## State Management
+## Workflow State Machine
 
-### STATUS.md Evolution
-
-```markdown
-# Research Phase
-- [x] Research | [ ] Planning | [ ] Implementation | [ ] Review
-
-# Planning Phase
-- [x] Research | [x] Planning | [ ] Implementation | [ ] Review
-
-# Implementation Phase
-- [x] Research | [x] Planning | [x] Implementation | [ ] Review
-
-# Review Phase
-- [x] Research | [x] Planning | [x] Implementation | [x] Review
-
-# Review-Fix Loop (if needed)
-- [x] Research | [x] Planning | [x] Implementation | [~] Review (Iteration 2/3)
 ```
+[START]
+   │
+   ▼
+Research ──gate──▶ Plan ──gate──▶ Implement ──gate──▶ Review
+                                                      │
+                                          ┌───────────┴───────────┐
+                                          │                       │
+                                      APPROVED               NEEDS_FIX
+                                          │                       │
+                                          ▼                       ▼
+                                      [COMPLETE]              Fix (max 3)
+                                                                  │
+                                                                  ▼
+                                                               Review
+```
+
+### Gate Checks
+
+| Gate | Check |
+|------|-------|
+| Research → Plan | 3 questions answered |
+| Plan → Implement | Scope + phases + criteria defined |
+| Implement → Review | All phases done + tests pass |
+| Review → Complete | APPROVED verdict |
+
+---
+
+## Comparison: Before vs After
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| Artifacts | 8+ | 5 |
+| Orchestrator | 860 lines | 250 lines |
+| Skills | 400+ lines each | 100-200 lines each |
+| LLM params | Specified | Trust Claude Code |
+| Resume logic | Complex `--from-*` | Simple `--resume` |
+| Communication | Extensive templates | Essential only |
 
 ---
 
 ## Quality Invariants
 
-1. **No logic in commands**: Commands only parse and invoke
-2. **Stateless skills**: Skills contain procedures, not state
-3. **Agent orchestrates**: Only agent manages workflow state
-4. **Persistent artifacts**: All progress in `docs/`
-5. **Deterministic gates**: Clear validation before progression
-6. **Max iterations**: Review-fix limited to 3 attempts
-7. **Clear separation**: UX, orchestration, capabilities, data
-
----
-
-## Usage Comparison
-
-| Task | Legacy (4 commands) | New (1 command) |
-|------|---------------------|-----------------|
-| Full workflow | `/research-code` → `/issue-planner` → `/execute-plan` → `/review-code` | `/sdlc feature-name "description"` |
-| Resume from plan | `/issue-planner` → `/execute-plan` → `/review-code` | `/sdlc feature-name --from-plan` |
-| Resume from review | `/review-code` | `/sdlc feature-name --from-review` |
-| Fix review issues | Manual fixes → `/review-code` | `/sdlc feature-name --from-review` (auto loop) |
-
----
-
-## Migration Path
-
-### Phase 1: Current (Parallel Support)
-- Both legacy and new workflows available
-- Users can choose either approach
-- Gather feedback on new workflow
-
-### Phase 2: Transition (Recommended)
-- Documentation promotes `/sdlc` as primary
-- Legacy commands marked as "alternative"
-- Migration guides provided
-
-### Phase 3: Future (Deprecation)
-- Legacy commands deprecated with notices
-- `/sdlc` becomes standard workflow
-- Backup files removed
+1. **No logic in command** - Only parsing and invocation
+2. **Stateless skills** - Procedures, not state holders
+3. **Agent orchestrates** - Only agent manages workflow
+4. **Minimal artifacts** - 5 files, no duplication
+5. **Trust the tool** - Claude Code handles context
+6. **Extended thinking** - For complex reasoning
+7. **Max 3 fix iterations** - Escalate if stuck

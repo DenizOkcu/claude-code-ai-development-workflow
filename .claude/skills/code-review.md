@@ -1,476 +1,220 @@
 ---
 name: reviewing-code
-description: "Comprehensive code review with automated checks and manual quality assessment. Use for quality assurance, compliance verification, or implementation validation. Triggers: review code, QA, quality check, verify implementation, code inspection, compliance."
+description: "Ensure production readiness with minimal overhead. Use for quality assurance and verification. Triggers: review code, QA, quality check, verify implementation."
 model: sonnet
-temperature: 0
 ---
 
 # Code Review
 
-Run automated checks and manual review to ensure production readiness.
+**Mindset:** Can this be deployed safely? Focus on blocking issues only.
 
-## LLM Parameters
+## Goal
 
-**For consistent, deterministic review:**
-- **Temperature:** 0 (deterministic, same inputs → same outputs)
-- **Max Tokens:** 8000 (comprehensive review coverage)
-- **Top-P:** 1.0 (use full distribution)
-- **Frequency Penalty:** 0 (no penalty for repetition)
-- **Presence Penalty:** 0 (no penalty for new topics)
+Answer: Is this ready to ship?
 
-**Seed Strategy:** Use `issue_name` as seed for consistency
+Focus on:
+1. Do tests pass?
+2. Are there security issues?
+3. Does it do what we planned?
 
-**Why These Parameters:**
-- Temperature 0 ensures reproducible review results
-- Higher token limit allows thorough analysis
-- No penalties enable complete issue identification
-- Consistent reviews enable reliable quality gates
+## Extended Thinking
 
-## Few-Shot Example
-
-### Example Input
-```yaml
-issue_name: "add-oauth-login"
-IMPLEMENTATION_SUMMARY.md: [exists]
-git diff: [shows changes]
-```
-
-### Example Output: CODE_REVIEW.md (Good ✅)
-```markdown
-### Summary
-- **Status:** APPROVED_WITH_NOTES
-- **Risk:** Low
-
-### Automated Checks
-```
-✓ Linting: Passed (0 errors, 0 warnings)
-✓ Type Checking: Passed (0 errors)
-✓ Tests: 15/15 passing (100%)
-✓ Build: Passed
-⚠ Security: 1 informational (no vulnerabilities)
-```
-
-### Code Quality
-| Area           | Rating     | Notes                        |
-| -------------- | ---------- | ---------------------------- |
-| Structure      | Excellent  | Clean, follows MVC pattern  |
-| Naming         | Excellent  | Clear, consistent           |
-| Error Handling | Good       | Comprehensive, could use logging |
-| Type Safety    | Excellent  | Strict TypeScript, proper types |
-| Testing        | Good       | Good coverage, add edge case tests |
-
-### Issues
-
-**💡 SUGGESTIONS (optional):**
-- `src/auth/google-strategy.ts:45` - Consider adding retry logic for OAuth calls
-- `src/middleware/session.ts:135` - Add JSDoc for provider tracking function
-- `tests/auth/oauth.test.ts:78` - Add test for OAuth failure scenario
-
-### Compliance
-- ✓ All planned features implemented
-- ✓ Design followed
-- Deviations: None
-
-### Recommendations
-1. Add OAuth failure test (edge case)
-2. Consider logging OAuth callbacks (debugging)
-3. Document OAuth setup in README (user onboarding)
-```
-
-### Example Output: CODE_REVIEW.md (Bad ❌)
-```markdown
-# Code Review
-
-Reviewed the OAuth implementation.
-
-Looks good! Tests pass.
-
-Approved.
-```
-
-**Why Bad:**
-- ❌ Missing automated checks section
-- ❌ No structured quality assessment
-- ❌ No specific file:line references
-- ❌ No compliance verification
-- ❌ Missing approval status format
-- ❌ No recommendations
-- ❌ Not actionable for fixes
-
-### Example Approval Determination (Good ✅)
-```
-[Analyzing CODE_REVIEW.md]
-
-Automated Checks:
-✓ Linting: Passed
-✓ Type Checking: Passed
-✓ Tests: 15/15 Passed
-✓ Build: Passed
-✓ Security: No vulnerabilities
-
-Issues:
-- Critical: 0
-- Important: 0
-- Suggestions: 3
-
-→ Decision: APPROVED_WITH_NOTES (suggestions are optional)
-→ Update STATUS.md: Phase complete, ready for deployment
-```
-
-### Example Approval Determination (Bad ❌)
-```
-[Skimming review]
-
-Looks mostly good. Some suggestions.
-
-→ Decision: APPROVED (missed that suggestions should be noted)
-```
-
-**Why Bad:**
-- ❌ Didn't count issues properly
-- ❌ Wrong approval status (should be APPROVED_WITH_NOTES)
-- ❌ Didn't verify automated checks all passed
-- ❌ Inconsistent decision-making
+Think a lot about:
+- Security vulnerabilities
+- Edge cases that could break
+- Hidden dependencies
 
 ## Inputs
 - `issue_name`: Kebab-case identifier
-- All planning artifacts (context)
-- Implementation code changes
+- `PLAN.md`: What was planned
+- `IMPLEMENTATION.md`: What was built
+- Changed files (via git diff)
 
-## Outputs
-- `docs/{issue_name}/CODE_REVIEW.md` (focused review report)
-- Updated `STATUS.md` with approval status
+## Output
+- `docs/{issue_name}/REVIEW.md`
+- `docs/{issue_name}/STATUS.md` (updated)
 
 ## Procedure
 
-### 1. Context Gathering
-Read all artifacts. Identify changed files (git diff). Update STATUS.md:
-```markdown
-## Phase: Review 🔄
-- **Status:** Running automated checks and manual review
-```
+### 1. Run Automated Checks
 
-### 2. Automated Checks
-Run checks appropriate to tech stack:
+Run what's available for the stack:
 
 **Node.js/TypeScript:**
 ```bash
-npm run lint
-npm run type-check  # or npx tsc --noEmit
 npm test
+npm run lint
+npx tsc --noEmit  # type check
 npm run build
-npm audit
 ```
 
 **Python:**
 ```bash
+pytest
 pylint src/
 mypy src/
-pytest
-black --check src/
 ```
 
 **Go:**
 ```bash
-go vet ./...
-golint ./...
 go test ./...
+go vet ./...
 go build
 ```
 
-**Rust:**
-```bash
-cargo clippy
-cargo test
-cargo build
-```
+### 2. Check Plan Compliance
 
-Document results for each check. Adapt these commands to the project.
+Read PLAN.md and IMPLEMENTATION.md:
+- Were acceptance criteria met?
+- Were planned features built?
+- Are deviations documented?
 
-### 3. Manual Code Review
+### 3. Security Scan
 
-**Code Quality:**
-- Functions small and focused
-- Clear, descriptive naming
-- No magic numbers/strings
-- No debug code or duplication
+Look for:
+- Hardcoded secrets
+- SQL injection
+- XSS vulnerabilities
+- Missing auth checks
+- Sensitive data in logs
 
-**Type Safety (if TypeScript):**
-- Proper type annotations for APIs
-- Minimal `any` usage
-- Proper null/undefined handling
-
-**Logic & Correctness:**
-- Edge cases handled
-- Input validation present
-- Comprehensive error handling
-- Proper async operations
-- Resource cleanup
-
-**Testing:**
-- Unit tests for new functions
-- Integration tests for interactions
-- Edge cases covered
-- Error scenarios tested
-
-**Security:**
-- No hardcoded secrets
-- SQL injection prevention
-- XSS prevention
-- Input sanitization
-- Auth/authz checks
-
-**Performance:**
-- No obvious bottlenecks
-- Efficient queries
-- Appropriate caching
-- Pagination for large lists
-
-**Maintainability:**
-- Follows project conventions
-- Documentation for complex logic
-- API documentation (JSDoc/TSDoc)
-- No unnecessary dependencies
-
-**Accessibility (if UI):**
-- Semantic HTML elements
-- ARIA labels where needed
-- Keyboard navigation works
-- Color contrast sufficient
-- Screen reader compatibility
-
-**Integration Verification:**
-- Follows existing architectural patterns
-- Doesn't break existing functionality
-- API contracts maintained
-- Database migrations safe
-- Environment variables documented
-- Configuration changes documented
-
-### 4. Plan Compliance
-Compare implementation against plans:
-- All planned features implemented
-- Technical design followed
-- Success criteria met
-- Document deviations
-
-### 5. Create CODE_REVIEW.md
+### 4. Create REVIEW.md
 
 ```markdown
-### Summary
-- **Status:** APPROVED / APPROVED WITH NOTES / NEEDS REVISION
-- **Risk:** Low/Medium/High
+# Review: {issue_name}
 
-### Automated Checks
+**When:** {timestamp}
+
+---
+
+## Verdict
+
+**Status:** APPROVED | NEEDS_FIX
+
+---
+
+## Automated Checks
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Tests | ✓/✗ | {N} passing |
+| Type Check | ✓/✗ | |
+| Lint | ✓/✗ | |
+| Build | ✓/✗ | |
+| Security | ✓/✗ | |
+
+---
+
+## Plan Compliance
+
+- [ ] Acceptance criteria met
+- [ ] Planned features built
+- [ ] Deviations documented
+
+**Deviations:** {None | acceptable because...}
+
+---
+
+## Issues
+
+### Blocking (must fix)
+- `path/to/file.ts` - {issue}
+
+### Non-Blocking (nice to have)
+- `path/to/file.ts` - {suggestion}
+
+---
+
+## Decision
+
+{APPROVED: Ready to ship | NEEDS_FIX: Blocking issues above}
 ```
-✓/✗ Linting: [status]
-✓/✗ Type Checking: [status]
-✓/✗ Tests: [N/M passing, X% coverage]
-✓/✗ Build: [status]
-✓/⚠ Security: [vulnerabilities if any]
-```
 
-### Code Quality
-| Area           | Rating     | Notes        |
-| -------------- | ---------- | ------------ |
-| Structure      | Good       | [brief note] |
-| Naming         | Excellent  | -            |
-| Error Handling | Needs Work | [brief note] |
-| Type Safety    | Good       | -            |
-| Testing        | Good       | [brief note] |
-
-### Issues
-
-**❌ CRITICAL** (must fix before deploy):
-- `file.ts:line` - Issue + fix
-
-**⚠ IMPORTANT** (should fix):
-- `file.ts:line` - Issue + fix
-
-**💡 SUGGESTIONS** (optional):
-- `file.ts:line` - Improvement
-
-### Compliance
-- ✓/✗ All planned features implemented
-- ✓/✗ Design followed
-- Deviations: [list or "None"]
-
-### Recommendations
-1. [Top priority action]
-2. [Second priority]
-3. [Third priority]
-```
-
-### 6. Determine Approval
-
-**APPROVED:**
-- All automated checks passing
-- No critical issues
-- No important issues
-- Minor suggestions OK
-
-**APPROVED WITH NOTES:**
-- All automated checks passing
-- No critical issues
-- Minor important issues or suggestions
-- Safe to deploy with follow-up tasks
-
-**NEEDS REVISION:**
-- Any automated check failures, OR
-- Critical issues present, OR
-- Multiple important issues
-
-### 7. Update STATUS.md
+### 5. Update STATUS.md
 
 **Approved:**
 ```markdown
+# Status: {issue_name}
+
+**Risk:** {level} | **Updated:** {timestamp}
+
+## Progress
+- [x] Research | [x] Planning | [x] Implementation | [x] Review
+
 ## Phase: Review ✓ APPROVED
-- **Critical:** 0
-- **Important:** 0
-- **Suggestions:** [N]
-- **Status:** Review complete, workflow finished
+- **Tests:** {N} passing
+- **Issues:** 0 blocking
+- **Next:** Ready to commit/deploy
+
+## Artifacts
+- RESEARCH.md ✓
+- PLAN.md ✓
+- IMPLEMENTATION.md ✓
+- REVIEW.md ✓
 ```
 
-**Needs Revision:**
+**Needs Fix:**
 ```markdown
-## Phase: Review ⚠ NEEDS REVISION
-- **Critical:** [N]
-- **Important:** [M]
-- **Status:** Issues found, entering fix loop
+# Status: {issue_name}
+
+**Risk:** {level} | **Updated:** {timestamp}
+
+## Progress
+- [x] Research | [x] Planning | [x] Implementation | [~] Review
+
+## Phase: Review ⚠ NEEDS_FIX
+- **Blocking Issues:** {N}
+- **Iteration:** {N}/3
+- **Next:** Fix issues
+
+## Artifacts
+- RESEARCH.md ✓
+- PLAN.md ✓
+- IMPLEMENTATION.md ✓
+- REVIEW.md ✓ (needs fixes)
 ```
 
-## Error Handling
+## Issue Classification
 
-### Known Error Scenarios
+**Blocking (MUST fix):**
+- Tests failing
+- Security vulnerabilities
+- Breaking existing functionality
+- Missing planned features
 
-1. **No Implementation Found**
-   - Check for IMPLEMENTATION_SUMMARY.md
-   - Check git diff for changes
-   - Error: "No implementation changes found"
-   - Recovery: Verify implementation phase completed
+**Non-Blocking (nice to have):**
+- Style suggestions
+- Performance optimizations
+- Additional tests
+- Documentation improvements
 
-2. **Automated Checks Unavailable**
-   - Linting not configured: Document, continue with manual review
-   - Type checking not available: Skip, note limitation
-   - Tests not configured: Document, continue without tests
-   - Warning: "Check not available: {check_name}"
+## What NOT to Do
 
-3. **Check Failures**
-   - Linting failures: Report as critical or important based on severity
-   - Type errors: Report as critical
-   - Test failures: Report as critical
-   - Build failures: Report as critical
-   - Security vulnerabilities: Report as critical
+- Don't nitpick style (linters handle this)
+- Don't suggest hypothetical edge cases
+- Don't add "nice to have" features
+- Don't mark non-blocking issues as blocking
+- Don't create extensive quality matrices
 
-4. **Cannot Read Files**
-   - Check file permissions
-   - Verify file paths
-   - Error: "Cannot read file: {path}"
-   - Recovery: Skip file, document limitation
+## Decision Logic
 
-5. **Missing Planning Documents**
-   - Check for PLAN_SUMMARY.md, PROJECT_SPEC.md
-   - Warning: "Planning documents not found - reviewing without plan context"
-   - Recovery: Continue with general best practices
+```
+APPROVED if:
+- All automated checks pass
+- No blocking issues
+- Acceptance criteria met
 
-### Error Recovery
+NEEDS_FIX if:
+- Any automated check fails
+- Any blocking issue exists
+- Acceptance criteria not met
+```
 
-- **Before review**: Verify IMPLEMENTATION_SUMMARY.md exists
-- **During automated checks**: If check fails, document result, continue
-- **Manual review**: If files cannot be read, note limitation, review accessible files
-- **Missing context**: Review based on general best practices if plan not available
+## Quality Check
 
-### Exit Conditions
-
-**Success:**
-- All automated checks run (or documented as unavailable)
-- Manual review completed
-- CODE_REVIEW.md created with all sections
-- Approval status determined
-- STATUS.md updated
-
-**Failure (Retryable):**
-- Temporary file access issues
-- Intermittent tool failures
-
-**Failure (Non-retryable):**
-- No implementation to review
-- Repository access issues
-- Critical errors preventing review
-
-### Validation Before Completion
-
-Before marking review complete, verify:
-- [ ] IMPLEMENTATION_SUMMARY.md read (or git diff analyzed)
-- [ ] All available automated checks run
-- [ ] Manual review completed for all accessible files
-- [ ] CODE_REVIEW.md has Summary, Automated Checks, Code Quality sections
-- [ ] Issues prioritized (Critical/Important/Suggestions)
-- [ ] File references include line numbers
-- [ ] Approval status clearly stated (APPROVED/APPROVED_WITH_NOTES/NEEDS_REVISION)
-- [ ] STATUS.md updated with approval status
-
-## Review Guidelines
-
-### Be Thorough but Practical
-- Focus on issues that matter
-- Don't nitpick style if linter handles it
-- Consider context and constraints
-- Balance perfection with shipping
-
-### Be Constructive
-- Explain why something is an issue
-- Suggest concrete solutions
-- Acknowledge good work
-- Use collaborative language
-
-### Prioritize Issues
-- **Critical**: Blocks deployment, security risks, data loss
-- **Important**: Significant bugs, poor error handling, maintainability
-- **Suggestions**: Improvements, optimizations, style
-
-### Use Specific References
-- Include file paths and line numbers
-- Show code snippets for issues
-- Link to relevant documentation
-- Reference best practices
-
-## Special Considerations
-
-### If No Automated Tools
-- Note lack of automated checks
-- Perform thorough manual review
-- Recommend setting up linting/testing
-
-### If Tests Are Missing
-- Note lack of tests
-- Recommend writing tests before deployment
-- Suggest test cases to add
-
-### If Plan Documents Don't Exist
-- Review code on its own merits
-- Use general best practices
-- Recommend creating documentation
-
-## Important Reminders
-
-- Read STATUS.md first - understand workflow context
-- Run ALL automated checks - don't skip any
-- Read the actual code - don't just run tools
-- Check git diff - see what actually changed
-- Test the feature manually - if possible
-- Be objective - good or bad, report it
-- Document everything - all findings in CODE_REVIEW.md
-- Update STATUS.md - reflect review completion
-- Give credit - note what was done well
-
-## Quality Checks
-- All automated checks run (or documented as unavailable)
-- Manual review completed
-- CODE_REVIEW.md created with all sections
-- Issues prioritized (Critical/Important/Suggestions)
-- File references with line numbers
-- Integration verified
-- Accessibility checked (if UI)
-- STATUS.md updated
-- Error scenarios handled
+- [ ] Automated checks run?
+- [ ] Security scanned?
+- [ ] Plan compliance checked?
+- [ ] REVIEW.md created?
+- [ ] Clear APPROVED/NEEDS_FIX verdict?
+- [ ] STATUS.md updated?
