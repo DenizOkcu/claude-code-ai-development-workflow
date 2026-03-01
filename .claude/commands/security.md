@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 ## Phase 7: Security Audit
 
 You are entering the **Security** phase for issue: `$ARGUMENTS`

@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 ## Phase 6: Code Review & Quality Assurance
 
 You are entering the **Review** phase for issue: `$ARGUMENTS`

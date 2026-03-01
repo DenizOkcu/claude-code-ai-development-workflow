@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 ## Phase 8: Deployment Strategy
 
 You are entering the **Deploy** phase for issue: `$ARGUMENTS`

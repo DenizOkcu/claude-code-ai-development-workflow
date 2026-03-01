@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 ## Phase 1: Discovery & Scoping
 
 You are entering the **Discovery** phase of the SDLC. Your job is to take a raw feature description, detect the project's tech stack, and produce a scoped, well-defined starting point for development.

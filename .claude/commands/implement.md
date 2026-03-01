@@ -1,3 +1,7 @@
+---
+model: opus
+---
+
 ## Phase 5: Implementation
 
 You are entering the **Implementation** phase for issue: `$ARGUMENTS`

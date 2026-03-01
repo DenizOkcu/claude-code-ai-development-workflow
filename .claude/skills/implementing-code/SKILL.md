@@ -1,7 +1,10 @@
 ---
 name: implementing-code
-description: "Build working software that meets acceptance criteria. Use when executing implementation plans. Triggers: implement, build, execute plan, write code."
-model: sonnet
+description: "Builds working software by executing implementation plans phase by phase. Use when writing code, running tests, or executing a planned feature build. Implements all phases autonomously, validates each phase, and documents deviations."
+model: opus
+metadata:
+  version: 1.0.0
+  category: workflow-automation
 ---
 
 # Code Implementation
@@ -12,27 +15,9 @@ model: sonnet
 
 Implement all phases and create working, tested code that meets the acceptance criteria.
 
-## Autonomy Rules
+## Instructions
 
-- **Implement ALL phases** - don't stop after Phase 1
-- **The plan guides, not dictates** - better approaches are welcome
-- **Document deviations** - explain why you diverged
-- **Tests are required** - part of each phase, not after
-
-## Inputs
-- `issue_name`: Kebab-case identifier
-- `PLAN.md`: Phases and acceptance criteria
-- `RESEARCH.md`: Context (if exists)
-
-## Output
-- Implementation code
-- Tests
-- `docs/{issue_name}/IMPLEMENTATION.md`
-- `docs/{issue_name}/STATUS.md` (updated)
-
-## Procedure
-
-### 1. Read the Plan
+### Step 1: Read the Plan
 
 Read `PLAN.md` and understand:
 - Total number of phases
@@ -41,7 +26,7 @@ Read `PLAN.md` and understand:
 
 **Count phases explicitly:** "I see {N} phases in the plan. I will implement all {N}."
 
-### 2. Implement Phase by Phase
+### Step 2: Implement Phase by Phase
 
 For each phase:
 1. Mark phase as in-progress in STATUS.md
@@ -65,7 +50,7 @@ The implementer MUST verify these before proceeding.
 
 **Continue until ALL phases are done.**
 
-### 3. Deviate Wisely
+### Step 3: Deviate Wisely
 
 Good reasons to deviate:
 - Discovered a better approach
@@ -78,7 +63,7 @@ When deviating:
 - Explain WHY
 - Ensure tests still pass
 
-### 4. Run Full Validation
+### Step 4: Run Full Validation
 
 After all phases:
 - Run full test suite
@@ -86,7 +71,18 @@ After all phases:
 - Run lint
 - Run build
 
-### 5. Create IMPLEMENTATION.md
+### Step 5: Create IMPLEMENTATION.md and Update STATUS.md
+
+Write `docs/{issue_name}/IMPLEMENTATION.md` and update `docs/{issue_name}/STATUS.md`.
+
+## Autonomy Rules
+
+- **Implement ALL phases** - don't stop after Phase 1
+- **The plan guides, not dictates** - better approaches are welcome
+- **Document deviations** - explain why you diverged
+- **Tests are required** - part of each phase, not after
+
+## Output Format
 
 ```markdown
 # Implementation: {issue_name}
@@ -107,7 +103,6 @@ Built {brief description of what was implemented}.
 
 ### Files Created
 - `path/to/file.ts` - {purpose}
-- `path/to/file.ts` - {purpose}
 
 ### Files Modified
 - `path/to/file.ts` - {what changed}
@@ -118,7 +113,6 @@ Built {brief description of what was implemented}.
 
 - [x] Phase 1: {name} - {brief result}
 - [x] Phase 2: {name} - {brief result}
-- [x] Phase 3: {name} - {brief result}
 
 ---
 
@@ -126,9 +120,9 @@ Built {brief description of what was implemented}.
 
 - Tests: {N} total, {N} passing
 - Coverage: {X}% for new code
-- Type check: ✓
-- Lint: ✓
-- Build: ✓
+- Type check: pass/fail
+- Lint: pass/fail
+- Build: pass/fail
 
 ---
 
@@ -147,58 +141,6 @@ Built {brief description of what was implemented}.
 - {limitation} (impact: {low/medium})
 ```
 
-### 6. Update STATUS.md
-
-```markdown
-# Status: {issue_name}
-
-**Risk:** {level} | **Updated:** {timestamp}
-
-## Progress
-- [x] Research | [x] Planning | [x] Implementation | [ ] Review
-
-## Phase: Implementation ✓
-- **Phases:** {N}/{N} complete
-- **Tests:** {N} passing
-- **Deviations:** {None | N}
-- **Next:** Review
-
-## Artifacts
-- RESEARCH.md ✓
-- PLAN.md ✓
-- IMPLEMENTATION.md ✓
-- {N} code files
-```
-
-## Code Quality
-
-Follow existing patterns in the codebase:
-- Match naming conventions
-- Use existing utilities
-- Keep functions focused
-- Handle errors appropriately
-
-## What NOT to Do
-
-- Don't stop after Phase 1
-- Don't skip tests
-- Don't ignore failing tests
-- Don't over-engineer
-- Don't add unrequested features
-
-## Stopping Criteria
-
-You are ONLY done when:
-- [ ] ALL phases from PLAN.md are complete
-- [ ] ALL phase validations from PLAN.md pass
-- [ ] All tests pass
-- [ ] Type check passes (if applicable)
-- [ ] Acceptance criteria from PLAN.md are met
-- [ ] IMPLEMENTATION.md created
-- [ ] STATUS.md updated
-
-**If ANY phase is incomplete OR any validation fails, keep implementing.**
-
 ## Quality Check
 
 - [ ] Read PLAN.md and counted phases?
@@ -210,3 +152,11 @@ You are ONLY done when:
 - [ ] Deviations documented?
 - [ ] IMPLEMENTATION.md created?
 - [ ] STATUS.md updated?
+
+## Common Issues
+
+- **Stopping early:** Don't stop after Phase 1. Implement ALL phases from PLAN.md.
+- **Skipping tests:** Tests are part of each phase, not a final step.
+- **Ignoring validation:** Run the validation checklist from PLAN.md for each phase before proceeding.
+- **Over-engineering:** Don't add unrequested features. Build what the plan specifies.
+- **Silent failures:** If ANY phase is incomplete OR any validation fails, keep implementing.

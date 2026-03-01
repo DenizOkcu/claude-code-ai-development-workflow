@@ -1,3 +1,7 @@
+---
+model: opus
+---
+
 ## Phase 3: Architecture & System Design
 
 You are entering the **Design** phase for issue: `$ARGUMENTS`

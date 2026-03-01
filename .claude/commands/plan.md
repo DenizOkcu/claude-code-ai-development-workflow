@@ -1,3 +1,7 @@
+---
+model: opus
+---
+
 ## Phase 4: Implementation Planning
 
 You are entering the **Planning** phase for issue: `$ARGUMENTS`

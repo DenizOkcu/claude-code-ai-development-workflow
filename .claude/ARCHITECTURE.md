@@ -32,8 +32,8 @@ Lean SDLC system aligned with Claude Code best practices.
           ┌───────────┴───────────┐
           ▼                       ▼
 ┌──────────────┐         ┌──────────────┐
-│reviewing-    │         │fixing-review │
-│code          │         │-issues       │
+│reviewing-    │         │review-fix    │
+│code          │         │              │
 └──────────────┘         └──────────────┘
         │
         ▼
@@ -70,7 +70,11 @@ Lean SDLC system aligned with Claude Code best practices.
 
 ### Capabilities Layer
 
-**Skills (stateless procedures):**
+**Skills (folder-based, Anthropic official format):**
+
+Each skill lives in `.claude/skills/{name}/SKILL.md` with YAML frontmatter (`name`, `description`, `model`, `metadata`) and standardized body (Mindset, Goal, Instructions, Output Format, Quality Check, Common Issues).
+
+**Model Routing:** Skills and commands declare their preferred model via the `model:` frontmatter field. Deep reasoning phases (research, plan, implement) use `opus`; checklist/template phases (discover, review, security, deploy, observe, retro) use `sonnet`.
 
 | Skill | Mindset | Output |
 |-------|---------|--------|
@@ -78,7 +82,20 @@ Lean SDLC system aligned with Claude Code best practices.
 | planning-solutions | Define WHAT, not HOW | PLAN.md |
 | implementing-code | Build working software | IMPLEMENTATION.md + code |
 | reviewing-code | Is this deployable? | REVIEW.md |
-| fixing-review-issues | Fix blocking issues only | Fixed code |
+| review-fix | Fix blocking issues only | Fixed code |
+
+### Memory Layer
+
+**Two-tier knowledge persistence:**
+
+| Tier | Location | Scope | Loaded |
+|------|----------|-------|--------|
+| Tier 1: Repo-shared | `CLAUDE.md ## Learnings` | Team-visible, versioned in git | Always (part of CLAUDE.md) |
+| Tier 2: Project-personal | `~/.claude/projects/{hash}/memory/` | Per-user, auto-loaded | MEMORY.md always; topic files on demand |
+
+**Auto-memory files:** MEMORY.md (index, max 200 lines), patterns.md, decisions.md, learnings.md
+
+**Data flow:** `/retro` writes to both tiers. New sessions get CLAUDE.md + MEMORY.md automatically.
 
 ### Data Layer
 

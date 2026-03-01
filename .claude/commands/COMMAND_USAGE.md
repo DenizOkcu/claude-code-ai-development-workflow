@@ -97,7 +97,7 @@ Skills (sequential):
   • planning-solutions
   • implementing-code
   • reviewing-code
-  • fixing-review-issues (if needed)
+  • review-fix (if needed)
     ↓
 5 artifacts + code
 ```

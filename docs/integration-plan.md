@@ -19,7 +19,7 @@ This integration plan restores explicit technical guidance that was lost or less
 
 ### 1.1 Add "Output Style" Section to solution-planning.md
 
-**File:** `.claude/skills/solution-planning.md`
+**File:** `.claude/skills/planning-solutions/SKILL.md`
 **Location:** After line 457 (after "Important Approach Guidelines" section)
 **Priority:** HIGH
 
@@ -67,7 +67,7 @@ These formatting rules ensure:
 
 ### 1.2 Enhance "Investigation Strategy" in code-research.md
 
-**File:** `.claude/skills/code-research.md`
+**File:** `.claude/skills/researching-code/SKILL.md`
 **Location:** Replace lines 196-206 (step 2 "Investigation Strategy")
 **Priority:** HIGH
 
@@ -134,7 +134,7 @@ These formatting rules ensure:
 
 ### 2.1 Restore TypeScript Detail in code-implementation.md
 
-**File:** `.claude/skills/code-implementation.md`
+**File:** `.claude/skills/implementing-code/SKILL.md`
 **Location:** Replace lines 366-388 (section 6, "TypeScript-Specific" subsections)
 **Priority:** MEDIUM
 
@@ -218,11 +218,11 @@ So the enhanced version should be:
 ### 2.2 Consolidate "Communication Style" Section Across All Skills
 
 **Files to modify:**
-1. `.claude/skills/code-research.md`
-2. `.claude/skills/solution-planning.md`
-3. `.claude/skills/code-implementation.md`
-4. `.claude/skills/code-review.md`
-5. `.claude/skills/review-fix.md`
+1. `.claude/skills/researching-code/SKILL.md`
+2. `.claude/skills/planning-solutions/SKILL.md`
+3. `.claude/skills/implementing-code/SKILL.md`
+4. `.claude/skills/reviewing-code/SKILL.md`
+5. `.claude/skills/review-fix/SKILL.md`
 
 **Priority:** MEDIUM
 **Note:** Some skills already have communication guidance. This adds consistency.

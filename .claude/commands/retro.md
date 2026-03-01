@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 ## Phase 10: Retrospective & Knowledge Capture
 
 You are entering the **Retro** phase for issue: `$ARGUMENTS`
@@ -74,7 +78,41 @@ Append **specific, actionable learnings** to the `## Learnings` section in the p
 - `Write good tests` (not actionable)
 - `Be careful with security` (not specific)
 
-#### 3. Update `STATUS.md`
+#### 3. Update Auto-Memory (Project-Personal Knowledge)
+
+After updating CLAUDE.md, also persist learnings to the auto-memory directory for cross-session context. The auto-memory directory is at `~/.claude/projects/{project-hash}/memory/`.
+
+**Append to `memory/learnings.md`:**
+```markdown
+## {date} — {issue-name}
+- {specific, actionable learning from this retro}
+- {specific, actionable learning from this retro}
+```
+
+**Update `memory/MEMORY.md` Session Notes section** — add a one-line entry:
+```markdown
+- {date}: {brief summary of issue and key outcome}
+```
+If MEMORY.md Session Notes section exceeds ~150 lines, prune the oldest entries to stay under 200 lines total.
+
+**If new stable patterns were confirmed**, append to `memory/patterns.md`:
+```markdown
+## Pattern: {name}
+- **Context:** {when this applies}
+- **Solution:** {what to do}
+- **Confirmed:** {date, issue name}
+```
+
+**If new architectural decisions were made**, append to `memory/decisions.md`:
+```markdown
+## Decision: {title}
+- **Date:** {date}
+- **Context:** {why}
+- **Decision:** {what}
+- **Status:** Active
+```
+
+#### 4. Update `STATUS.md`
 
 Mark ALL phases as complete:
 
@@ -105,4 +143,5 @@ Mark ALL phases as complete:
 - At least 2 learnings added to CLAUDE.md
 - Learnings are specific and reference the issue name
 - Process learnings address whether phase selection was appropriate
+- Auto-memory updated (learnings.md + MEMORY.md Session Notes at minimum)
 - STATUS.md shows complete journey

@@ -459,3 +459,11 @@ cat .claude/planning/{issue-name}/STATUS.md
 
 ## Learnings (auto-updated by /retro)
 <!-- The /retro command appends lessons learned here automatically -->
+
+### 2026-02-28 — add-memory-improve-skills
+
+- **The `model:` frontmatter field is officially supported in Claude Code skills and commands (values: `sonnet`, `opus`, `haiku`, `inherit`).** Use it for cost-optimized model routing: Opus for deep reasoning phases (research, design, plan, implement), Sonnet for checklist/template phases (discover, review, security, deploy, observe, retro). Saves ~40-60% on a full SDLC run.
+- **Always audit `~/.claude/` before deploying changes that touch the Claude Code environment.** Preserve: `settings.json` (permissions, model), `plugins/` (installed plugins), `claude_desktop_config.json` (MCP servers), existing `memory/` files. These are user-specific and silently lost if overwritten.
+- **Non-destructive migration: create alongside, verify, then delete.** For file restructuring, create new structure first, verify it works, then remove old files. Provides safe rollback at every step.
+- **Cross-reference audits must include `docs/` and archive paths.** `docs/integration-plan.md` had 7 stale skill file paths. Always grep the full repo, not just `.claude/`.
+- **Verify YAML field support against official docs before removing fields.** We removed `model: sonnet` from skills based on incomplete information, then had to re-add it. Check the Claude Code spec first.

@@ -1,3 +1,7 @@
+---
+model: opus
+---
+
 ## Phase 2: Codebase & Ecosystem Research
 
 You are entering the **Research** phase for issue: `$ARGUMENTS`

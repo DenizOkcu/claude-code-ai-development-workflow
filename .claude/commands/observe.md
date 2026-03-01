@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 ## Phase 9: Observability Setup
 
 You are entering the **Observe** phase for issue: `$ARGUMENTS`

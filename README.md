@@ -172,6 +172,19 @@ your-project/
 │   │       ├── DEPLOY_PLAN.md
 │   │       ├── OBSERVABILITY.md
 │   │       └── RETROSPECTIVE.md
+│   ├── agents/                      # Multi-agent orchestration
+│   │   └── sdlc-orchestrator.md    # Autonomous SDLC agent (Research→Plan→Implement→Review)
+│   ├── skills/                      # Folder-based skills (Anthropic official format)
+│   │   ├── researching-code/
+│   │   │   └── SKILL.md            # Codebase research skill (model: opus)
+│   │   ├── planning-solutions/
+│   │   │   └── SKILL.md            # Implementation planning skill (model: opus)
+│   │   ├── implementing-code/
+│   │   │   └── SKILL.md            # Code implementation skill (model: opus)
+│   │   ├── reviewing-code/
+│   │   │   └── SKILL.md            # Code review skill (model: sonnet)
+│   │   └── review-fix/
+│   │       └── SKILL.md            # Review fix skill (model: sonnet)
 │   └── settings.json                # Claude Code project settings
 ├── CLAUDE.md                        # Project-level AI instructions
 └── docs/
@@ -179,6 +192,80 @@ your-project/
         ├── ai-integration-guide.md  # How to add LLM features
         └── sdlc-reference.md        # Full workflow reference
 ```
+
+---
+
+## Skills Format
+
+Skills follow the [Anthropic official skill specification](https://docs.anthropic.com). Each skill is a folder under `.claude/skills/` with a `SKILL.md` file:
+
+```
+.claude/skills/{skill-name}/
+├── SKILL.md            # Required: YAML frontmatter + instructions
+└── references/         # Optional: supplementary docs (loaded on demand)
+```
+
+**SKILL.md structure:**
+```yaml
+---
+name: skill-name          # kebab-case, matches folder name
+description: "What it does. Use when [trigger]. [Capabilities]."
+model: opus               # optional: sonnet, opus, haiku, inherit
+metadata:
+  version: 1.0.0
+  category: workflow-automation
+---
+# Skill Title
+## Goal
+## Instructions
+## Output Format
+## Quality Check
+## Common Issues
+```
+
+Skills are loaded progressively: YAML frontmatter is always in context (~100 tokens), the full SKILL.md body loads only when the skill triggers (~2K tokens), and `references/` files load on demand.
+
+---
+
+## Model Routing
+
+Each phase uses a cost-appropriate model via the `model:` field in YAML frontmatter. Deep reasoning phases get Opus; checklist/template phases get Sonnet (~5x cheaper per token).
+
+| Phase | Command | Model | Rationale |
+|-------|---------|-------|-----------|
+| 1. Discover | `/discover` | sonnet | Stack detection, checklist scanning |
+| 2. Research | `/research` | opus | Deep architectural reasoning |
+| 3. Design | `/design-system` | opus | Architecture decisions, ADRs |
+| 4. Plan | `/plan` | opus | Phase sequencing, acceptance criteria |
+| 5. Implement | `/implement` | opus | Multi-file code generation, testing |
+| 6. Review | `/review` | sonnet | Checklist verification, pattern matching |
+| 7. Security | `/security` | sonnet | OWASP/STRIDE checklists |
+| 8. Deploy | `/deploy-plan` | sonnet | Document generation from template |
+| 9. Observe | `/observe` | sonnet | Document generation from template |
+| 10. Retro | `/retro` | sonnet | Summarization, knowledge extraction |
+
+**Cost impact:** 6/10 phases on Sonnet saves ~40-60% per full SDLC run compared to running everything on Opus, with no quality loss on the checklist/template phases.
+
+The `model:` field is officially supported in both commands and skills. Valid values: `sonnet`, `opus`, `haiku`, `inherit`.
+
+---
+
+## Memory System
+
+The workflow includes a two-tier memory system for cross-session knowledge retention:
+
+| Tier | Location | Scope | How It Works |
+|------|----------|-------|-------------|
+| **Tier 1: Repo-shared** | `CLAUDE.md ## Learnings` | Team-visible, versioned in git | `/retro` appends specific, actionable learnings |
+| **Tier 2: Project-personal** | `~/.claude/projects/{hash}/memory/` | Per-user, auto-loaded | MEMORY.md (index, always loaded) + topic files (on demand) |
+
+**Auto-memory files:**
+- `MEMORY.md` — Index with quick reference, links to topic files (max 200 lines, auto-loaded every session)
+- `patterns.md` — Stable workflow patterns confirmed across sessions
+- `decisions.md` — Key architectural decisions
+- `learnings.md` — Detailed lessons from `/retro`
+
+The `/retro` command writes to both tiers automatically.
 
 ---
 
