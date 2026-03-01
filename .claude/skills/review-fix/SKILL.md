@@ -1,7 +1,10 @@
 ---
-name: fixing-review-issues
-description: "Fix blocking issues to get APPROVED. Use when addressing review feedback. Triggers: fix issues, address review, resolve bugs."
+name: review-fix
+description: "Fixes blocking issues identified during code review to achieve APPROVED status. Use when addressing review feedback or resolving blocking bugs. Applies minimal targeted fixes, re-validates, and iterates up to 3 times."
 model: sonnet
+metadata:
+  version: 1.0.0
+  category: workflow-automation
 ---
 
 # Review Fix
@@ -12,25 +15,9 @@ model: sonnet
 
 Fix all blocking issues identified in REVIEW.md so the code can ship.
 
-## Rules
+## Instructions
 
-- **Fix blocking issues only** - non-blocking are suggestions
-- **Minimal changes** - don't refactor unrelated code
-- **Max 3 iterations** - if not fixed by then, escalate
-
-## Inputs
-- `issue_name`: Kebab-case identifier
-- `REVIEW.md`: Issues to fix
-- Changed files
-
-## Output
-- Fixed code
-- Updated `REVIEW.md`
-- Updated `STATUS.md`
-
-## Procedure
-
-### 1. Read REVIEW.md
+### Step 1: Read REVIEW.md
 
 Identify blocking issues:
 ```
@@ -39,7 +26,7 @@ Identify blocking issues:
 - `tests/auth.test.ts` - Test for OAuth failure missing
 ```
 
-### 2. Fix Each Issue
+### Step 2: Fix Each Issue
 
 For each blocking issue:
 1. Read the file at the specified location
@@ -47,37 +34,31 @@ For each blocking issue:
 3. Run related tests
 4. Mark as fixed in REVIEW.md
 
-### 3. Update REVIEW.md
+### Step 3: Update REVIEW.md
 
 ```markdown
 ## Issues
 
 ### Blocking (must fix)
-- ~~`src/auth.ts:45` - Missing error handling~~ ✓ FIXED
-- ~~`tests/auth.test.ts` - Test for OAuth failure missing~~ ✓ FIXED
+- ~~`src/auth.ts:45` - Missing error handling~~ FIXED
+- ~~`tests/auth.test.ts` - Test for OAuth failure missing~~ FIXED
 
 ### Non-Blocking (nice to have)
 - `src/utils.ts` - Consider extracting helper (skipped)
 ```
 
-### 4. Run Full Validation
+### Step 4: Run Full Validation
 
 - Run all tests
 - Run type check
 - Run lint
 - Run build
 
-### 5. Update STATUS.md
+### Step 5: Update STATUS.md
 
-```markdown
-## Phase: Review Fix
-- **Fixed:** {N} blocking issues
-- **Iteration:** {N}/3
-- **Tests:** {N} passing
-- **Next:** Re-review
-```
+Update with fix iteration count and test results.
 
-## Fix Principles
+## Fix Rules
 
 **DO:**
 - Fix exactly what's described
@@ -102,6 +83,12 @@ If still failing after iteration 3:
 - Create diagnostic
 - Escalate to user
 
+## Output Format
+
+- Fixed code files
+- Updated `REVIEW.md` with struck-through fixed issues
+- Updated `STATUS.md` with iteration count
+
 ## Quality Check
 
 - [ ] All blocking issues fixed?
@@ -109,3 +96,10 @@ If still failing after iteration 3:
 - [ ] REVIEW.md updated?
 - [ ] STATUS.md updated?
 - [ ] No new issues introduced?
+
+## Common Issues
+
+- **Scope creep:** Don't fix non-blocking issues. Focus only on what blocks APPROVED status.
+- **Over-fixing:** Apply minimal changes. Don't refactor surrounding code.
+- **Iteration overflow:** If not fixed by iteration 3, escalate to user instead of continuing.
+- **New regressions:** Always run the full test suite after fixes to catch unintended side effects.

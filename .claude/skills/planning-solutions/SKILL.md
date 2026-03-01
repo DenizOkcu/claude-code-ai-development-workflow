@@ -1,19 +1,15 @@
 ---
 name: planning-solutions
-description: "Define WHAT to build with clear phases and acceptance criteria. Use when creating implementation strategies. Triggers: plan, design solution, implementation strategy."
-model: sonnet
+description: "Creates phased implementation plans with clear scope and acceptance criteria. Use when defining what to build, sequencing work into phases, or establishing validation gates. Produces actionable plans with per-phase validation checklists."
+model: opus
+metadata:
+  version: 1.0.0
+  category: workflow-automation
 ---
 
 # Solution Planning
 
 **Mindset:** Define WHAT to build, not HOW to build every line. The plan is a guide, not a contract.
-
-## Extended Thinking
-
-Before planning, think harder about:
-- What could go wrong?
-- What's the simplest approach?
-- How do we know when it's done?
 
 ## Goal
 
@@ -22,30 +18,28 @@ Create a clear plan that answers:
 2. What are the phases? (sequence)
 3. How do we know it's done? (acceptance criteria)
 
-## Inputs
-- `issue_name`: Kebab-case identifier
-- `feature_description`: What to build
-- `RESEARCH.md`: Research findings (if exists)
+## Instructions
 
-## Output
-- `docs/{issue_name}/PLAN.md`
-- `docs/{issue_name}/STATUS.md` (updated)
+### Step 1: Think Before Planning
 
-## Procedure
+Before planning, think harder about:
+- What could go wrong?
+- What's the simplest approach?
+- How do we know when it's done?
 
-### 1. Read Context
+### Step 2: Read Context
 
 Read `RESEARCH.md` if it exists. Understand:
 - Files to touch
 - Patterns to follow
 - Risks identified
 
-### 2. Define Scope
+### Step 3: Define Scope
 
 **In Scope:** What we WILL do (3-5 items)
 **Out of Scope:** What we WON'T do (important for boundaries)
 
-### 3. Design Phases (2-4 phases)
+### Step 4: Design Phases (2-4 phases)
 
 Each phase should:
 - Be completable in one sitting
@@ -57,14 +51,14 @@ Each phase should:
 - Phase 2: Core feature (main implementation)
 - Phase 3: Polish (edge cases, tests, docs)
 
-### 4. Define Acceptance Criteria
+### Step 5: Define Acceptance Criteria
 
 How do we know it's done? Specific, testable criteria:
 - "User can authenticate via Google"
 - "Failed login shows error message"
 - "Tests cover happy path and error cases"
 
-### 5. Define Validation per Phase
+### Step 6: Define Validation per Phase
 
 For EACH phase, define specific validation steps the implementer must run:
 
@@ -80,7 +74,11 @@ Validation:
 
 This ensures the implementer knows exactly how to verify each phase is complete.
 
-### 6. Create PLAN.md
+### Step 7: Create PLAN.md and Update STATUS.md
+
+Write `docs/{issue_name}/PLAN.md` and update `docs/{issue_name}/STATUS.md`.
+
+## Output Format
 
 ```markdown
 # Plan: {issue_name}
@@ -95,11 +93,9 @@ This ensures the implementer knows exactly how to verify each phase is complete.
 **Building:**
 - {Feature 1}
 - {Feature 2}
-- {Feature 3}
 
 **NOT Building:**
 - {Out of scope 1}
-- {Out of scope 2}
 
 ---
 
@@ -111,33 +107,18 @@ This ensures the implementer knows exactly how to verify each phase is complete.
 Tasks:
 - [ ] {task 1}
 - [ ] {task 2}
-- [ ] {task 3}
 
 Validation:
-- [ ] {specific check - e.g., "npm test passes"}
-- [ ] {specific check - e.g., "TypeScript compiles"}
-- [ ] {specific check - e.g., "New module is importable"}
+- [ ] {specific check}
+- [ ] {specific check}
 
 ### Phase 2: {Name}
 **Goal:** {what this phase accomplishes}
 
 Tasks:
 - [ ] {task 1}
-- [ ] {task 2}
 
 Validation:
-- [ ] {specific check}
-- [ ] {specific check}
-
-### Phase 3: {Name}
-**Goal:** {what this phase accomplishes}
-
-Tasks:
-- [ ] {task 1}
-- [ ] {task 2}
-
-Validation:
-- [ ] {specific check}
 - [ ] {specific check}
 
 ---
@@ -146,7 +127,6 @@ Validation:
 
 - [ ] {criterion 1}
 - [ ] {criterion 2}
-- [ ] {criterion 3}
 - [ ] All tests passing
 - [ ] No regressions
 
@@ -160,9 +140,6 @@ Validation:
 - Create: `path/to/new-file.ts`
 - Modify: `path/to/existing.ts`
 
-**Dependencies:**
-- {package} (new | existing)
-
 ---
 
 ## Risks & Mitigations
@@ -170,52 +147,6 @@ Validation:
 | Risk | Plan |
 |------|------|
 | {risk} | {mitigation} |
-```
-
-### 6. Update STATUS.md
-
-```markdown
-# Status: {issue_name}
-
-**Risk:** {level} | **Updated:** {timestamp}
-
-## Progress
-- [x] Research | [~] Planning | [ ] Implementation | [ ] Review
-
-## Phase: Planning
-- **Phases:** {N}
-- **Key Decisions:** {decision}
-- **Next:** Implementation
-
-## Artifacts
-- RESEARCH.md ✓
-- PLAN.md ✓
-```
-
-## What NOT to Do
-
-- Don't specify line numbers (they become stale)
-- Don't write pseudo-code for every function
-- Don't create detailed API contracts upfront
-- Don't make more than 4 phases
-- Don't create separate PLAN + SPEC documents
-
-## Good vs Bad Plans
-
-**Good:**
-```
-Phase 1: Foundation
-- Create GoogleOAuthStrategy class
-- Register strategy with passport
-- Add dependency to package.json
-```
-
-**Bad:**
-```
-Phase 1: Foundation (lines 1-50 of src/auth/google.ts)
-- Lines 1-10: Import statements
-- Lines 11-30: Class definition
-- Lines 31-50: Constructor with OAuth config
 ```
 
 ## Quality Check
@@ -227,3 +158,10 @@ Phase 1: Foundation (lines 1-50 of src/auth/google.ts)
 - [ ] Risks identified?
 - [ ] PLAN.md created (single file)?
 - [ ] STATUS.md updated?
+
+## Common Issues
+
+- **Too detailed:** Don't specify line numbers (they become stale). Don't write pseudo-code for every function.
+- **Too many phases:** Maximum 4 phases. Break further if needed in implementation.
+- **Missing validation:** Every phase MUST have a validation checklist. This is critical for the implementer.
+- **Duplicate artifacts:** Create PLAN.md only. Don't create separate PLAN + SPEC documents.

@@ -1,7 +1,10 @@
 ---
 name: reviewing-code
-description: "Ensure production readiness with minimal overhead. Use for quality assurance and verification. Triggers: review code, QA, quality check, verify implementation."
+description: "Reviews code for production readiness with focus on blocking issues. Use when performing quality assurance, verifying implementations, or checking security. Runs automated checks, validates plan compliance, and produces APPROVED or NEEDS_FIX verdict."
 model: sonnet
+metadata:
+  version: 1.0.0
+  category: workflow-automation
 ---
 
 # Code Review
@@ -17,26 +20,16 @@ Focus on:
 2. Are there security issues?
 3. Does it do what we planned?
 
-## Extended Thinking
+## Instructions
+
+### Step 1: Think About Risks
 
 Think a lot about:
 - Security vulnerabilities
 - Edge cases that could break
 - Hidden dependencies
 
-## Inputs
-- `issue_name`: Kebab-case identifier
-- `PLAN.md`: What was planned
-- `IMPLEMENTATION.md`: What was built
-- Changed files (via git diff)
-
-## Output
-- `docs/{issue_name}/REVIEW.md`
-- `docs/{issue_name}/STATUS.md` (updated)
-
-## Procedure
-
-### 1. Run Automated Checks
+### Step 2: Run Automated Checks
 
 Run what's available for the stack:
 
@@ -62,14 +55,14 @@ go vet ./...
 go build
 ```
 
-### 2. Check Plan Compliance
+### Step 3: Check Plan Compliance
 
 Read PLAN.md and IMPLEMENTATION.md:
 - Were acceptance criteria met?
 - Were planned features built?
 - Are deviations documented?
 
-### 3. Security Scan
+### Step 4: Security Scan
 
 Look for:
 - Hardcoded secrets
@@ -78,7 +71,11 @@ Look for:
 - Missing auth checks
 - Sensitive data in logs
 
-### 4. Create REVIEW.md
+### Step 5: Create REVIEW.md and Update STATUS.md
+
+Write `docs/{issue_name}/REVIEW.md` and update `docs/{issue_name}/STATUS.md`.
+
+## Output Format
 
 ```markdown
 # Review: {issue_name}
@@ -97,11 +94,11 @@ Look for:
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Tests | ✓/✗ | {N} passing |
-| Type Check | ✓/✗ | |
-| Lint | ✓/✗ | |
-| Build | ✓/✗ | |
-| Security | ✓/✗ | |
+| Tests | pass/fail | {N} passing |
+| Type Check | pass/fail | |
+| Lint | pass/fail | |
+| Build | pass/fail | |
+| Security | pass/fail | |
 
 ---
 
@@ -130,50 +127,6 @@ Look for:
 {APPROVED: Ready to ship | NEEDS_FIX: Blocking issues above}
 ```
 
-### 5. Update STATUS.md
-
-**Approved:**
-```markdown
-# Status: {issue_name}
-
-**Risk:** {level} | **Updated:** {timestamp}
-
-## Progress
-- [x] Research | [x] Planning | [x] Implementation | [x] Review
-
-## Phase: Review ✓ APPROVED
-- **Tests:** {N} passing
-- **Issues:** 0 blocking
-- **Next:** Ready to commit/deploy
-
-## Artifacts
-- RESEARCH.md ✓
-- PLAN.md ✓
-- IMPLEMENTATION.md ✓
-- REVIEW.md ✓
-```
-
-**Needs Fix:**
-```markdown
-# Status: {issue_name}
-
-**Risk:** {level} | **Updated:** {timestamp}
-
-## Progress
-- [x] Research | [x] Planning | [x] Implementation | [~] Review
-
-## Phase: Review ⚠ NEEDS_FIX
-- **Blocking Issues:** {N}
-- **Iteration:** {N}/3
-- **Next:** Fix issues
-
-## Artifacts
-- RESEARCH.md ✓
-- PLAN.md ✓
-- IMPLEMENTATION.md ✓
-- REVIEW.md ✓ (needs fixes)
-```
-
 ## Issue Classification
 
 **Blocking (MUST fix):**
@@ -187,14 +140,6 @@ Look for:
 - Performance optimizations
 - Additional tests
 - Documentation improvements
-
-## What NOT to Do
-
-- Don't nitpick style (linters handle this)
-- Don't suggest hypothetical edge cases
-- Don't add "nice to have" features
-- Don't mark non-blocking issues as blocking
-- Don't create extensive quality matrices
 
 ## Decision Logic
 
@@ -218,3 +163,10 @@ NEEDS_FIX if:
 - [ ] REVIEW.md created?
 - [ ] Clear APPROVED/NEEDS_FIX verdict?
 - [ ] STATUS.md updated?
+
+## Common Issues
+
+- **Nitpicking style:** Don't nitpick style (linters handle this).
+- **Hypothetical edge cases:** Don't suggest hypothetical edge cases that are unlikely to occur.
+- **Feature creep:** Don't add "nice to have" features during review.
+- **Misclassification:** Don't mark non-blocking issues as blocking.
