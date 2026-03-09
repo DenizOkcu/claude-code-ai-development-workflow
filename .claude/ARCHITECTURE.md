@@ -38,6 +38,25 @@ Lean SDLC system aligned with Claude Code best practices.
         │
         ▼
 ┌─────────────────────────────────────────────────────────────┐
+│                  SECURITY LAYER (DevSecOps)                   │
+│               Security Analyst Agent (opus)                   │
+│                                                              │
+│  7a: /security ──▶ 7b: /security/pentest ──▶ 7c: /redteam  │
+│  (OWASP, STRIDE)   (Shannon dynamic)         (AI/LLM audit) │
+│       │                    │                       │         │
+│       └────────────────────┴───────────────────────┘         │
+│                            │                                  │
+│                            ▼                                  │
+│                    /security/harden                            │
+│                  (P0 fix → re-verify)                         │
+│                                                              │
+│  Skill: offensive-security (exploit patterns reference)      │
+│  MCP: Shannon (dynamic pentest via OAuth wrapper)            │
+│  Tool: OBLITERATUS (AI alignment analysis, GPU required)     │
+└─────────────────────────┬───────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
 │                      ARTIFACTS                               │
 │                  docs/{issue-name}/                          │
 │                                                              │
@@ -45,7 +64,11 @@ Lean SDLC system aligned with Claude Code best practices.
 │  ├── RESEARCH.md         (what we found)                     │
 │  ├── PLAN.md             (what we'll build)                  │
 │  ├── IMPLEMENTATION.md   (what we built)                     │
-│  └── REVIEW.md           (is it ready?)                      │
+│  ├── REVIEW.md           (is it ready?)                      │
+│  ├── SECURITY_AUDIT.md   (7a: static findings)              │
+│  ├── PENTEST_REPORT.md   (7b: confirmed exploits)           │
+│  ├── AI_THREAT_MODEL.md  (7c: LLM attack surface)           │
+│  └── HARDEN_PLAN.md      (fix plan + regression tests)      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -83,6 +106,26 @@ Each skill lives in `.claude/skills/{name}/SKILL.md` with YAML frontmatter (`nam
 | implementing-code | Build working software | IMPLEMENTATION.md + code |
 | reviewing-code | Is this deployable? | REVIEW.md |
 | review-fix | Fix blocking issues only | Fixed code |
+| offensive-security | Think like an attacker | Exploit patterns, OWASP/STRIDE reference |
+
+### Security Layer
+
+**Security Analyst Agent (`security-analyst.md`):**
+- Activates during `/security`, `/security/pentest`, `/security/redteam-ai`, `/security/harden`
+- "No exploit, no report" — every Critical/High finding requires a working PoC
+- Combines static analysis (OWASP, STRIDE) with dynamic testing (Shannon) and AI auditing (OBLITERATUS)
+- Produces findings with CVSS scores, reproduction steps, and fix recommendations
+
+**Shannon MCP Integration:**
+- Autonomous pentester running in Docker
+- Connected via OAuth wrapper (`.claude/scripts/shannon-mcp-wrapper.sh`)
+- Reads token dynamically from `~/.claude/credentials.json` — no manual key management
+- Cost: ~$50/run under pay-per-token; monitor usage under Team subscription
+
+**OBLITERATUS (optional, GPU required):**
+- Mechanistic interpretability toolkit for open-source LLMs
+- Reveals alignment constraint structure, jailbreak surface, self-repair robustness
+- Only relevant when the application embeds a self-hosted open-source model
 
 ### Memory Layer
 
@@ -99,7 +142,7 @@ Each skill lives in `.claude/skills/{name}/SKILL.md` with YAML frontmatter (`nam
 
 ### Data Layer
 
-**5 artifacts per issue:**
+**5 core artifacts per issue + up to 4 security artifacts:**
 
 | File | Purpose | Size |
 |------|---------|------|
@@ -108,6 +151,10 @@ Each skill lives in `.claude/skills/{name}/SKILL.md` with YAML frontmatter (`nam
 | PLAN.md | Implementation plan | ~80 lines |
 | IMPLEMENTATION.md | What was built | ~60 lines |
 | REVIEW.md | Review findings | ~40 lines |
+| SECURITY_AUDIT.md | 7a: Static findings (OWASP, STRIDE, CVEs) | ~60 lines |
+| PENTEST_REPORT.md | 7b: Shannon-confirmed exploits with PoCs | ~80 lines |
+| AI_THREAT_MODEL.md | 7c: LLM attack surface, prompt injection risks | ~60 lines |
+| HARDEN_PLAN.md | Prioritized fix list, patches, regression tests | ~80 lines |
 
 ---
 
@@ -160,16 +207,30 @@ Essential notifications only:
    │
    ▼
 Research ──gate──▶ Plan ──gate──▶ Implement ──gate──▶ Review
-                                                      │
-                                          ┌───────────┴───────────┐
-                                          │                       │
-                                      APPROVED               NEEDS_FIX
-                                          │                       │
-                                          ▼                       ▼
-                                      [COMPLETE]              Fix (max 3)
-                                                                  │
-                                                                  ▼
-                                                               Review
+                                                       │
+                                           ┌───────────┴───────────┐
+                                           │                       │
+                                       APPROVED               NEEDS_FIX
+                                           │                       │
+                                           ▼                       ▼
+                                      Security (7a)            Fix (max 3)
+                                           │                       │
+                                           ▼                       ▼
+                                      Pentest (7b)             Review
+                                      (optional)
+                                           │
+                                           ▼
+                                      AI Audit (7c)
+                                      (if LLMs)
+                                           │
+                                           ▼
+                                       Harden (8)
+                                      (if findings)
+                                           │
+                                           ▼
+                                      [DEPLOY →
+                                       OBSERVE →
+                                       RETRO]
 ```
 
 ### Gate Checks
@@ -179,7 +240,10 @@ Research ──gate──▶ Plan ──gate──▶ Implement ──gate──
 | Research → Plan | 3 questions answered |
 | Plan → Implement | Scope + phases + criteria defined |
 | Implement → Review | All phases done + tests pass |
-| Review → Complete | APPROVED verdict |
+| Review → Security | APPROVED verdict |
+| Security → Pentest | SECURITY_AUDIT.md produced |
+| Pentest → Harden | PENTEST_REPORT.md produced (or skipped) |
+| Harden → Deploy | P0 fixes implemented + tests pass |
 
 ---
 

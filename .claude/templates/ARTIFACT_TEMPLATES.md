@@ -304,6 +304,119 @@ Built {brief description of what was implemented}.
 
 ---
 
+---
+
+## PENTEST_REPORT.md
+
+```markdown
+# Penetration Test Report — {issue_name}
+
+**Date**: {date}
+**Tool**: Shannon Lite (autonomous AI pentester)
+**Target**: {staging_url}
+**Duration**: {duration}
+**Shannon Workflow ID**: {workflow_id}
+
+## Executive Summary
+
+{2-3 sentence summary: number of critical/high findings, categories, overall risk}
+
+## Confirmed Vulnerabilities
+
+### [SEVERITY] Finding Title
+
+**CVSS Score**: X.X | **CWE**: CWE-XXX | **OWASP**: A0X
+
+**Description**: {concise description}
+**Affected**: {file path or endpoint}
+
+**Reproduction Steps**
+1. {step}
+
+**Proof of Concept**
+```
+{copy-paste exploit}
+```
+
+**Fix**: {specific code change}
+
+## Unconfirmed / Informational
+
+{Findings Shannon attempted but could not exploit}
+
+## Correlation with Static Audit
+
+| Static Finding | Dynamic Result |
+|---|---|
+| {finding} | CONFIRMED / NOT EXPLOITABLE / NEEDS MANUAL REVIEW |
+
+## Metrics
+
+- Critical: X | High: X | Medium: X | Low: X
+```
+
+---
+
+## AI_THREAT_MODEL.md
+
+```markdown
+# AI Threat Model — {issue_name}
+
+**Date**: {date}
+**Models Used**: {list with versions}
+
+## AI Components Inventory
+
+| Component | Model | Integration Point | User Input Path |
+|---|---|---|---|
+| {component} | {model} | {endpoint} | {data flow} |
+
+## Threat Summary
+
+| Threat | Vector | Severity | Exploitable? |
+|---|---|---|---|
+| {threat} | Direct / Indirect | High | YES — PoC in §X |
+
+## Mitigations
+
+- Never interpolate raw user input into system prompts
+- HTML-escape model output before rendering
+- Restrict tool calls to an explicit allow-list
+```
+
+---
+
+## HARDEN_PLAN.md
+
+```markdown
+# Hardening Plan — {issue_name}
+
+**Source reports**: SECURITY_AUDIT.md | PENTEST_REPORT.md | AI_THREAT_MODEL.md
+**Total findings**: X (Critical: X | High: X | Medium: X | Low: X)
+
+## Fix Summary
+
+| Priority | Finding | CWE | Affected File | Effort |
+|---|---|---|---|---|
+| P0 | {finding} | CWE-XXX | {path} | {hours} |
+
+## P0 Fixes — Implement Immediately
+
+### Fix 1: {title}
+**Root cause**: {why}
+**Before**: {vulnerable code}
+**After**: {fixed code}
+**Test**: {regression test}
+
+## Verification Checklist
+
+- [ ] All regression tests pass
+- [ ] Re-run `/security` — static findings resolved
+- [ ] Re-run `/security/pentest` — exploits closed
+```
+
+---
+
 **Artifact Summary:**
 
 | File | Purpose | Created By |
@@ -313,3 +426,7 @@ Built {brief description of what was implemented}.
 | IMPLEMENTATION.md | What we built | Implementation phase |
 | REVIEW.md | Is it ready? | Review phase |
 | STATUS.md | Where are we? | All phases |
+| SECURITY_AUDIT.md | Static security findings | Phase 7a |
+| PENTEST_REPORT.md | Confirmed exploits with PoCs | Phase 7b |
+| AI_THREAT_MODEL.md | LLM attack surface | Phase 7c |
+| HARDEN_PLAN.md | Fix plan + patches | Phase 8 |

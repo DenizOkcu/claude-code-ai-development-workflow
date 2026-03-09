@@ -1,6 +1,6 @@
-# AI-Powered Software Development Lifecycle (SDLC) — Extended Edition
+# AI-Powered Software Development Lifecycle (SDLC) — DevSecOps Edition
 
-> A comprehensive, 10-phase slash-command workflow for Claude Code that covers the **entire** software development lifecycle — from discovery through post-deployment observability.
+> A comprehensive DevSecOps slash-command workflow for Claude Code that covers the **entire** software development lifecycle — from discovery through security hardening, deployment, and post-deployment observability. Includes an integrated red team layer powered by [Shannon](https://github.com/KeygraphHQ/shannon) (autonomous AI pentester) and [OBLITERATUS](https://github.com/elder-plinius/OBLITERATUS) (AI model threat analysis).
 
 Built by synthesizing [DenizOkcu/claude-code-ai-development-workflow](https://github.com/DenizOkcu/claude-code-ai-development-workflow) (structured Research → Plan → Execute → Review commands) with [OmarKAly22/llm-knowledge-hub](https://github.com/OmarKAly22/llm-knowledge-hub) (LLM best practices, prompt engineering, agentic AI patterns, RAG, security, and evaluation), then extending both with DevOps, observability, knowledge-capture, and multi-agent orchestration phases.
 
@@ -12,7 +12,10 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 
 | Gap in Existing Workflows | How This Project Addresses It |
 |---|---|
-| No threat modeling or security audit phase | `/security-audit` command with OWASP, STRIDE, dependency scanning |
+| No threat modeling or security audit phase | `/security` (static OWASP/STRIDE) + `/security/pentest` (dynamic via Shannon) |
+| No dynamic penetration testing | Shannon MCP integration — proves exploits, not just flags risks |
+| No AI/LLM-specific security testing | `/security/redteam-ai` for prompt injection, alignment analysis (OBLITERATUS) |
+| No security fix loop | `/security/harden` prioritizes (P0–P3), patches, and re-verifies |
 | No architecture decision records | `/design-system` produces ADRs + system diagrams |
 | No performance/load testing phase | `/perf-test` generates benchmarks, profiles, and load scripts |
 | No deployment automation guidance | `/deploy-plan` creates rollout strategy + rollback playbook |
@@ -37,7 +40,7 @@ cp -r .claude/ /path/to/your/project/.claude/
 
 ---
 
-## The 10-Phase Workflow
+## The DevSecOps Workflow
 
 ```
 ┌─────────────┐    ┌──────────────┐    ┌────────────────┐    ┌──────────────┐
@@ -47,17 +50,36 @@ cp -r .claude/ /path/to/your/project/.claude/
                                                                      │
        ┌─────────────────────────────────────────────────────────────┘
        ▼
-┌──────────────┐    ┌────────────────┐    ┌──────────────┐    ┌──────────────┐
-│ 5. IMPLEMENT │───▶│ 6. REVIEW      │───▶│ 7. SECURITY  │───▶│ 8. DEPLOY    │
-│ /implement   │    │ /review        │    │ /security    │    │ /deploy-plan │
-└──────────────┘    └────────────────┘    └──────────────┘    └──────────────┘
-                                                                     │
-       ┌─────────────────────────────────────────────────────────────┘
+┌──────────────┐    ┌────────────────┐
+│ 5. IMPLEMENT │───▶│ 6. REVIEW      │
+│ /implement   │    │ /review        │
+└──────────────┘    └────────┬───────┘
+                             │
+       ┌─────────────────────┘
        ▼
-┌──────────────┐    ┌──────────────┐
-│ 9. OBSERVE   │───▶│ 10. RETRO    │
-│ /observe     │    │ /retro       │
-└──────────────┘    └──────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    SECURITY LAYER (DevSecOps)                             │
+│                                                                          │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐               │
+│  │ 7a. STATIC   │───▶│ 7b. PENTEST  │───▶│ 7c. AI AUDIT │               │
+│  │ /security    │    │ /security/   │    │ /security/   │               │
+│  │ (OWASP,STRIDE)    │ pentest      │    │ redteam-ai   │               │
+│  └──────────────┘    │ (Shannon)    │    │ (OBLITERATUS) │              │
+│                      └──────────────┘    └──────────────┘               │
+│                             │                                            │
+│                      ┌──────┴───────┐                                    │
+│                      │ 8. HARDEN    │                                    │
+│                      │ /security/   │                                    │
+│                      │ harden       │                                    │
+│                      └──────────────┘                                    │
+└──────────────────────────────────────────────────┬───────────────────────┘
+                                                   │
+       ┌───────────────────────────────────────────┘
+       ▼
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│ 9. DEPLOY    │───▶│ 10. OBSERVE  │───▶│ 11. RETRO    │
+│ /deploy-plan │    │ /observe     │    │ /retro       │
+└──────────────┘    └──────────────┘    └──────────────┘
 ```
 
 ### Phase Summaries
@@ -70,12 +92,58 @@ cp -r .claude/ /path/to/your/project/.claude/
 | 4 | **Plan** | `/plan {issue}` | `IMPLEMENTATION_PLAN.md`, test strategy |
 | 5 | **Implement** | `/implement {issue}` | Source code, tests, updated `STATUS.md` |
 | 6 | **Review** | `/review {issue}` | `CODE_REVIEW.md`, approval/rejection status |
-| 7 | **Security** | `/security {issue}` | `SECURITY_AUDIT.md`, dependency report |
-| 8 | **Deploy** | `/deploy-plan {issue}` | `DEPLOY_PLAN.md`, rollback playbook |
-| 9 | **Observe** | `/observe {issue}` | `OBSERVABILITY.md`, alert definitions |
-| 10 | **Retro** | `/retro {issue}` | `RETROSPECTIVE.md`, CLAUDE.md updates |
+| 7a | **Static Security** | `/security {issue}` | `SECURITY_AUDIT.md` (OWASP, STRIDE, deps) |
+| 7b | **Dynamic Pentest** | `/security/pentest {issue}` | `PENTEST_REPORT.md` (Shannon-confirmed exploits) |
+| 7c | **AI Model Audit** | `/security/redteam-ai {issue}` | `AI_THREAT_MODEL.md` (only if LLMs in stack) |
+| 8 | **Harden** | `/security/harden {issue}` | `HARDEN_PLAN.md`, P0 patches, GitHub issues |
+| 9 | **Deploy** | `/deploy-plan {issue}` | `DEPLOY_PLAN.md`, rollback playbook |
+| 10 | **Observe** | `/observe {issue}` | `OBSERVABILITY.md`, alert definitions |
+| 11 | **Retro** | `/retro {issue}` | `RETROSPECTIVE.md`, CLAUDE.md updates |
 
 ---
+
+## Security Commands (DevSecOps)
+
+| Command | Phase | What It Does |
+|---------|-------|--------------|
+| `/security/pentest {issue}` | 7b | Dynamic pentest via Shannon — only reports proven exploits with PoCs |
+| `/security/redteam-ai {issue}` | 7c | AI/LLM threat modeling — prompt injection surface, OBLITERATUS analysis |
+| `/security/harden {issue}` | 8 | Prioritized fix plan (P0–P3), implements P0 patches, creates GitHub issues |
+
+### The Security Analyst Agent
+
+A dedicated `security-analyst` agent activates during all security phases. It enforces the **"No Exploit, No Report"** standard — theoretical risks without working PoCs are classified as Informational, never Critical/High. Every finding includes CVSS score, CWE, reproduction steps, and fix recommendation.
+
+### Shannon Integration (Autonomous AI Pentester)
+
+Shannon runs as an MCP server connected via an OAuth wrapper that reads your Claude Code token dynamically — no API key management needed.
+
+**Setup:**
+```bash
+# 1. Clone Shannon next to your project
+git clone https://github.com/KeygraphHQ/shannon.git ./shannon
+
+# 2. Ensure Docker is running (Shannon runs in containers)
+docker --version
+
+# 3. Authenticate with Claude Code (only needed once)
+claude login
+
+# That's it. The MCP wrapper handles everything else automatically.
+```
+
+**How it works:**
+- `.claude/scripts/shannon-mcp-wrapper.sh` reads `~/.claude/credentials.json` at startup
+- Extracts OAuth token, builds Shannon's MCP server if needed, launches it
+- When token rotates, just `claude login` — next call picks it up automatically
+
+> Never run Shannon against production. It actively exploits — creates users, modifies data. Staging or localhost only.
+
+### OBLITERATUS (AI Model Auditing)
+
+Relevant **only** when your app embeds a self-hosted open-source LLM (Llama, Mistral, etc.). For cloud APIs (Claude, GPT), skip this and use the prompt injection patterns from `/security/redteam-ai` instead.
+
+OBLITERATUS requires a GPU. See the [OBLITERATUS repo](https://github.com/elder-plinius/OBLITERATUS) for installation.
 
 ## Bonus Commands
 
@@ -130,13 +198,17 @@ your-project/
 │   │   ├── plan.md                  # Phase 4: Implementation planning
 │   │   ├── implement.md             # Phase 5: Code implementation
 │   │   ├── review.md                # Phase 6: Code review & QA
-│   │   ├── security.md              # Phase 7: Security audit
-│   │   ├── deploy-plan.md           # Phase 8: Deployment strategy
-│   │   ├── observe.md               # Phase 9: Observability setup
-│   │   ├── retro.md                 # Phase 10: Retrospective
+│   │   ├── security.md              # Phase 7a: Static security audit
+│   │   ├── deploy-plan.md           # Phase 9: Deployment strategy
+│   │   ├── observe.md               # Phase 10: Observability setup
+│   │   ├── retro.md                 # Phase 11: Retrospective
 │   │   ├── ai-integrate.md          # Bonus: LLM/AI integration
 │   │   ├── perf-test.md             # Bonus: Performance testing
 │   │   ├── hotfix.md                # Bonus: Emergency hotfix workflow
+│   │   ├── security/               # DevSecOps security sub-commands
+│   │   │   ├── pentest.md          # Phase 7b: Dynamic pentest via Shannon
+│   │   │   ├── redteam-ai.md       # Phase 7c: AI/LLM threat modeling
+│   │   │   └── harden.md           # Phase 8: Security hardening + fix plan
 │   │   ├── language/
 │   │   │   ├── typescript-pro.md    # TypeScript expert mode
 │   │   │   ├── javascript-react-pro.md  # JavaScript + React expert mode
@@ -168,12 +240,16 @@ your-project/
 │   │       ├── PROJECT_SPEC.md
 │   │       ├── IMPLEMENTATION_PLAN.md
 │   │       ├── CODE_REVIEW.md
-│   │       ├── SECURITY_AUDIT.md
+│   │       ├── SECURITY_AUDIT.md    # Phase 7a output
+│   │       ├── PENTEST_REPORT.md    # Phase 7b output (Shannon)
+│   │       ├── AI_THREAT_MODEL.md   # Phase 7c output (if LLMs)
+│   │       ├── HARDEN_PLAN.md       # Phase 8 output
 │   │       ├── DEPLOY_PLAN.md
 │   │       ├── OBSERVABILITY.md
 │   │       └── RETROSPECTIVE.md
 │   ├── agents/                      # Multi-agent orchestration
-│   │   └── sdlc-orchestrator.md    # Autonomous SDLC agent (Research→Plan→Implement→Review)
+│   │   ├── sdlc-orchestrator.md    # Autonomous SDLC agent (Research→Plan→Implement→Review)
+│   │   └── security-analyst.md     # Security persona (OWASP, Shannon, OBLITERATUS)
 │   ├── skills/                      # Folder-based skills (Anthropic official format)
 │   │   ├── researching-code/
 │   │   │   └── SKILL.md            # Codebase research skill (model: opus)
@@ -183,9 +259,13 @@ your-project/
 │   │   │   └── SKILL.md            # Code implementation skill (model: opus)
 │   │   ├── reviewing-code/
 │   │   │   └── SKILL.md            # Code review skill (model: sonnet)
-│   │   └── review-fix/
-│   │       └── SKILL.md            # Review fix skill (model: sonnet)
-│   └── settings.json                # Claude Code project settings
+│   │   ├── review-fix/
+│   │   │   └── SKILL.md            # Review fix skill (model: sonnet)
+│   │   └── offensive-security/
+│   │       └── SKILL.md            # OWASP, STRIDE, exploit patterns reference (model: opus)
+│   ├── scripts/
+│   │   └── shannon-mcp-wrapper.sh  # OAuth token wrapper for Shannon MCP server
+│   └── settings.json                # Claude Code project settings + Shannon MCP config
 ├── CLAUDE.md                        # Project-level AI instructions
 └── docs/
     └── guides/
@@ -239,12 +319,15 @@ Each phase uses a cost-appropriate model via the `model:` field in YAML frontmat
 | 4. Plan | `/plan` | opus | Phase sequencing, acceptance criteria |
 | 5. Implement | `/implement` | opus | Multi-file code generation, testing |
 | 6. Review | `/review` | sonnet | Checklist verification, pattern matching |
-| 7. Security | `/security` | sonnet | OWASP/STRIDE checklists |
-| 8. Deploy | `/deploy-plan` | sonnet | Document generation from template |
-| 9. Observe | `/observe` | sonnet | Document generation from template |
-| 10. Retro | `/retro` | sonnet | Summarization, knowledge extraction |
+| 7a. Static Security | `/security` | sonnet | OWASP/STRIDE checklists |
+| 7b. Dynamic Pentest | `/security/pentest` | sonnet | Shannon orchestration, report parsing |
+| 7c. AI Model Audit | `/security/redteam-ai` | opus | Deep threat analysis, attack patterns |
+| 8. Harden | `/security/harden` | opus | Fix plan + code patching |
+| 9. Deploy | `/deploy-plan` | sonnet | Document generation from template |
+| 10. Observe | `/observe` | sonnet | Document generation from template |
+| 11. Retro | `/retro` | sonnet | Summarization, knowledge extraction |
 
-**Cost impact:** 6/10 phases on Sonnet saves ~40-60% per full SDLC run compared to running everything on Opus, with no quality loss on the checklist/template phases.
+**Cost impact:** 7/11 phases on Sonnet saves ~40-60% per full SDLC run compared to running everything on Opus, with no quality loss on the checklist/template phases.
 
 The `model:` field is officially supported in both commands and skills. Valid values: `sonnet`, `opus`, `haiku`, `inherit`.
 
@@ -356,23 +439,38 @@ This detection feeds into `DISCOVERY.md` and `STATUS.md`, so every subsequent ph
 # Output: CODE_REVIEW.md
 # STATUS: [x] Review - ✓ APPROVED
 
-# Phase 7: Security audit
+# Phase 7a: Static security audit
 /security add-jwt-rbac
 
 # Output: SECURITY_AUDIT.md (threat model, dependency scan, OWASP checklist)
-# STATUS: [x] Security - ✓ PASSED (0 critical, 2 low findings)
+# STATUS: [x] Static Security - ⚠ CONDITIONAL PASS (2 findings need dynamic testing)
 
-# Phase 8: Deploy
+# Phase 7b: Dynamic pentest (optional — requires staging environment)
+/security/pentest add-jwt-rbac
+
+# Output: PENTEST_REPORT.md (Shannon confirmed 1 exploit, dismissed 1 as non-exploitable)
+# STATUS: [x] Dynamic Pentest - 1 confirmed vulnerability (JWT alg:none bypass)
+
+# Phase 7c: AI model audit (only if your feature uses an LLM)
+# /security/redteam-ai add-jwt-rbac  # ← skip if no LLM components
+
+# Phase 8: Harden — fix confirmed vulnerabilities
+/security/harden add-jwt-rbac
+
+# Output: HARDEN_PLAN.md (P0: JWT fix implemented, P2: 1 GitHub issue created)
+# STATUS: [x] Hardening - P0 fixes applied, regression tests passing
+
+# Phase 9: Deploy
 /deploy-plan add-jwt-rbac
 
 # Output: DEPLOY_PLAN.md (rollout strategy, feature flags, rollback)
 
-# Phase 9: Observe
+# Phase 10: Observe
 /observe add-jwt-rbac
 
 # Output: OBSERVABILITY.md (metrics, alerts, dashboard specs)
 
-# Phase 10: Retro
+# Phase 11: Retro
 /retro add-jwt-rbac
 
 # Output: RETROSPECTIVE.md, updates to CLAUDE.md with learnings
@@ -383,17 +481,18 @@ This detection feeds into `DISCOVERY.md` and `STATUS.md`, so every subsequent ph
 
 ## When to Skip Phases
 
-Not every change needs all 10 phases. Use judgment:
+Not every change needs all phases. Use judgment:
 
 | Change Type | Recommended Phases |
 |---|---|
 | Typo fix | Just fix it directly |
 | Small bug fix | Research → Implement → Review |
 | Medium feature | Discover → Research → Plan → Implement → Review |
-| Large feature | All 10 phases |
-| Security-critical | All 10 phases, emphasize Security + Observe |
+| Large feature | All phases |
+| Security-critical | All phases, include 7b Pentest + 8 Harden |
 | Hotfix/emergency | `/hotfix` (compressed: Research → Fix → Review → Deploy) |
-| AI/LLM feature | Add `/ai-integrate` between Design and Plan |
+| AI/LLM feature | Add `/ai-integrate` between Design and Plan, include 7c AI Audit |
+| Auth/payment/PII | Must include 7a + 7b + 8 (static + dynamic + harden) |
 
 ---
 
@@ -451,8 +550,10 @@ This project synthesizes and extends:
 
 - **[claude-code-ai-development-workflow](https://github.com/DenizOkcu/claude-code-ai-development-workflow)** by DenizOkcu — the original 4-phase slash command workflow (Research → Plan → Execute → Review)
 - **[llm-knowledge-hub](https://github.com/OmarKAly22/llm-knowledge-hub)** by OmarKAly22 — comprehensive LLM development guides, agentic AI patterns, RAG, security, evaluation, and best practices
+- **[Shannon](https://github.com/KeygraphHQ/shannon)** by KeygraphHQ — autonomous AI pentester for dynamic security testing
+- **[OBLITERATUS](https://github.com/elder-plinius/OBLITERATUS)** by elder-plinius — mechanistic interpretability toolkit for AI model alignment analysis
 
-Extended with: Discovery, Architecture/ADR, Security Audit, Deployment, Observability, Retrospective phases, AI/LLM integration commands, performance testing, hotfix workflow, multi-agent orchestration patterns, and self-improving CLAUDE.md via automated retrospectives.
+Extended with: Discovery, Architecture/ADR, DevSecOps security layer (static + dynamic + AI audit + hardening), Deployment, Observability, Retrospective phases, AI/LLM integration commands, performance testing, hotfix workflow, multi-agent orchestration patterns, and self-improving CLAUDE.md via automated retrospectives.
 
 ## License
 

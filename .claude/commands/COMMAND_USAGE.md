@@ -82,6 +82,48 @@ cat docs/{issue-name}/STATUS.md
 | Implementation | IMPLEMENTATION.md + code | All phases done + tests pass |
 | Review | REVIEW.md | APPROVED verdict |
 | Fix | Fixed code | Blocking issues resolved |
+| Security (7a) | SECURITY_AUDIT.md | OWASP/STRIDE evaluated |
+| Pentest (7b) | PENTEST_REPORT.md | Shannon run complete |
+| AI Audit (7c) | AI_THREAT_MODEL.md | LLM threats documented |
+| Harden (8) | HARDEN_PLAN.md + patches | P0 fixes implemented |
+
+---
+
+## Security Commands (DevSecOps)
+
+### `/security/pentest {issue}`
+
+Phase 7b — Dynamic pentest via Shannon (autonomous AI pentester).
+
+```bash
+/security/pentest add-jwt-rbac
+```
+
+**Prerequisites:** `/security` completed, staging running, Docker available, Shannon cloned.
+**Output:** `PENTEST_REPORT.md` with proven exploits only.
+
+> Never run against production. Staging or localhost only.
+
+### `/security/redteam-ai {issue}`
+
+Phase 7c — AI/LLM threat modeling (only if LLMs in stack).
+
+```bash
+/security/redteam-ai add-chat-assistant
+```
+
+**Skip if** no LLM/AI components. **Output:** `AI_THREAT_MODEL.md`.
+
+### `/security/harden {issue}`
+
+Phase 8 — Aggregate findings, prioritize, and implement fixes.
+
+```bash
+/security/harden add-jwt-rbac
+```
+
+**Priority:** P0 (fix now) → P1 (this sprint) → P2 (next sprint) → P3 (backlog).
+**Output:** `HARDEN_PLAN.md` + P0 patches applied + GitHub issues for P1/P2.
 
 ---
 
@@ -99,7 +141,13 @@ Skills (sequential):
   • reviewing-code
   • review-fix (if needed)
     ↓
-5 artifacts + code
+Security Layer:
+  • /security (7a: static)
+  • /security/pentest (7b: dynamic, optional)
+  • /security/redteam-ai (7c: AI audit, optional)
+  • /security/harden (8: fix loop)
+    ↓
+5 core artifacts + security artifacts + code
 ```
 
 ---
@@ -112,3 +160,4 @@ Skills (sequential):
 - **Tracked** - STATUS.md shows progress
 - **Quality gates** - Validation at each phase
 - **Self-healing** - Auto fix loop (max 3)
+- **DevSecOps** - Integrated security testing with proven exploits only

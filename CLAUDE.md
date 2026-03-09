@@ -72,29 +72,37 @@ Use the ticket number in all branches for easy tracking.
 
 ---
 
-## Development Workflow (10-Phase SDLC)
+## Development Workflow (DevSecOps SDLC)
 
-This workspace uses a structured 10-phase development lifecycle via slash commands. All workflow artifacts are stored under `.claude/planning/{issue-name}/` and tracked via a central `STATUS.md`.
+This workspace uses a structured development lifecycle via slash commands with an integrated **DevSecOps security layer**. All workflow artifacts are stored under `.claude/planning/{issue-name}/` and tracked via a central `STATUS.md`.
 
 ### Quick Start
 ```bash
 # Full workflow for complex features:
-/discover [description]          # Phase 1: Scope + detect tech stack
-/research {issue-name}           # Phase 2: Deep codebase analysis
-/design-system {issue-name}      # Phase 3: Architecture + ADRs
-/plan {issue-name}               # Phase 4: Implementation plan
-/implement {issue-name}          # Phase 5: Code + tests
-/review {issue-name}             # Phase 6: Code review + QA
-/security {issue-name}           # Phase 7: Security audit
-/deploy-plan {issue-name}        # Phase 8: Deployment strategy
-/observe {issue-name}            # Phase 9: Observability setup
-/retro {issue-name}              # Phase 10: Retrospective + knowledge capture
+/discover [description]              # Phase 1: Scope + detect tech stack
+/research {issue-name}               # Phase 2: Deep codebase analysis
+/design-system {issue-name}          # Phase 3: Architecture + ADRs
+/plan {issue-name}                   # Phase 4: Implementation plan
+/implement {issue-name}              # Phase 5: Code + tests
+/review {issue-name}                 # Phase 6: Code review + QA
+/security {issue-name}               # Phase 7a: Static security audit (OWASP, STRIDE)
+/security/pentest {issue-name}       # Phase 7b: Dynamic pentest via Shannon (optional)
+/security/redteam-ai {issue-name}    # Phase 7c: AI/LLM threat model (only if LLMs in stack)
+/security/harden {issue-name}        # Phase 8: Prioritized fix plan + patch implementation
+/deploy-plan {issue-name}            # Phase 9: Deployment strategy
+/observe {issue-name}                # Phase 10: Observability setup
+/retro {issue-name}                  # Phase 11: Retrospective + knowledge capture
 
 # Medium complexity (skip discovery/design):
 /research {issue-name}
 /plan {issue-name}
 /implement {issue-name}
 /review {issue-name}
+
+# Security-focused (after review):
+/security {issue-name}               # Static audit
+/security/pentest {issue-name}       # Dynamic pentest (staging only)
+/security/harden {issue-name}        # Fix confirmed vulnerabilities
 
 # Simple change → Just code it directly.
 
@@ -119,7 +127,10 @@ Issue names are **kebab-case**, concise (2-5 words), and descriptive:
 │   ├── PROJECT_SPEC.md        # Technical requirements and specs
 │   ├── IMPLEMENTATION_PLAN.md # Phased implementation strategy
 │   ├── CODE_REVIEW.md         # Review findings and approval status
-│   ├── SECURITY_AUDIT.md      # Threat model + OWASP + dependency scan
+│   ├── SECURITY_AUDIT.md      # Phase 7a: Static threat model + OWASP + dependency scan
+│   ├── PENTEST_REPORT.md      # Phase 7b: Shannon-confirmed exploits with PoCs
+│   ├── AI_THREAT_MODEL.md     # Phase 7c: LLM attack surface + prompt injection risks
+│   ├── HARDEN_PLAN.md         # Phase 8: Prioritized fix list + regression tests
 │   ├── DEPLOY_PLAN.md         # Rollout strategy + rollback playbook
 │   ├── OBSERVABILITY.md       # Metrics, logging, alerts, dashboards
 │   └── RETROSPECTIVE.md       # Lessons learned
@@ -144,6 +155,11 @@ The `/discover` command automatically scans the project to detect languages, fra
 /language/openshift-pro [task]          # Routes, SCCs, operators, builds
 /language/software-engineer-pro [task]  # Fallback: SOLID, clean arch, testing (any lang)
 /language/cloud-engineer-pro [task]     # Fallback: provider-agnostic infra & ops
+
+# Security (DevSecOps — after /review):
+/security/pentest {issue-name}          # Dynamic pentest via Shannon (staging only)
+/security/redteam-ai {issue-name}       # AI/LLM threat model + OBLITERATUS analysis
+/security/harden {issue-name}           # Prioritized fix plan + implement P0 patches
 
 # Quality tooling (run anytime):
 /quality/code-audit [scope]             # Full static analysis + metrics
@@ -434,17 +450,20 @@ ansible-inventory --graph                   # Show inventory tree
 # Check workflow status for an issue
 cat .claude/planning/{issue-name}/STATUS.md
 
-# Full 10-phase workflow
-/discover [description]           # Phase 1: Scope + stack detection
-/research {issue-name}            # Phase 2: Codebase analysis
-/design-system {issue-name}       # Phase 3: Architecture + ADRs
-/plan {issue-name}                # Phase 4: Implementation plan
-/implement {issue-name}           # Phase 5: Code + tests
-/review {issue-name}              # Phase 6: Code review
-/security {issue-name}            # Phase 7: Security audit
-/deploy-plan {issue-name}         # Phase 8: Deployment strategy
-/observe {issue-name}             # Phase 9: Observability
-/retro {issue-name}               # Phase 10: Retrospective
+# Full DevSecOps workflow
+/discover [description]              # Phase 1: Scope + stack detection
+/research {issue-name}               # Phase 2: Codebase analysis
+/design-system {issue-name}          # Phase 3: Architecture + ADRs
+/plan {issue-name}                   # Phase 4: Implementation plan
+/implement {issue-name}              # Phase 5: Code + tests
+/review {issue-name}                 # Phase 6: Code review
+/security {issue-name}               # Phase 7a: Static security audit
+/security/pentest {issue-name}       # Phase 7b: Dynamic pentest (Shannon)
+/security/redteam-ai {issue-name}    # Phase 7c: AI model audit (if LLMs)
+/security/harden {issue-name}        # Phase 8: Fix confirmed vulnerabilities
+/deploy-plan {issue-name}            # Phase 9: Deployment strategy
+/observe {issue-name}                # Phase 10: Observability
+/retro {issue-name}                  # Phase 11: Retrospective
 ```
 
 ---

@@ -2,9 +2,15 @@
 model: sonnet
 ---
 
-## Phase 7: Security Audit
+## Phase 7a: Static Security Audit
 
-You are entering the **Security** phase for issue: `$ARGUMENTS`
+You are entering the **Static Security Audit** phase (7a) for issue: `$ARGUMENTS`
+
+> This is the first of up to three security sub-phases:
+> - **7a** `/security` — Static analysis (OWASP, STRIDE, dependency scan) **← you are here**
+> - **7b** `/security/pentest` — Dynamic pentest via Shannon (staging only)
+> - **7c** `/security/redteam-ai` — AI/LLM threat modeling (only if LLMs in stack)
+> - Then → `/security/harden` to fix confirmed findings
 
 ### Pre-Conditions
 - Read `STATUS.md` — confirm Review is complete and APPROVED
@@ -93,9 +99,12 @@ Report: vulnerability count by severity, remediation steps.
 ```
 
 ### Post-Actions
-- Update `STATUS.md` with security audit outcome
-- If PASSED: suggest `/deploy-plan $ARGUMENTS`
-- If FAILED: list remediations, fix, then re-run `/security $ARGUMENTS`
+- Update `STATUS.md` with static security audit outcome
+- **Next steps after 7a:**
+  - If staging environment is available → suggest `/security/pentest $ARGUMENTS` (Phase 7b)
+  - If the feature involves LLM/AI components → suggest `/security/redteam-ai $ARGUMENTS` (Phase 7c)
+  - If no staging/no dynamic testing needed → suggest `/security/harden $ARGUMENTS` to address findings
+  - If PASSED with zero findings → suggest `/deploy-plan $ARGUMENTS`
 
 ### Quality Gates
 - STRIDE analysis covers all new components/boundaries
