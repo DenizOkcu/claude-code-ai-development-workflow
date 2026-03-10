@@ -1,6 +1,6 @@
 # AI-Powered Software Development Lifecycle (SDLC) — DevSecOps Edition
 
->> A comprehensive DevSecOps slash-command workflow for Claude Code that covers the **entire** software development lifecycle — from discovery through security hardening, deployment, and post-deployment observability. Includes an integrated red team layer and a rich visualization engine for turning artifacts into interactive HTML pages.
+> A comprehensive DevSecOps slash-command workflow for Claude Code that covers the **entire** software development lifecycle — from discovery through security hardening, deployment, and post-deployment observability. Includes an integrated red team layer and a rich visualization engine for turning artifacts into interactive HTML pages.
 
 ### Integrated External Tools
 
