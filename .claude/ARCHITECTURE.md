@@ -57,6 +57,23 @@ Lean SDLC system aligned with Claude Code best practices.
         │
         ▼
 ┌─────────────────────────────────────────────────────────────┐
+│                   VISUALIZATION LAYER                        │
+│                Visual Explainer Skill (sonnet)               │
+│                                                              │
+│  /visual/generate-web-diagram    HTML diagrams (Mermaid)    │
+│  /visual/diff-review             Before/after code review   │
+│  /visual/plan-review             Plan vs codebase analysis  │
+│  /visual/project-recap           Mental model snapshot      │
+│  /visual/generate-slides         Slide deck presentations   │
+│  /visual/generate-visual-plan    Feature implementation viz │
+│  /visual/fact-check              Document accuracy check    │
+│  /visual/share                   Deploy to Vercel           │
+│                                                              │
+│  Output: ~/.agent/diagrams/ (self-contained HTML files)     │
+└─────────────────────────┬───────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
 │                      ARTIFACTS                               │
 │                  docs/{issue-name}/                          │
 │                                                              │
@@ -107,6 +124,28 @@ Each skill lives in `.claude/skills/{name}/SKILL.md` with YAML frontmatter (`nam
 | reviewing-code | Is this deployable? | REVIEW.md |
 | review-fix | Fix blocking issues only | Fixed code |
 | offensive-security | Think like an attacker | Exploit patterns, OWASP/STRIDE reference |
+| visual-explainer | Generate rich HTML visualizations | Self-contained HTML pages in ~/.agent/diagrams/ |
+
+### Visualization Layer
+
+**Visual Explainer Skill (`visual-explainer/SKILL.md`):**
+- Generates self-contained HTML pages with Mermaid diagrams, CSS Grid layouts, Chart.js dashboards
+- Commands namespaced under `/visual/` (8 commands)
+- Anti-slop guardrails: forbidden fonts, colors, and patterns to ensure distinctive output
+- Supports light/dark themes, responsive navigation, zoom/pan on diagrams
+- Optional AI image generation via `surf-cli`
+- Output: `~/.agent/diagrams/` (persistent across sessions)
+
+| Command | Purpose | Model |
+|---------|---------|-------|
+| generate-web-diagram | Any HTML diagram | sonnet |
+| diff-review | Before/after architecture + code review | opus |
+| plan-review | Plan vs codebase risk assessment | opus |
+| project-recap | Mental model snapshot | opus |
+| fact-check | Verify document accuracy | opus |
+| generate-slides | Magazine-quality slide deck | sonnet |
+| generate-visual-plan | Visual implementation plan | opus |
+| share | Deploy to Vercel | — |
 
 ### Security Layer
 

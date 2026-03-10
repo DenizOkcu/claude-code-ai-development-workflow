@@ -170,6 +170,16 @@ The `/discover` command automatically scans the project to detect languages, fra
 # DevOps:
 /devops/ci-pipeline [context]           # Generate CI/CD pipeline config
 
+# Visualization (visual-explainer):
+/visual/generate-web-diagram [topic]    # HTML diagram for any topic
+/visual/diff-review [ref]               # Visual diff review with architecture comparison
+/visual/plan-review [plan-file]         # Compare plan against codebase visually
+/visual/project-recap [time-window]     # Mental model snapshot for context-switching
+/visual/fact-check [file]               # Verify document accuracy against code
+/visual/generate-slides [topic]         # Magazine-quality slide deck
+/visual/generate-visual-plan [feature]  # Visual implementation plan with state machines
+/visual/share [html-file]              # Deploy HTML page to Vercel for sharing
+
 # Bonus:
 /ai-integrate {issue-name}             # LLM/AI integration patterns
 /perf-test {issue-name}                # Performance testing + benchmarks

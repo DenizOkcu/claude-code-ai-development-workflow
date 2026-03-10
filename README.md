@@ -1,8 +1,22 @@
 # AI-Powered Software Development Lifecycle (SDLC) — DevSecOps Edition
 
-> A comprehensive DevSecOps slash-command workflow for Claude Code that covers the **entire** software development lifecycle — from discovery through security hardening, deployment, and post-deployment observability. Includes an integrated red team layer powered by [Shannon](https://github.com/KeygraphHQ/shannon) (autonomous AI pentester) and [OBLITERATUS](https://github.com/elder-plinius/OBLITERATUS) (AI model threat analysis).
+>> A comprehensive DevSecOps slash-command workflow for Claude Code that covers the **entire** software development lifecycle — from discovery through security hardening, deployment, and post-deployment observability. Includes an integrated red team layer and a rich visualization engine for turning artifacts into interactive HTML pages.
 
-Built by synthesizing [DenizOkcu/claude-code-ai-development-workflow](https://github.com/DenizOkcu/claude-code-ai-development-workflow) (structured Research → Plan → Execute → Review commands) with [OmarKAly22/llm-knowledge-hub](https://github.com/OmarKAly22/llm-knowledge-hub) (LLM best practices, prompt engineering, agentic AI patterns, RAG, security, and evaluation), then extending both with DevOps, observability, knowledge-capture, and multi-agent orchestration phases.
+### Integrated External Tools
+
+This project synthesizes and extends several open-source tools, each bringing distinct capabilities:
+
+| Tool | What It Brings | Commands |
+|------|---------------|----------|
+| [**claude-code-ai-development-workflow**](https://github.com/DenizOkcu/claude-code-ai-development-workflow) by DenizOkcu | The original 4-phase slash command workflow (Research → Plan → Execute → Review) that forms the backbone of the SDLC pipeline | `/research`, `/plan`, `/implement`, `/review` |
+| [**llm-knowledge-hub**](https://github.com/OmarKAly22/llm-knowledge-hub) by OmarKAly22 | LLM best practices, prompt engineering, agentic AI patterns, RAG, security, and evaluation guides | `/ai-integrate`, language expert commands |
+| [**Shannon**](https://github.com/KeygraphHQ/shannon) by KeygraphHQ | Autonomous AI pentester — proves exploits with working PoCs, not just flags theoretical risks. Runs as an MCP server in Docker | `/security/pentest` |
+| [**OBLITERATUS**](https://github.com/elder-plinius/OBLITERATUS) by elder-plinius | Mechanistic interpretability toolkit for AI model alignment analysis — reveals jailbreak surfaces and self-repair robustness in self-hosted LLMs | `/security/redteam-ai` |
+| [**visual-explainer**](https://github.com/nicobailon/visual-explainer) by nicobailon | Generates self-contained HTML pages with Mermaid diagrams, interactive zoom/pan, dark/light themes, KPI dashboards, slide decks, and anti-AI-slop guardrails. Turns markdown artifacts into browser-quality visualizations | `/visual/*` (8 commands) |
+
+Extended with: Discovery, Architecture/ADR, DevSecOps security layer, Deployment, Observability, Retrospective phases, performance testing, hotfix workflow, multi-agent orchestration, and self-improving CLAUDE.md via automated retrospectives.
+
+**[View the interactive slide deck overview](https://ai-sdlc.andersonleite.me/sdlc-overview-deck.html)** — a 13-slide visual summary of the entire workflow, built with the integrated visual-explainer. ([local](docs/sdlc-overview-deck.html))
 
 ---
 
@@ -23,6 +37,7 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 | No knowledge capture / retrospective | `/retro` generates lessons-learned docs and updates CLAUDE.md |
 | No multi-feature orchestration | Parallel issue tracking via `STATUS.md` per feature |
 | No LLM/AI-specific development patterns | `/ai-integrate` for prompt engineering, RAG, eval, and guardrails |
+| No visual output for artifacts | `/visual/*` generates HTML pages with Mermaid diagrams, KPI dashboards, slide decks |
 
 ---
 
@@ -153,6 +168,28 @@ OBLITERATUS requires a GPU. See the [OBLITERATUS repo](https://github.com/elder-
 | `/perf-test {issue}` | Performance testing — benchmarks, profiling, load tests |
 | `/hotfix [description]` | Compressed emergency workflow (research → fix → review → deploy) |
 
+## Visualization Commands
+
+Generate rich HTML pages from any technical content — architecture diagrams, diff reviews, project recaps, slide decks. Powered by [visual-explainer](https://github.com/nicobailon/visual-explainer). Output goes to `~/.agent/diagrams/` and opens in the browser.
+
+| Command | Purpose |
+|---------|---------|
+| `/visual/generate-web-diagram [topic]` | HTML diagram for any topic — architecture, flowcharts, ER, state machines, data tables |
+| `/visual/diff-review [ref]` | Visual diff review with KPI dashboard, module architecture, Good/Bad/Ugly code review |
+| `/visual/plan-review [plan-file]` | Compare implementation plan against codebase — blast radius, risk assessment, gaps |
+| `/visual/project-recap [time-window]` | Mental model snapshot — architecture, recent activity, decision log, cognitive debt |
+| `/visual/fact-check [file]` | Verify document accuracy against actual code, correct inaccuracies in place |
+| `/visual/generate-slides [topic]` | Magazine-quality slide deck with 10 slide types and 4 curated presets |
+| `/visual/generate-visual-plan [feature]` | Visual implementation plan with state machines, code snippets, edge cases |
+| `/visual/share [html-file]` | Deploy any HTML page to Vercel — instant public URL, no auth needed |
+
+**SDLC touchpoints** — visualization commands pair naturally with SDLC phases:
+- After `/design-system` → `/visual/generate-web-diagram` for interactive architecture diagrams
+- After `/review` → `/visual/diff-review` for visual diff analysis
+- After `/plan` → `/visual/plan-review` to validate the plan visually
+- After `/retro` → `/visual/generate-slides` for team presentation
+- Context-switching back to a project → `/visual/project-recap 2w`
+
 ## Language & Cloud Expert Commands
 
 Auto-detected during `/discover` based on your project's tech stack:
@@ -228,6 +265,15 @@ your-project/
 │   │   │   ├── test-strategy.md     # Test pyramid setup & config
 │   │   │   ├── lint-setup.md        # Linter, formatter, hooks setup
 │   │   │   └── dependency-check.md  # Vulnerability & license audit
+│   │   ├── visual/                    # Visualization commands (visual-explainer)
+│   │   │   ├── generate-web-diagram.md  # HTML diagram generation
+│   │   │   ├── diff-review.md           # Visual diff review
+│   │   │   ├── plan-review.md           # Plan vs codebase visual comparison
+│   │   │   ├── project-recap.md         # Mental model snapshot
+│   │   │   ├── fact-check.md            # Document accuracy verification
+│   │   │   ├── generate-slides.md       # Slide deck generation
+│   │   │   ├── generate-visual-plan.md  # Visual implementation plan
+│   │   │   └── share.md                 # Deploy HTML to Vercel
 │   │   └── devops/
 │   │       └── ci-pipeline.md       # CI/CD pipeline generation
 │   ├── planning/                    # Auto-generated per issue
@@ -261,8 +307,13 @@ your-project/
 │   │   │   └── SKILL.md            # Code review skill (model: sonnet)
 │   │   ├── review-fix/
 │   │   │   └── SKILL.md            # Review fix skill (model: sonnet)
-│   │   └── offensive-security/
-│   │       └── SKILL.md            # OWASP, STRIDE, exploit patterns reference (model: opus)
+│   │   ├── offensive-security/
+│   │   │   └── SKILL.md            # OWASP, STRIDE, exploit patterns reference (model: opus)
+│   │   └── visual-explainer/        # HTML visualization skill (visual-explainer)
+│   │       ├── SKILL.md            # Workflow, diagram types, anti-slop rules (model: sonnet)
+│   │       ├── references/          # CSS patterns, libraries, slide patterns (~120KB)
+│   │       ├── templates/           # HTML reference templates (architecture, table, mermaid, slides)
+│   │       └── scripts/share.sh    # Vercel deployment script
 │   ├── scripts/
 │   │   └── shannon-mcp-wrapper.sh  # OAuth token wrapper for Shannon MCP server
 │   └── settings.json                # Claude Code project settings + Shannon MCP config
@@ -326,6 +377,13 @@ Each phase uses a cost-appropriate model via the `model:` field in YAML frontmat
 | 9. Deploy | `/deploy-plan` | sonnet | Document generation from template |
 | 10. Observe | `/observe` | sonnet | Document generation from template |
 | 11. Retro | `/retro` | sonnet | Summarization, knowledge extraction |
+| Visual: Diagram | `/visual/generate-web-diagram` | sonnet | Template-based HTML generation |
+| Visual: Diff Review | `/visual/diff-review` | opus | Deep codebase analysis + visualization |
+| Visual: Plan Review | `/visual/plan-review` | opus | Plan vs code cross-referencing |
+| Visual: Recap | `/visual/project-recap` | opus | Architecture scan + narrative |
+| Visual: Slides | `/visual/generate-slides` | sonnet | Template-based slide generation |
+| Visual: Plan | `/visual/generate-visual-plan` | opus | Feature design + state machines |
+| Visual: Fact Check | `/visual/fact-check` | opus | Claim extraction + source verification |
 
 **Cost impact:** 7/11 phases on Sonnet saves ~40-60% per full SDLC run compared to running everything on Opus, with no quality loss on the checklist/template phases.
 
@@ -552,8 +610,9 @@ This project synthesizes and extends:
 - **[llm-knowledge-hub](https://github.com/OmarKAly22/llm-knowledge-hub)** by OmarKAly22 — comprehensive LLM development guides, agentic AI patterns, RAG, security, evaluation, and best practices
 - **[Shannon](https://github.com/KeygraphHQ/shannon)** by KeygraphHQ — autonomous AI pentester for dynamic security testing
 - **[OBLITERATUS](https://github.com/elder-plinius/OBLITERATUS)** by elder-plinius — mechanistic interpretability toolkit for AI model alignment analysis
+- **[visual-explainer](https://github.com/nicobailon/visual-explainer)** by nicobailon — rich HTML visualization engine with Mermaid diagrams, interactive zoom/pan, slide decks, and anti-AI-slop design guardrails
 
-Extended with: Discovery, Architecture/ADR, DevSecOps security layer (static + dynamic + AI audit + hardening), Deployment, Observability, Retrospective phases, AI/LLM integration commands, performance testing, hotfix workflow, multi-agent orchestration patterns, and self-improving CLAUDE.md via automated retrospectives.
+Extended with: Discovery, Architecture/ADR, DevSecOps security layer (static + dynamic + AI audit + hardening), Deployment, Observability, Retrospective phases, Visualization layer, AI/LLM integration commands, performance testing, hotfix workflow, multi-agent orchestration patterns, and self-improving CLAUDE.md via automated retrospectives.
 
 ## License
 
