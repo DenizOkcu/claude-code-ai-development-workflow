@@ -1,7 +1,10 @@
 ---
 name: researching-code
-description: "Understand minimum codebase context needed for planning. Use before implementation or when analyzing unfamiliar code areas. Triggers: research, investigate codebase, analyze architecture, find patterns."
-model: sonnet
+description: "Investigates codebase to find minimum context needed for planning. Use when starting a new feature, analyzing unfamiliar code, or preparing for implementation. Identifies files to touch, patterns to follow, and risks to mitigate."
+model: opus
+metadata:
+  version: 1.0.0
+  category: workflow-automation
 ---
 
 # Code Research
@@ -15,7 +18,9 @@ Find the minimum context needed to answer:
 2. What patterns should we follow?
 3. What are the main risks?
 
-## Extended Thinking
+## Instructions
+
+### Step 1: Think Deeply Before Searching
 
 Before creating artifacts, think deeply about:
 - What are the hidden dependencies?
@@ -24,17 +29,7 @@ Before creating artifacts, think deeply about:
 
 Use phrases like "think deeper", "think about edge cases" to trigger extended thinking.
 
-## Inputs
-- `issue_name`: Kebab-case identifier
-- `feature_description`: What to build
-
-## Output
-- `docs/{issue_name}/RESEARCH.md`
-- `docs/{issue_name}/STATUS.md` (updated)
-
-## Procedure
-
-### 1. Quick Discovery (5-15 files max)
+### Step 2: Quick Discovery (5-15 files max)
 
 Use Glob/Grep/Read to answer the three questions:
 
@@ -57,7 +52,9 @@ Read file_path="path/to/similar/implementation"
 - Look for shared utilities/dependencies
 - Identify tight coupling
 
-### 2. Create RESEARCH.md
+### Step 3: Create RESEARCH.md
+
+Write `docs/{issue_name}/RESEARCH.md` with this structure:
 
 ```markdown
 # Research: {issue_name}
@@ -79,15 +76,12 @@ Read file_path="path/to/similar/implementation"
 
 ### Files to Touch
 - `path/to/file.ts` - {why}
-- `path/to/file.ts` - {why}
 
 ### Patterns to Follow
 - `{pattern}` from `path/to/reference.ts`
-- `{convention}` used in this codebase
 
 ### Key Dependencies
 - `{package}` - existing | needed
-- `{shared_module}` - existing
 
 ---
 
@@ -106,38 +100,25 @@ Read file_path="path/to/similar/implementation"
    - Recommendation: {A because...}
 ```
 
-### 3. Update STATUS.md
+### Step 4: Update STATUS.md
 
-```markdown
-# Status: {issue_name}
+Update `docs/{issue_name}/STATUS.md` to reflect research completion.
 
-**Risk:** {level} | **Updated:** {timestamp}
+## Output Format
 
-## Progress
-- [~] Research | [ ] Planning | [ ] Implementation | [ ] Review
-
-## Phase: Research
-- **Finding:** {key finding}
-- **Risk:** {level}
-- **Next:** Planning
-
-## Artifacts
-- RESEARCH.md ✓
-```
-
-## What NOT to Do
-
-- Don't document the entire architecture
-- Don't trace full data flows
-- Don't analyze git history (rarely needed)
-- Don't create 30+ file analyses
-- Don't write comprehensive documentation
+- `docs/{issue_name}/RESEARCH.md`
+- `docs/{issue_name}/STATUS.md` (updated)
 
 ## Quality Check
 
-Before marking complete:
 - [ ] Answered: What files to touch?
 - [ ] Answered: What patterns to follow?
 - [ ] Answered: What are the risks?
 - [ ] RESEARCH.md created (not CODE_RESEARCH.md + RESEARCH_SUMMARY.md)
 - [ ] STATUS.md updated
+
+## Common Issues
+
+- **Over-researching:** Don't document the entire architecture. Don't trace full data flows. Don't analyze git history (rarely needed). Don't create 30+ file analyses.
+- **Wrong artifact name:** Create RESEARCH.md, not CODE_RESEARCH.md + RESEARCH_SUMMARY.md.
+- **Too many files:** Limit discovery to 5-15 files maximum.

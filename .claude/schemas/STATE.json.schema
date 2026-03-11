@@ -88,9 +88,9 @@
               "type": "string",
               "description": "Artifact filename",
               "examples": [
-                "CODE_RESEARCH.md",
-                "IMPLEMENTATION_PLAN.md",
-                "CODE_REVIEW.md"
+                "02_CODE_RESEARCH.md",
+                "04_IMPLEMENTATION_PLAN.md",
+                "06_CODE_REVIEW.md"
               ]
             },
             "status": {
@@ -101,7 +101,7 @@
             "path": {
               "type": "string",
               "description": "Relative path from issue directory",
-              "examples": ["CODE_RESEARCH.md", "src/component.ts"]
+              "examples": ["02_CODE_RESEARCH.md", "src/component.ts"]
             },
             "created_at": {
               "type": "string",
@@ -181,10 +181,10 @@
   "created_at": "2026-01-12T10:00:00Z",
   "updated_at": "2026-01-12T11:30:00Z",
   "artifacts": {
-    "CODE_RESEARCH.md": {
-      "name": "CODE_RESEARCH.md",
+    "02_CODE_RESEARCH.md": {
+      "name": "02_CODE_RESEARCH.md",
       "status": "complete",
-      "path": "CODE_RESEARCH.md",
+      "path": "02_CODE_RESEARCH.md",
       "created_at": "2026-01-12T11:00:00Z",
       "updated_at": "2026-01-12T11:00:00Z",
       "size_bytes": 5420,
@@ -219,10 +219,10 @@
   "created_at": "2026-01-12T10:00:00Z",
   "updated_at": "2026-01-12T15:45:00Z",
   "artifacts": {
-    "CODE_RESEARCH.md": {
-      "name": "CODE_RESEARCH.md",
+    "02_CODE_RESEARCH.md": {
+      "name": "02_CODE_RESEARCH.md",
       "status": "complete",
-      "path": "CODE_RESEARCH.md",
+      "path": "02_CODE_RESEARCH.md",
       "created_at": "2026-01-12T11:00:00Z",
       "updated_at": "2026-01-12T11:00:00Z",
       "size_bytes": 5420,
@@ -237,19 +237,19 @@
       "size_bytes": 3200,
       "checksum": "f6e5d4c3b2a1..."
     },
-    "IMPLEMENTATION_PLAN.md": {
-      "name": "IMPLEMENTATION_PLAN.md",
+    "04_IMPLEMENTATION_PLAN.md": {
+      "name": "04_IMPLEMENTATION_PLAN.md",
       "status": "complete",
-      "path": "IMPLEMENTATION_PLAN.md",
+      "path": "04_IMPLEMENTATION_PLAN.md",
       "created_at": "2026-01-12T12:00:00Z",
       "updated_at": "2026-01-12T12:00:00Z",
       "size_bytes": 4800,
       "checksum": "b2c3d4e5f6a7..."
     },
-    "PROJECT_SPEC.md": {
-      "name": "PROJECT_SPEC.md",
+    "03_PROJECT_SPEC.md": {
+      "name": "03_PROJECT_SPEC.md",
       "status": "complete",
-      "path": "PROJECT_SPEC.md",
+      "path": "03_PROJECT_SPEC.md",
       "created_at": "2026-01-12T12:30:00Z",
       "updated_at": "2026-01-12T12:30:00Z",
       "size_bytes": 3500,
@@ -293,10 +293,10 @@
   "created_at": "2026-01-12T10:00:00Z",
   "updated_at": "2026-01-12T16:30:00Z",
   "artifacts": {
-    "CODE_RESEARCH.md": {
-      "name": "CODE_RESEARCH.md",
+    "02_CODE_RESEARCH.md": {
+      "name": "02_CODE_RESEARCH.md",
       "status": "complete",
-      "path": "CODE_RESEARCH.md",
+      "path": "02_CODE_RESEARCH.md",
       "created_at": "2026-01-12T11:00:00Z",
       "updated_at": "2026-01-12T11:00:00Z",
       "size_bytes": 5420,
@@ -311,19 +311,19 @@
       "size_bytes": 3200,
       "checksum": "f6e5d4c3b2a1..."
     },
-    "IMPLEMENTATION_PLAN.md": {
-      "name": "IMPLEMENTATION_PLAN.md",
+    "04_IMPLEMENTATION_PLAN.md": {
+      "name": "04_IMPLEMENTATION_PLAN.md",
       "status": "complete",
-      "path": "IMPLEMENTATION_PLAN.md",
+      "path": "04_IMPLEMENTATION_PLAN.md",
       "created_at": "2026-01-12T12:00:00Z",
       "updated_at": "2026-01-12T12:00:00Z",
       "size_bytes": 4800,
       "checksum": "b2c3d4e5f6a7..."
     },
-    "PROJECT_SPEC.md": {
-      "name": "PROJECT_SPEC.md",
+    "03_PROJECT_SPEC.md": {
+      "name": "03_PROJECT_SPEC.md",
       "status": "complete",
-      "path": "PROJECT_SPEC.md",
+      "path": "03_PROJECT_SPEC.md",
       "created_at": "2026-01-12T12:30:00Z",
       "updated_at": "2026-01-12T12:30:00Z",
       "size_bytes": 3500,
@@ -347,10 +347,10 @@
       "size_bytes": 2800,
       "checksum": "e5f6a7b8c9d0..."
     },
-    "CODE_REVIEW.md": {
-      "name": "CODE_REVIEW.md",
+    "06_CODE_REVIEW.md": {
+      "name": "06_CODE_REVIEW.md",
       "status": "complete",
-      "path": "CODE_REVIEW.md",
+      "path": "06_CODE_REVIEW.md",
       "created_at": "2026-01-12T16:15:00Z",
       "updated_at": "2026-01-12T16:15:00Z",
       "size_bytes": 6200,
@@ -383,8 +383,8 @@
 | From Phase | Valid To Phases | Condition |
 |------------|-----------------|-----------|
 | `start` | `research` | Always valid |
-| `research` | `planning`, `blocked` | `planning`: Requires CODE_RESEARCH.md + RESEARCH_SUMMARY.md |
-| `planning` | `implementation`, `blocked` | `implementation`: Requires IMPLEMENTATION_PLAN.md + PROJECT_SPEC.md + PLAN_SUMMARY.md |
+| `research` | `planning`, `blocked` | `planning`: Requires 02_CODE_RESEARCH.md + RESEARCH_SUMMARY.md |
+| `planning` | `implementation`, `blocked` | `implementation`: Requires 04_IMPLEMENTATION_PLAN.md + 03_PROJECT_SPEC.md + PLAN_SUMMARY.md |
 | `implementation` | `review`, `blocked` | `review`: Requires IMPLEMENTATION_SUMMARY.md |
 | `review` | `complete`, `fix`, `blocked` | `complete`: APPROVED status<br>`fix`: NEEDS_REVISION status<br>`blocked`: After 3 fix iterations |
 | `fix` | `review`, `blocked` | `review`: Fix iteration < 3<br>`blocked`: Fix iteration >= 3 |
@@ -429,12 +429,12 @@ When creating or updating STATE.json, verify:
 
 **Research Phase:**
 - Create at start of phase
-- Update after CODE_RESEARCH.md and RESEARCH_SUMMARY.md created
+- Update after 02_CODE_RESEARCH.md and RESEARCH_SUMMARY.md created
 - Set `current_phase: "planning"`, `phase_status: "in_progress"`
 
 **Planning Phase:**
 - Load existing STATE.json
-- Update after IMPLEMENTATION_PLAN.md, PROJECT_SPEC.md, PLAN_SUMMARY.md created
+- Update after 04_IMPLEMENTATION_PLAN.md, 03_PROJECT_SPEC.md, PLAN_SUMMARY.md created
 - Set `current_phase: "implementation"`, `phase_status: "in_progress"`
 
 **Implementation Phase:**
@@ -444,7 +444,7 @@ When creating or updating STATE.json, verify:
 
 **Review Phase:**
 - Load existing STATE.json
-- Update after CODE_REVIEW.md created
+- Update after 06_CODE_REVIEW.md created
 - If APPROVED: Set `current_phase: "complete"`, `phase_status: "complete"`
 - If NEEDS_REVISION: Increment `review_iteration`, set `current_phase: "fix"`, `phase_status: "in_progress"`
 
