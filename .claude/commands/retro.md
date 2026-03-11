@@ -7,15 +7,15 @@ model: sonnet
 You are entering the **Retro** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — review the entire journey
+- Read `00_STATUS.md` — review the entire journey
 - Read all artifacts in `.claude/planning/$ARGUMENTS/`
 - Read project root `CLAUDE.md` for current learnings
 
 ### Instructions
 
-Capture lessons learned and improve future workflows. Create `.claude/planning/$ARGUMENTS/RETROSPECTIVE.md` AND update the project's `CLAUDE.md`.
+Capture lessons learned and improve future workflows. Create `.claude/planning/$ARGUMENTS/11_RETROSPECTIVE.md` AND update the project's `CLAUDE.md`.
 
-#### 1. `RETROSPECTIVE.md`
+#### 1. `11_RETROSPECTIVE.md`
 
 ```markdown
 # Retrospective: {issue-name}
@@ -112,7 +112,7 @@ If MEMORY.md Session Notes section exceeds ~150 lines, prune the oldest entries 
 - **Status:** Active
 ```
 
-#### 4. Update `STATUS.md`
+#### 4. Update `00_STATUS.md`
 
 Mark ALL phases as complete:
 
@@ -133,7 +133,7 @@ Mark ALL phases as complete:
 ```
 
 ### Post-Actions
-- Update `STATUS.md`: mark Retro as completed, set status to WORKFLOW COMPLETE
+- Update `00_STATUS.md`: mark Retro as completed, set status to WORKFLOW COMPLETE
 - Update `CLAUDE.md` with learnings
 - Summarize the entire workflow journey to the user
 - Suggest: commit, push, and deploy
@@ -144,4 +144,4 @@ Mark ALL phases as complete:
 - Learnings are specific and reference the issue name
 - Process learnings address whether phase selection was appropriate
 - Auto-memory updated (learnings.md + MEMORY.md Session Notes at minimum)
-- STATUS.md shows complete journey
+- 00_STATUS.md shows complete journey

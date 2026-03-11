@@ -10,7 +10,7 @@ This is a **compressed 4-step emergency workflow** that combines Research → Fi
 
 1. Generate issue name with `hotfix-` prefix (e.g., `hotfix-auth-crash`)
 2. Create `.claude/planning/{issue-name}/` directory
-3. Create minimal `STATUS.md`
+3. Create minimal `00_STATUS.md`
 4. Identify:
    - **Symptom**: What users are experiencing
    - **Impact**: How many users, how severe
@@ -56,7 +56,7 @@ Quick manual review:
 ```
 
 ### Post-Actions
-- Update `STATUS.md` to WORKFLOW COMPLETE
+- Update `00_STATUS.md` to WORKFLOW COMPLETE
 - Create a follow-up issue for proper cleanup if technical debt was introduced
 - Add learning to `CLAUDE.md`: what caused this and how to prevent it
 

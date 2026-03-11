@@ -48,22 +48,22 @@ explain exactly why it is not exploitable in this context.
 
 ### Phase 7a — Static Security Audit
 
-1. Read `ARCHITECTURE.md`, `PROJECT_SPEC.md`, and all source code in scope.
+1. Read `03_ARCHITECTURE.md`, `03_PROJECT_SPEC.md`, and all source code in scope.
 2. Apply STRIDE threat model: Spoofing, Tampering, Repudiation, Information
    Disclosure, Denial of Service, Elevation of Privilege.
 3. Run OWASP Top 10 checklist against the codebase.
 4. Scan `package.json` / `requirements.txt` / `composer.json` for known CVEs.
 5. Check for secrets, hardcoded credentials, and insecure configurations.
-6. Output: `SECURITY_AUDIT.md` — findings sorted by severity with CVSS scores.
+6. Output: `07a_SECURITY_AUDIT.md` — findings sorted by severity with CVSS scores.
 
 ### Phase 7b — Dynamic Pentest via Shannon
 
-1. Read `DEPLOY_PLAN.md` to get the staging URL.
-2. Read `DISCOVERY.md` to get the repo path.
+1. Read `09_DEPLOY_PLAN.md` to get the staging URL.
+2. Read `01_DISCOVERY.md` to get the repo path.
 3. Invoke Shannon: `./shannon start URL=<staging_url> REPO=<repo_path>`.
 4. Monitor with `./shannon logs` until complete.
 5. Parse the generated report from `audit-logs/`.
-6. Merge confirmed exploits into `PENTEST_REPORT.md`.
+6. Merge confirmed exploits into `07b_PENTEST_REPORT.md`.
 7. Cross-reference with Phase 7a findings — mark confirmed / unconfirmed.
 
 > ⚠️ NEVER run Shannon against a production URL. Staging or local only.
@@ -71,20 +71,20 @@ explain exactly why it is not exploitable in this context.
 
 ### Phase 7c — AI Model Audit (only if `/ai-integrate` was run)
 
-1. Check `ARCHITECTURE.md` for any embedded LLM or AI inference component.
+1. Check `03_ARCHITECTURE.md` for any embedded LLM or AI inference component.
 2. If found, document the model name, version, and integration point.
 3. Apply OBLITERATUS analysis concepts:
    - Map the prompt injection attack surface (user inputs → model inputs).
    - Identify whether the model has alignment constraints relevant to the feature.
    - Assess jailbreak risk using known techniques (role confusion, indirect
      injection, delimiter attacks, virtualization prompts).
-4. Output findings in `AI_THREAT_MODEL.md`.
+4. Output findings in `07c_AI_THREAT_MODEL.md`.
 
 ---
 
 ## Output Standards
 
-Every finding in `SECURITY_AUDIT.md` or `PENTEST_REPORT.md` must include:
+Every finding in `07a_SECURITY_AUDIT.md` or `07b_PENTEST_REPORT.md` must include:
 
 ```
 ### [SEVERITY] Finding Title
@@ -149,10 +149,10 @@ Specific code change or configuration update required.
 
 | File | Phase | Contents |
 |---|---|---|
-| `SECURITY_AUDIT.md` | 7a | Static findings — OWASP, STRIDE, CVEs |
-| `PENTEST_REPORT.md` | 7b | Shannon-confirmed exploits with PoCs |
-| `AI_THREAT_MODEL.md` | 7c | LLM attack surface and prompt injection risks |
-| `HARDEN_PLAN.md` | 8 | Prioritized fix list, patch PRs, regression tests |
+| `07a_SECURITY_AUDIT.md` | 7a | Static findings — OWASP, STRIDE, CVEs |
+| `07b_PENTEST_REPORT.md` | 7b | Shannon-confirmed exploits with PoCs |
+| `07c_AI_THREAT_MODEL.md` | 7c | LLM attack surface and prompt injection risks |
+| `08_HARDEN_PLAN.md` | 8 | Prioritized fix list, patch PRs, regression tests |
 
 ---
 

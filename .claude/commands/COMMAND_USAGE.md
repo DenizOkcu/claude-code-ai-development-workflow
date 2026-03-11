@@ -82,10 +82,32 @@ cat docs/{issue-name}/STATUS.md
 | Implementation | IMPLEMENTATION.md + code | All phases done + tests pass |
 | Review | REVIEW.md | APPROVED verdict |
 | Fix | Fixed code | Blocking issues resolved |
-| Security (7a) | SECURITY_AUDIT.md | OWASP/STRIDE evaluated |
-| Pentest (7b) | PENTEST_REPORT.md | Shannon run complete |
-| AI Audit (7c) | AI_THREAT_MODEL.md | LLM threats documented |
-| Harden (8) | HARDEN_PLAN.md + patches | P0 fixes implemented |
+| Security (7a) | 07a_SECURITY_AUDIT.md | OWASP/STRIDE evaluated |
+| Pentest (7b) | 07b_PENTEST_REPORT.md | Shannon run complete |
+| AI Audit (7c) | 07c_AI_THREAT_MODEL.md | LLM threats documented |
+| Harden (8) | 08_HARDEN_PLAN.md + patches | P0 fixes implemented |
+
+---
+
+## `/sdlc/continue`
+
+Resume the most recent incomplete SDLC workflow.
+
+```bash
+/sdlc/continue
+```
+
+**What it does:**
+1. Scans `.claude/planning/` for incomplete workflows
+2. If one found, auto-selects it
+3. If multiple found, asks you to choose
+4. Determines the next phase from `00_STATUS.md`
+5. Invokes the appropriate command
+
+**When to use:**
+- Starting a new Claude session with unfinished work
+- After a session timeout or interruption
+- When you can't remember which phase you were on
 
 ---
 
@@ -100,7 +122,7 @@ Phase 7b — Dynamic pentest via Shannon (autonomous AI pentester).
 ```
 
 **Prerequisites:** `/security` completed, staging running, Docker available, Shannon cloned.
-**Output:** `PENTEST_REPORT.md` with proven exploits only.
+**Output:** `07b_PENTEST_REPORT.md` with proven exploits only.
 
 > Never run against production. Staging or localhost only.
 
@@ -112,7 +134,7 @@ Phase 7c — AI/LLM threat modeling (only if LLMs in stack).
 /security/redteam-ai add-chat-assistant
 ```
 
-**Skip if** no LLM/AI components. **Output:** `AI_THREAT_MODEL.md`.
+**Skip if** no LLM/AI components. **Output:** `07c_AI_THREAT_MODEL.md`.
 
 ### `/security/harden {issue}`
 
@@ -123,7 +145,7 @@ Phase 8 — Aggregate findings, prioritize, and implement fixes.
 ```
 
 **Priority:** P0 (fix now) → P1 (this sprint) → P2 (next sprint) → P3 (backlog).
-**Output:** `HARDEN_PLAN.md` + P0 patches applied + GitHub issues for P1/P2.
+**Output:** `08_HARDEN_PLAN.md` + P0 patches applied + GitHub issues for P1/P2.
 
 ---
 

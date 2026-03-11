@@ -7,12 +7,12 @@ model: opus
 You are entering the **Research** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `.claude/planning/$ARGUMENTS/STATUS.md` to confirm Discovery is complete
-- Read `.claude/planning/$ARGUMENTS/DISCOVERY.md` for context
+- Read `.claude/planning/$ARGUMENTS/00_STATUS.md` to confirm Discovery is complete
+- Read `.claude/planning/$ARGUMENTS/01_DISCOVERY.md` for context
 
 ### Instructions
 
-Perform a deep investigation of the codebase and relevant ecosystem. Create `.claude/planning/$ARGUMENTS/CODE_RESEARCH.md` with:
+Perform a deep investigation of the codebase and relevant ecosystem. Create `.claude/planning/$ARGUMENTS/02_CODE_RESEARCH.md` with:
 
 1. **Codebase Analysis**
    - Relevant files and modules (list paths and purposes)
@@ -56,7 +56,7 @@ Perform a deep investigation of the codebase and relevant ecosystem. Create `.cl
    - Unknowns that need resolution before design
 
 ### Post-Actions
-- Update `STATUS.md`: mark Research as completed
+- Update `00_STATUS.md`: mark Research as completed
 - Add key findings to the Key Decisions section
 - Suggest next command: `/design-system $ARGUMENTS`
 

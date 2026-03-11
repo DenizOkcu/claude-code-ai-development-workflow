@@ -7,13 +7,13 @@ model: opus
 You are entering the **Planning** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Design is complete
-- Read `ARCHITECTURE.md`, `PROJECT_SPEC.md`, and all ADRs
-- Read `CODE_RESEARCH.md` for codebase context
+- Read `00_STATUS.md` — confirm Design is complete
+- Read `03_ARCHITECTURE.md`, `03_PROJECT_SPEC.md`, and all 03_ADRs
+- Read `02_CODE_RESEARCH.md` for codebase context
 
 ### Instructions
 
-Transform the design into an actionable, phase-by-phase implementation plan. Create `.claude/planning/$ARGUMENTS/IMPLEMENTATION_PLAN.md`:
+Transform the design into an actionable, phase-by-phase implementation plan. Create `.claude/planning/$ARGUMENTS/04_IMPLEMENTATION_PLAN.md`:
 
 #### Structure
 
@@ -87,8 +87,8 @@ Include at the end of the plan:
 ```
 
 ### Post-Actions
-- Update `STATUS.md`: mark Planning as completed
-- Add phase count and key milestones to STATUS.md
+- Update `00_STATUS.md`: mark Planning as completed
+- Add phase count and key milestones to 00_STATUS.md
 - Suggest next command: `/implement $ARGUMENTS`
 
 ### Quality Gates

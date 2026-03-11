@@ -306,7 +306,7 @@ Built {brief description of what was implemented}.
 
 ---
 
-## PENTEST_REPORT.md
+## 07b_PENTEST_REPORT.md
 
 ```markdown
 # Penetration Test Report — {issue_name}
@@ -357,7 +357,7 @@ Built {brief description of what was implemented}.
 
 ---
 
-## AI_THREAT_MODEL.md
+## 07c_AI_THREAT_MODEL.md
 
 ```markdown
 # AI Threat Model — {issue_name}
@@ -386,12 +386,12 @@ Built {brief description of what was implemented}.
 
 ---
 
-## HARDEN_PLAN.md
+## 08_HARDEN_PLAN.md
 
 ```markdown
 # Hardening Plan — {issue_name}
 
-**Source reports**: SECURITY_AUDIT.md | PENTEST_REPORT.md | AI_THREAT_MODEL.md
+**Source reports**: 07a_SECURITY_AUDIT.md | 07b_PENTEST_REPORT.md | 07c_AI_THREAT_MODEL.md
 **Total findings**: X (Critical: X | High: X | Medium: X | Low: X)
 
 ## Fix Summary
@@ -426,7 +426,7 @@ Built {brief description of what was implemented}.
 | IMPLEMENTATION.md | What we built | Implementation phase |
 | REVIEW.md | Is it ready? | Review phase |
 | STATUS.md | Where are we? | All phases |
-| SECURITY_AUDIT.md | Static security findings | Phase 7a |
-| PENTEST_REPORT.md | Confirmed exploits with PoCs | Phase 7b |
-| AI_THREAT_MODEL.md | LLM attack surface | Phase 7c |
-| HARDEN_PLAN.md | Fix plan + patches | Phase 8 |
+| 07a_SECURITY_AUDIT.md | Static security findings | Phase 7a |
+| 07b_PENTEST_REPORT.md | Confirmed exploits with PoCs | Phase 7b |
+| 07c_AI_THREAT_MODEL.md | LLM attack surface | Phase 7c |
+| 08_HARDEN_PLAN.md | Fix plan + patches | Phase 8 |

@@ -35,7 +35,7 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 | No deployment automation guidance | `/deploy-plan` creates rollout strategy + rollback playbook |
 | No post-deploy observability | `/observe` sets up logging, metrics, alerts, and dashboards |
 | No knowledge capture / retrospective | `/retro` generates lessons-learned docs and updates CLAUDE.md |
-| No multi-feature orchestration | Parallel issue tracking via `STATUS.md` per feature |
+| No multi-feature orchestration | Parallel issue tracking via `00_STATUS.md` per feature |
 | No LLM/AI-specific development patterns | `/ai-integrate` for prompt engineering, RAG, eval, and guardrails |
 | No visual output for artifacts | `/visual/*` generates HTML pages with Mermaid diagrams, KPI dashboards, slide decks |
 
@@ -51,6 +51,9 @@ cp -r .claude/ /path/to/your/project/.claude/
 /discover Add real-time collaborative editing to the document editor
 
 # This generates an issue name (e.g., "add-realtime-collab") and kicks off the 10-phase workflow.
+
+# Resume an incomplete workflow (auto-detects from .claude/planning/):
+/sdlc/continue
 ```
 
 ---
@@ -101,19 +104,19 @@ cp -r .claude/ /path/to/your/project/.claude/
 
 | # | Phase | Command | Artifacts Produced |
 |---|-------|---------|-------------------|
-| 1 | **Discover** | `/discover [description]` | Issue name, `DISCOVERY.md`, `STATUS.md` |
-| 2 | **Research** | `/research {issue}` | `CODE_RESEARCH.md`, updated `STATUS.md` |
-| 3 | **Design** | `/design-system {issue}` | `ARCHITECTURE.md`, `ADR-*.md`, `PROJECT_SPEC.md` |
-| 4 | **Plan** | `/plan {issue}` | `IMPLEMENTATION_PLAN.md`, test strategy |
-| 5 | **Implement** | `/implement {issue}` | Source code, tests, updated `STATUS.md` |
-| 6 | **Review** | `/review {issue}` | `CODE_REVIEW.md`, approval/rejection status |
-| 7a | **Static Security** | `/security {issue}` | `SECURITY_AUDIT.md` (OWASP, STRIDE, deps) |
-| 7b | **Dynamic Pentest** | `/security/pentest {issue}` | `PENTEST_REPORT.md` (Shannon-confirmed exploits) |
-| 7c | **AI Model Audit** | `/security/redteam-ai {issue}` | `AI_THREAT_MODEL.md` (only if LLMs in stack) |
-| 8 | **Harden** | `/security/harden {issue}` | `HARDEN_PLAN.md`, P0 patches, GitHub issues |
-| 9 | **Deploy** | `/deploy-plan {issue}` | `DEPLOY_PLAN.md`, rollback playbook |
-| 10 | **Observe** | `/observe {issue}` | `OBSERVABILITY.md`, alert definitions |
-| 11 | **Retro** | `/retro {issue}` | `RETROSPECTIVE.md`, CLAUDE.md updates |
+| 1 | **Discover** | `/discover [description]` | Issue name, `01_DISCOVERY.md`, `00_STATUS.md` |
+| 2 | **Research** | `/research {issue}` | `02_CODE_RESEARCH.md`, updated `00_STATUS.md` |
+| 3 | **Design** | `/design-system {issue}` | `03_ARCHITECTURE.md`, `03_ADR-*.md`, `03_PROJECT_SPEC.md` |
+| 4 | **Plan** | `/plan {issue}` | `04_IMPLEMENTATION_PLAN.md`, test strategy |
+| 5 | **Implement** | `/implement {issue}` | Source code, tests, updated `00_STATUS.md` |
+| 6 | **Review** | `/review {issue}` | `06_CODE_REVIEW.md`, approval/rejection status |
+| 7a | **Static Security** | `/security {issue}` | `07a_SECURITY_AUDIT.md` (OWASP, STRIDE, deps) |
+| 7b | **Dynamic Pentest** | `/security/pentest {issue}` | `07b_PENTEST_REPORT.md` (Shannon-confirmed exploits) |
+| 7c | **AI Model Audit** | `/security/redteam-ai {issue}` | `07c_AI_THREAT_MODEL.md` (only if LLMs in stack) |
+| 8 | **Harden** | `/security/harden {issue}` | `08_HARDEN_PLAN.md`, P0 patches, GitHub issues |
+| 9 | **Deploy** | `/deploy-plan {issue}` | `09_DEPLOY_PLAN.md`, rollback playbook |
+| 10 | **Observe** | `/observe {issue}` | `10_OBSERVABILITY.md`, alert definitions |
+| 11 | **Retro** | `/retro {issue}` | `11_RETROSPECTIVE.md`, CLAUDE.md updates |
 
 ---
 
@@ -278,21 +281,21 @@ your-project/
 │   │       └── ci-pipeline.md       # CI/CD pipeline generation
 │   ├── planning/                    # Auto-generated per issue
 │   │   └── {issue-name}/
-│   │       ├── STATUS.md            # Central progress dashboard
-│   │       ├── DISCOVERY.md
-│   │       ├── CODE_RESEARCH.md
-│   │       ├── ARCHITECTURE.md
-│   │       ├── ADR-001-*.md
-│   │       ├── PROJECT_SPEC.md
-│   │       ├── IMPLEMENTATION_PLAN.md
-│   │       ├── CODE_REVIEW.md
-│   │       ├── SECURITY_AUDIT.md    # Phase 7a output
-│   │       ├── PENTEST_REPORT.md    # Phase 7b output (Shannon)
-│   │       ├── AI_THREAT_MODEL.md   # Phase 7c output (if LLMs)
-│   │       ├── HARDEN_PLAN.md       # Phase 8 output
-│   │       ├── DEPLOY_PLAN.md
-│   │       ├── OBSERVABILITY.md
-│   │       └── RETROSPECTIVE.md
+│   │       ├── 00_STATUS.md            # Central progress dashboard
+│   │       ├── 01_DISCOVERY.md
+│   │       ├── 02_CODE_RESEARCH.md
+│   │       ├── 03_ARCHITECTURE.md
+│   │       ├── 03_ADR-001-*.md
+│   │       ├── 03_PROJECT_SPEC.md
+│   │       ├── 04_IMPLEMENTATION_PLAN.md
+│   │       ├── 06_CODE_REVIEW.md
+│   │       ├── 07a_SECURITY_AUDIT.md    # Phase 7a output
+│   │       ├── 07b_PENTEST_REPORT.md    # Phase 7b output (Shannon)
+│   │       ├── 07c_AI_THREAT_MODEL.md   # Phase 7c output (if LLMs)
+│   │       ├── 08_HARDEN_PLAN.md        # Phase 8 output
+│   │       ├── 09_DEPLOY_PLAN.md
+│   │       ├── 10_OBSERVABILITY.md
+│   │       └── 11_RETROSPECTIVE.md
 │   ├── agents/                      # Multi-agent orchestration
 │   │   ├── sdlc-orchestrator.md    # Autonomous SDLC agent (Research→Plan→Implement→Review)
 │   │   └── security-analyst.md     # Security persona (OWASP, Shannon, OBLITERATUS)
@@ -410,9 +413,9 @@ The `/retro` command writes to both tiers automatically.
 
 ---
 
-## STATUS.md — Your Progress Dashboard
+## 00_STATUS.md — Your Progress Dashboard
 
-Every command reads and updates `STATUS.md`. It is the single source of truth.
+Every command reads and updates `00_STATUS.md`. It is the single source of truth.
 
 ```markdown
 # Status: add-realtime-collab
@@ -436,9 +439,9 @@ Every command reads and updates `STATUS.md`. It is the single source of truth.
 - ADR-002: WebSocket with fallback to SSE for transport
 
 ## Artifacts
-- DISCOVERY.md, CODE_RESEARCH.md, ARCHITECTURE.md
-- ADR-001-conflict-resolution.md, ADR-002-transport.md
-- PROJECT_SPEC.md, IMPLEMENTATION_PLAN.md
+- 01_DISCOVERY.md, 02_CODE_RESEARCH.md, 03_ARCHITECTURE.md
+- 03_ADR-001-conflict-resolution.md, 03_ADR-002-transport.md
+- 03_PROJECT_SPEC.md, 04_IMPLEMENTATION_PLAN.md
 ```
 
 ---
@@ -455,7 +458,7 @@ The `/discover` command automatically scans your project to detect:
 
 **Quality Tooling:** ESLint, Prettier, Vitest/Jest, PHPStan, Ruff, pre-commit hooks, CI/CD pipelines — reports what's configured and what's missing.
 
-This detection feeds into `DISCOVERY.md` and `STATUS.md`, so every subsequent phase knows which expert commands (`/language/*-pro`) and quality commands (`/quality/*`) are relevant. If quality tooling gaps are found, the discovery phase recommends fixing them before proceeding to implementation.
+This detection feeds into `01_DISCOVERY.md` and `00_STATUS.md`, so every subsequent phase knows which expert commands (`/language/*-pro`) and quality commands (`/quality/*`) are relevant. If quality tooling gaps are found, the discovery phase recommends fixing them before proceeding to implementation.
 
 ---
 
@@ -465,25 +468,25 @@ This detection feeds into `DISCOVERY.md` and `STATUS.md`, so every subsequent ph
 # Phase 1: Discover — define scope and generate issue name
 /discover Add JWT authentication with refresh tokens and role-based access control
 
-# Output: issue name "add-jwt-rbac", DISCOVERY.md, STATUS.md
+# Output: issue name "add-jwt-rbac", 01_DISCOVERY.md, 00_STATUS.md
 # STATUS: [x] Discovery | [ ] Research | ...
 
 # Phase 2: Research — deep-dive into codebase and ecosystem
 /research add-jwt-rbac
 
-# Output: CODE_RESEARCH.md (existing auth patterns, deps, risks)
+# Output: 02_CODE_RESEARCH.md (existing auth patterns, deps, risks)
 # STATUS: [x] Discovery | [x] Research | [ ] Design | ...
 
 # Phase 3: Design — architecture, ADRs, system spec
 /design-system add-jwt-rbac
 
-# Output: ARCHITECTURE.md, ADR-001-token-strategy.md, PROJECT_SPEC.md
+# Output: 03_ARCHITECTURE.md, 03_ADR-001-token-strategy.md, 03_PROJECT_SPEC.md
 # STATUS: [x] Discovery | [x] Research | [x] Design | ...
 
 # Phase 4: Plan — detailed implementation plan with phases and tasks
 /plan add-jwt-rbac
 
-# Output: IMPLEMENTATION_PLAN.md (4 phases, test strategy)
+# Output: 04_IMPLEMENTATION_PLAN.md (4 phases, test strategy)
 # STATUS: [x] Discovery | [x] Research | [x] Design | [x] Planning | ...
 
 # Phase 5: Implement — write code phase by phase
@@ -494,19 +497,19 @@ This detection feeds into `DISCOVERY.md` and `STATUS.md`, so every subsequent ph
 # Phase 6: Review — comprehensive code review and QA
 /review add-jwt-rbac
 
-# Output: CODE_REVIEW.md
+# Output: 06_CODE_REVIEW.md
 # STATUS: [x] Review - ✓ APPROVED
 
 # Phase 7a: Static security audit
 /security add-jwt-rbac
 
-# Output: SECURITY_AUDIT.md (threat model, dependency scan, OWASP checklist)
+# Output: 07a_SECURITY_AUDIT.md (threat model, dependency scan, OWASP checklist)
 # STATUS: [x] Static Security - ⚠ CONDITIONAL PASS (2 findings need dynamic testing)
 
 # Phase 7b: Dynamic pentest (optional — requires staging environment)
 /security/pentest add-jwt-rbac
 
-# Output: PENTEST_REPORT.md (Shannon confirmed 1 exploit, dismissed 1 as non-exploitable)
+# Output: 07b_PENTEST_REPORT.md (Shannon confirmed 1 exploit, dismissed 1 as non-exploitable)
 # STATUS: [x] Dynamic Pentest - 1 confirmed vulnerability (JWT alg:none bypass)
 
 # Phase 7c: AI model audit (only if your feature uses an LLM)
@@ -515,23 +518,23 @@ This detection feeds into `DISCOVERY.md` and `STATUS.md`, so every subsequent ph
 # Phase 8: Harden — fix confirmed vulnerabilities
 /security/harden add-jwt-rbac
 
-# Output: HARDEN_PLAN.md (P0: JWT fix implemented, P2: 1 GitHub issue created)
+# Output: 08_HARDEN_PLAN.md (P0: JWT fix implemented, P2: 1 GitHub issue created)
 # STATUS: [x] Hardening - P0 fixes applied, regression tests passing
 
 # Phase 9: Deploy
 /deploy-plan add-jwt-rbac
 
-# Output: DEPLOY_PLAN.md (rollout strategy, feature flags, rollback)
+# Output: 09_DEPLOY_PLAN.md (rollout strategy, feature flags, rollback)
 
 # Phase 10: Observe
 /observe add-jwt-rbac
 
-# Output: OBSERVABILITY.md (metrics, alerts, dashboard specs)
+# Output: 10_OBSERVABILITY.md (metrics, alerts, dashboard specs)
 
 # Phase 11: Retro
 /retro add-jwt-rbac
 
-# Output: RETROSPECTIVE.md, updates to CLAUDE.md with learnings
+# Output: 11_RETROSPECTIVE.md, updates to CLAUDE.md with learnings
 # STATUS: ALL PHASES COMPLETE ✓
 ```
 
@@ -561,9 +564,9 @@ Not every change needs all phases. Use judgment:
 /discover Add OAuth2 authentication        # → generates: add-oauth-auth
 /discover Fix memory leak in data pipeline  # → generates: fix-data-pipeline-leak
 
-# Each gets its own directory and STATUS.md
-.claude/planning/add-oauth-auth/STATUS.md
-.claude/planning/fix-data-pipeline-leak/STATUS.md
+# Each gets its own directory and 00_STATUS.md
+.claude/planning/add-oauth-auth/00_STATUS.md
+.claude/planning/fix-data-pipeline-leak/00_STATUS.md
 
 # Continue each workflow independently
 /research add-oauth-auth

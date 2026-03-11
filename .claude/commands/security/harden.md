@@ -1,8 +1,8 @@
 ---
 name: harden
 description: >
-  Phase 8 — Security hardening. Reads SECURITY_AUDIT.md, PENTEST_REPORT.md,
-  and AI_THREAT_MODEL.md (if present), then generates a prioritized fix plan
+  Phase 8 — Security hardening. Reads 07a_SECURITY_AUDIT.md, 07b_PENTEST_REPORT.md,
+  and 07c_AI_THREAT_MODEL.md (if present), then generates a prioritized fix plan
   and triggers implementation of security patches. Closes the
   audit → fix → verify loop.
 model: opus
@@ -16,9 +16,9 @@ Generate a prioritized security fix plan from all audit outputs, then implement 
 
 Read the following files:
 
-1. `.claude/planning/$ARGUMENTS/SECURITY_AUDIT.md` — static findings
-2. `.claude/planning/$ARGUMENTS/PENTEST_REPORT.md` — confirmed exploits (if exists)
-3. `.claude/planning/$ARGUMENTS/AI_THREAT_MODEL.md` — AI threats (if exists)
+1. `.claude/planning/$ARGUMENTS/07a_SECURITY_AUDIT.md` — static findings
+2. `.claude/planning/$ARGUMENTS/07b_PENTEST_REPORT.md` — confirmed exploits (if exists)
+3. `.claude/planning/$ARGUMENTS/07c_AI_THREAT_MODEL.md` — AI threats (if exists)
 
 Create a unified severity-ranked finding list. Apply this triage logic:
 
@@ -31,15 +31,15 @@ Create a unified severity-ranked finding list. Apply this triage logic:
 
 ---
 
-## Step 2 — Generate HARDEN_PLAN.md
+## Step 2 — Generate 08_HARDEN_PLAN.md
 
-Create `.claude/planning/$ARGUMENTS/HARDEN_PLAN.md`:
+Create `.claude/planning/$ARGUMENTS/08_HARDEN_PLAN.md`:
 
 ```markdown
 # Hardening Plan — {issue}
 
 **Generated**: {date}
-**Source reports**: SECURITY_AUDIT.md | PENTEST_REPORT.md | AI_THREAT_MODEL.md
+**Source reports**: 07a_SECURITY_AUDIT.md | 07b_PENTEST_REPORT.md | 07c_AI_THREAT_MODEL.md
 **Total findings**: {X} (Critical: X | High: X | Medium: X | Low: X)
 
 ## Fix Summary
@@ -125,9 +125,9 @@ For each P1 and P2 finding, create a GitHub issue:
 gh issue create \
   --title "Security: {finding title} ({CWE})" \
   --body "**Severity**: {severity}
-**Source**: {SECURITY_AUDIT.md | PENTEST_REPORT.md}
+**Source**: {07a_SECURITY_AUDIT.md | 07b_PENTEST_REPORT.md}
 **Affected**: {file}
-**Fix**: See HARDEN_PLAN.md in .claude/planning/{issue}/
+**Fix**: See 08_HARDEN_PLAN.md in .claude/planning/{issue}/
 
 {description}"
   --label "security,{priority}"
@@ -135,7 +135,7 @@ gh issue create \
 
 ---
 
-## Step 5 — Update STATUS.md
+## Step 5 — Update 00_STATUS.md
 
 ```markdown
 - [x] Hardening - Completed

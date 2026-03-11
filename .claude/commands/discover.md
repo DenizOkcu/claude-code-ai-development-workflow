@@ -74,7 +74,7 @@ Scan for these markers:
 
 Create `.claude/planning/{issue-name}/`
 
-#### 4. Create `DISCOVERY.md`
+#### 4. Create `01_DISCOVERY.md`
 
 ```markdown
 # Discovery: {issue-name}
@@ -149,7 +149,7 @@ If the detected language or cloud provider does NOT match any specific expert:
 Always assign at least one expert command. If nothing specific matches, these two generics cover any stack.
 ```
 
-#### 5. Create `STATUS.md`
+#### 5. Create `00_STATUS.md`
 
 ```markdown
 # Status: {issue-name}
@@ -181,7 +181,7 @@ Always assign at least one expert command. If nothing specific matches, these tw
 (none yet)
 
 ## Artifacts
-- DISCOVERY.md
+- 01_DISCOVERY.md
 ```
 
 #### 6. Output to User
@@ -199,7 +199,7 @@ Present:
 ### Quality Gates
 - Issue name follows kebab-case convention
 - Tech stack detection scanned at least: package.json/composer.json/pyproject.toml, tsconfig, *.tf files, Dockerfile, CI config
-- DISCOVERY.md has all required sections filled including the full stack table
-- STATUS.md includes detected stack and applicable expert commands
+- 01_DISCOVERY.md has all required sections filled including the full stack table
+- 00_STATUS.md includes detected stack and applicable expert commands
 - Missing quality tooling is explicitly called out with fix commands
 - Success criteria are measurable, not vague

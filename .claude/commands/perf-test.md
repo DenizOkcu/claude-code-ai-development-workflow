@@ -3,13 +3,13 @@
 You are entering the **Performance Testing** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Implementation is complete
-- Read `ARCHITECTURE.md` for system design and performance notes
-- Read `PROJECT_SPEC.md` for non-functional requirements
+- Read `00_STATUS.md` — confirm Implementation is complete
+- Read `03_ARCHITECTURE.md` for system design and performance notes
+- Read `03_PROJECT_SPEC.md` for non-functional requirements
 
 ### Instructions
 
-Design and execute performance tests. Add `PERF_TEST.md` to `.claude/planning/$ARGUMENTS/`:
+Design and execute performance tests. Add `05b_PERF_TEST.md` to `.claude/planning/$ARGUMENTS/`:
 
 #### 1. Baseline Capture
 
@@ -84,11 +84,11 @@ For each scenario, report:
 ```
 
 ### Post-Actions
-- Add `PERF_TEST.md` to artifacts in `STATUS.md`
+- Add `05b_PERF_TEST.md` to artifacts in `00_STATUS.md`
 - Flag any performance regressions as blockers
 
 ### Quality Gates
 - Baselines captured before testing new code
-- All NFR targets from PROJECT_SPEC.md are tested
+- All NFR targets from 03_PROJECT_SPEC.md are tested
 - Load test covers at least normal + peak scenarios
 - Any regressions are documented with remediation plan

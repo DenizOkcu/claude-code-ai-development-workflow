@@ -13,13 +13,13 @@ You are entering the **Static Security Audit** phase (7a) for issue: `$ARGUMENTS
 > - Then → `/security/harden` to fix confirmed findings
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Review is complete and APPROVED
-- Read `ARCHITECTURE.md` for system design
-- Read `CODE_REVIEW.md` for any security-related findings
+- Read `00_STATUS.md` — confirm Review is complete and APPROVED
+- Read `03_ARCHITECTURE.md` for system design
+- Read `06_CODE_REVIEW.md` for any security-related findings
 
 ### Instructions
 
-Perform a security-focused audit of the implemented feature. Create `.claude/planning/$ARGUMENTS/SECURITY_AUDIT.md`:
+Perform a security-focused audit of the implemented feature. Create `.claude/planning/$ARGUMENTS/07a_SECURITY_AUDIT.md`:
 
 #### 1. Threat Modeling (STRIDE)
 
@@ -99,7 +99,7 @@ Report: vulnerability count by severity, remediation steps.
 ```
 
 ### Post-Actions
-- Update `STATUS.md` with static security audit outcome
+- Update `00_STATUS.md` with static security audit outcome
 - **Next steps after 7a:**
   - If staging environment is available → suggest `/security/pentest $ARGUMENTS` (Phase 7b)
   - If the feature involves LLM/AI components → suggest `/security/redteam-ai $ARGUMENTS` (Phase 7c)

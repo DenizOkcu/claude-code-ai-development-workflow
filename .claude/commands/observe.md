@@ -7,13 +7,13 @@ model: sonnet
 You are entering the **Observe** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Deploy plan is complete
-- Read `ARCHITECTURE.md` for system components
-- Read `PROJECT_SPEC.md` for non-functional requirements / SLAs
+- Read `00_STATUS.md` — confirm Deploy plan is complete
+- Read `03_ARCHITECTURE.md` for system components
+- Read `03_PROJECT_SPEC.md` for non-functional requirements / SLAs
 
 ### Instructions
 
-Define the observability strategy for the feature. Create `.claude/planning/$ARGUMENTS/OBSERVABILITY.md`:
+Define the observability strategy for the feature. Create `.claude/planning/$ARGUMENTS/10_OBSERVABILITY.md`:
 
 #### 1. Key Metrics
 
@@ -109,7 +109,7 @@ Define panels for a monitoring dashboard:
 | ... | ... | ... |
 
 ### Post-Actions
-- Update `STATUS.md`: mark Observe as completed
+- Update `00_STATUS.md`: mark Observe as completed
 - Suggest next command: `/retro $ARGUMENTS`
 
 ### Quality Gates

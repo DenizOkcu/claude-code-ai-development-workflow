@@ -7,15 +7,15 @@ model: opus
 You are entering the **Design** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Research is complete
-- Read `CODE_RESEARCH.md` for findings and recommendations
-- Read `DISCOVERY.md` for scope and success criteria
+- Read `00_STATUS.md` — confirm Research is complete
+- Read `02_CODE_RESEARCH.md` for findings and recommendations
+- Read `01_DISCOVERY.md` for scope and success criteria
 
 ### Instructions
 
 Produce the architectural blueprint for this feature. Create these artifacts in `.claude/planning/$ARGUMENTS/`:
 
-#### 1. `ARCHITECTURE.md`
+#### 1. `03_ARCHITECTURE.md`
 
 - **System Context Diagram** (describe in text/Mermaid): how the feature sits in the overall system
 - **Component Design**: new/modified components with responsibilities
@@ -26,7 +26,7 @@ Produce the architectural blueprint for this feature. Create these artifacts in 
 - **Performance Considerations**: caching, pagination, lazy loading, connection pooling
 - **Scalability Notes**: what happens at 10x, 100x current load
 
-#### 2. `ADR-{NNN}-{title}.md` (Architecture Decision Records)
+#### 2. `03_ADR-{NNN}-{title}.md` (Architecture Decision Records)
 
 For each significant technical decision, create an ADR:
 
@@ -57,9 +57,9 @@ What is the decision that was made?
 - Links to relevant docs, articles, or discussions
 ```
 
-#### 3. `PROJECT_SPEC.md`
+#### 3. `03_PROJECT_SPEC.md`
 
-- **Technical Requirements**: derived from DISCOVERY.md success criteria
+- **Technical Requirements**: derived from 01_DISCOVERY.md success criteria
 - **Non-Functional Requirements**: performance targets, SLAs, accessibility
 - **Interface Contracts**: TypeScript interfaces, API schemas, event payloads
 - **Testing Requirements**: what must be tested and how
@@ -68,14 +68,14 @@ What is the decision that was made?
 - **Rollback Plan**: how to undo if something goes wrong
 
 ### Post-Actions
-- Update `STATUS.md`: mark Design as completed
+- Update `00_STATUS.md`: mark Design as completed
 - Add ADR summaries to Key Decisions section
 - List all artifacts created
 - Suggest next command: `/plan $ARGUMENTS`
 
 ### Quality Gates
 - At least 1 ADR for any non-trivial decision
-- ARCHITECTURE.md covers all 8 sections
-- PROJECT_SPEC.md has measurable non-functional requirements
+- 03_ARCHITECTURE.md covers all 8 sections
+- 03_PROJECT_SPEC.md has measurable non-functional requirements
 - Interface contracts use actual types (not just descriptions)
 - Rollback plan is specific and actionable

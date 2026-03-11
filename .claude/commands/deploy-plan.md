@@ -7,13 +7,13 @@ model: sonnet
 You are entering the **Deploy** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Security audit is complete
-- Read `ARCHITECTURE.md` for infrastructure context
-- Read `PROJECT_SPEC.md` for non-functional requirements
+- Read `00_STATUS.md` — confirm Security audit is complete
+- Read `03_ARCHITECTURE.md` for infrastructure context
+- Read `03_PROJECT_SPEC.md` for non-functional requirements
 
 ### Instructions
 
-Create a deployment strategy. Produce `.claude/planning/$ARGUMENTS/DEPLOY_PLAN.md`:
+Create a deployment strategy. Produce `.claude/planning/$ARGUMENTS/09_DEPLOY_PLAN.md`:
 
 #### 1. Pre-Deployment Checklist
 
@@ -91,7 +91,7 @@ Detail:
 - User-facing release notes (if applicable)
 
 ### Post-Actions
-- Update `STATUS.md`: mark Deploy as completed (planned)
+- Update `00_STATUS.md`: mark Deploy as completed (planned)
 - Suggest next command: `/observe $ARGUMENTS`
 
 ### Quality Gates

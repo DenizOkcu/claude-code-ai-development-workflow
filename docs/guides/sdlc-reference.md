@@ -7,8 +7,8 @@ Quick reference for all slash commands in the Extended SDLC workflow.
 ### `/discover [feature description]`
 **Phase 1** — Scope and define a new feature or fix.
 - Generates kebab-case issue name
-- Creates DISCOVERY.md with problem statement, success criteria, scope
-- Initializes STATUS.md with all 10 phases
+- Creates 01_DISCOVERY.md with problem statement, success criteria, scope
+- Initializes 00_STATUS.md with all 10 phases
 - **Next:** `/research {issue}`
 
 ### `/research {issue-name}`
@@ -20,9 +20,9 @@ Quick reference for all slash commands in the Extended SDLC workflow.
 
 ### `/design-system {issue-name}`
 **Phase 3** — Architecture and system design.
-- Creates ARCHITECTURE.md with component design, data model, API design
+- Creates 03_ARCHITECTURE.md with component design, data model, API design
 - Generates ADR (Architecture Decision Record) for each key decision
-- Produces PROJECT_SPEC.md with technical and non-functional requirements
+- Produces 03_PROJECT_SPEC.md with technical and non-functional requirements
 - **Next:** `/plan {issue}`
 
 ### `/plan {issue-name}`
@@ -34,16 +34,16 @@ Quick reference for all slash commands in the Extended SDLC workflow.
 
 ### `/implement {issue-name}`
 **Phase 5** — Phase-by-phase code implementation.
-- Follows IMPLEMENTATION_PLAN.md exactly
+- Follows 04_IMPLEMENTATION_PLAN.md exactly
 - Test-driven: write test → implement → verify
-- Updates STATUS.md with progress per phase
+- Updates 00_STATUS.md with progress per phase
 - **Next:** `/review {issue}`
 
 ### `/review {issue-name}`
 **Phase 6** — Comprehensive code review.
 - Runs all automated checks (lint, types, tests, build)
 - Manual review against checklist (security, patterns, naming, tests)
-- Produces CODE_REVIEW.md with categorized findings
+- Produces 06_CODE_REVIEW.md with categorized findings
 - **Next:** `/security {issue}` (if approved)
 
 ### `/security {issue-name}`
@@ -77,6 +77,13 @@ Quick reference for all slash commands in the Extended SDLC workflow.
 - Captures technical and process learnings
 - Updates CLAUDE.md with actionable insights
 - Marks workflow as COMPLETE
+
+### `/sdlc/continue`
+Resume an incomplete workflow automatically.
+- Scans `.claude/planning/` for incomplete `00_STATUS.md` files
+- If one found, auto-selects it; if multiple, asks you to choose
+- Determines the next phase and invokes the appropriate command
+- Supports both new (`00_STATUS.md`) and legacy (`STATUS.md`) naming
 
 ---
 
@@ -185,7 +192,7 @@ Vulnerability scanning (npm audit, pip audit, composer audit, trivy), outdated p
 
 ### Check status anytime
 ```bash
-cat .claude/planning/{issue-name}/STATUS.md
+cat .claude/planning/{issue-name}/00_STATUS.md
 ```
 
 ### Set up quality tooling for a new project

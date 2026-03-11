@@ -7,14 +7,14 @@ model: sonnet
 You are entering the **Review** phase for issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Implementation is complete
-- Read `IMPLEMENTATION_PLAN.md` for what was planned
-- Read `PROJECT_SPEC.md` for requirements
-- Read `ARCHITECTURE.md` and ADRs for design decisions
+- Read `00_STATUS.md` — confirm Implementation is complete
+- Read `04_IMPLEMENTATION_PLAN.md` for what was planned
+- Read `03_PROJECT_SPEC.md` for requirements
+- Read `03_ARCHITECTURE.md` and 03_ADRs for design decisions
 
 ### Instructions
 
-Perform a comprehensive code review simulating a senior engineer. Create `.claude/planning/$ARGUMENTS/CODE_REVIEW.md`:
+Perform a comprehensive code review simulating a senior engineer. Create `.claude/planning/$ARGUMENTS/06_CODE_REVIEW.md`:
 
 #### 1. Automated Checks
 
@@ -41,8 +41,8 @@ Review every file changed/created for this issue. For each finding, categorize:
 | 💡 Praise | Excellent code, good pattern | Recognition |
 
 **Review Checklist:**
-- [ ] Code matches the ARCHITECTURE.md design
-- [ ] All PROJECT_SPEC.md requirements are met
+- [ ] Code matches the 03_ARCHITECTURE.md design
+- [ ] All 03_PROJECT_SPEC.md requirements are met
 - [ ] Error handling is comprehensive (no silent failures)
 - [ ] Edge cases are handled and tested
 - [ ] No hardcoded values that should be configurable
@@ -86,7 +86,7 @@ Review every file changed/created for this issue. For each finding, categorize:
 ```
 
 ### Post-Actions
-- Update `STATUS.md` with review outcome
+- Update `00_STATUS.md` with review outcome
 - If APPROVED: suggest `/security $ARGUMENTS`
 - If NEEDS REVISION: list specific changes needed, then re-run `/review $ARGUMENTS` after fixes
 

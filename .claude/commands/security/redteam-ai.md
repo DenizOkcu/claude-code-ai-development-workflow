@@ -4,7 +4,7 @@ description: >
   Phase 7c — AI model threat surface analysis. Use ONLY when the issue
   involves an embedded LLM or AI inference component (i.e., /ai-integrate
   was run). Maps prompt injection attack surface, alignment constraints,
-  and adversarial input risks. Produces AI_THREAT_MODEL.md.
+  and adversarial input risks. Produces 07c_AI_THREAT_MODEL.md.
 model: opus
 ---
 
@@ -13,7 +13,7 @@ model: opus
 AI-specific threat modeling for features that embed or call large language models.
 
 > Skip this phase entirely if the issue does not involve LLM/AI components.
-> Check `ARCHITECTURE.md` — if there's no AI inference layer, run `/harden` instead.
+> Check `03_ARCHITECTURE.md` — if there's no AI inference layer, run `/harden` instead.
 
 ## Context
 
@@ -36,7 +36,7 @@ be bypassed via adversarial prompting.
 
 ## Step 1 — Identify AI Components
 
-Read `ARCHITECTURE.md` and `PROJECT_SPEC.md`. Document:
+Read `03_ARCHITECTURE.md` and `03_PROJECT_SPEC.md`. Document:
 
 ```markdown
 ## AI Components Inventory
@@ -181,9 +181,9 @@ print(f'Entanglement: {result.safety_capability_entanglement}')
 
 ---
 
-## Step 5 — Document Findings in AI_THREAT_MODEL.md
+## Step 5 — Document Findings in 07c_AI_THREAT_MODEL.md
 
-Create `.claude/planning/$ARGUMENTS/AI_THREAT_MODEL.md`:
+Create `.claude/planning/$ARGUMENTS/07c_AI_THREAT_MODEL.md`:
 
 ```markdown
 # AI Threat Model — {issue}
@@ -230,11 +230,11 @@ Create `.claude/planning/$ARGUMENTS/AI_THREAT_MODEL.md`:
 - Use parameterized queries and prepared statements downstream of model output
 ```
 
-## Step 6 — Update STATUS.md
+## Step 6 — Update 00_STATUS.md
 
 ```markdown
 - [x] AI Model Audit - Completed
-  - AI_THREAT_MODEL.md generated
+  - 07c_AI_THREAT_MODEL.md generated
   - {X} threats identified, {Y} confirmed exploitable
 ```
 

@@ -74,10 +74,28 @@ Use the ticket number in all branches for easy tracking.
 
 ## Development Workflow (DevSecOps SDLC)
 
-This workspace uses a structured development lifecycle via slash commands with an integrated **DevSecOps security layer**. All workflow artifacts are stored under `.claude/planning/{issue-name}/` and tracked via a central `STATUS.md`.
+This workspace uses a structured development lifecycle via slash commands with an integrated **DevSecOps security layer**. All workflow artifacts are stored under `.claude/planning/{issue-name}/` and tracked via a central `00_STATUS.md`.
+
+### Session Start: Incomplete Workflow Detection
+
+When starting a new session in this repository, proactively check if `.claude/planning/` contains any directories with incomplete SDLC workflows:
+
+1. List directories under `.claude/planning/`
+2. For each, check if `00_STATUS.md` (or legacy `STATUS.md`) exists and is NOT marked `WORKFLOW COMPLETE`
+3. If incomplete workflows are found, notify the user:
+
+> Found {N} incomplete SDLC workflow(s):
+> - **{issue-name}** — paused at {phase} (last updated {date})
+>
+> Run `/sdlc/continue` to resume, or start something new.
+
+This is a suggestion only — do not auto-resume without user confirmation.
 
 ### Quick Start
 ```bash
+# Resume an incomplete workflow:
+/sdlc/continue                       # Auto-detect and continue next phase
+
 # Full workflow for complex features:
 /discover [description]              # Phase 1: Scope + detect tech stack
 /research {issue-name}               # Phase 2: Deep codebase analysis
@@ -119,25 +137,25 @@ Issue names are **kebab-case**, concise (2-5 words), and descriptive:
 ```
 .claude/planning/
 ├── {issue-name}/
-│   ├── STATUS.md              # Central progress tracker (updated by all commands)
-│   ├── DISCOVERY.md           # Scope, success criteria, detected stack
-│   ├── CODE_RESEARCH.md       # Research findings
-│   ├── ARCHITECTURE.md        # System design + component design
-│   ├── ADR-001-*.md           # Architecture Decision Records
-│   ├── PROJECT_SPEC.md        # Technical requirements and specs
-│   ├── IMPLEMENTATION_PLAN.md # Phased implementation strategy
-│   ├── CODE_REVIEW.md         # Review findings and approval status
-│   ├── SECURITY_AUDIT.md      # Phase 7a: Static threat model + OWASP + dependency scan
-│   ├── PENTEST_REPORT.md      # Phase 7b: Shannon-confirmed exploits with PoCs
-│   ├── AI_THREAT_MODEL.md     # Phase 7c: LLM attack surface + prompt injection risks
-│   ├── HARDEN_PLAN.md         # Phase 8: Prioritized fix list + regression tests
-│   ├── DEPLOY_PLAN.md         # Rollout strategy + rollback playbook
-│   ├── OBSERVABILITY.md       # Metrics, logging, alerts, dashboards
-│   └── RETROSPECTIVE.md       # Lessons learned
+│   ├── 00_STATUS.md              # Central progress tracker (updated by all commands)
+│   ├── 01_DISCOVERY.md           # Scope, success criteria, detected stack
+│   ├── 02_CODE_RESEARCH.md       # Research findings
+│   ├── 03_ARCHITECTURE.md        # System design + component design
+│   ├── 03_ADR-001-*.md           # Architecture Decision Records
+│   ├── 03_PROJECT_SPEC.md        # Technical requirements and specs
+│   ├── 04_IMPLEMENTATION_PLAN.md # Phased implementation strategy
+│   ├── 06_CODE_REVIEW.md         # Review findings and approval status
+│   ├── 07a_SECURITY_AUDIT.md     # Phase 7a: Static threat model + OWASP + dependency scan
+│   ├── 07b_PENTEST_REPORT.md     # Phase 7b: Shannon-confirmed exploits with PoCs
+│   ├── 07c_AI_THREAT_MODEL.md    # Phase 7c: LLM attack surface + prompt injection risks
+│   ├── 08_HARDEN_PLAN.md         # Phase 8: Prioritized fix list + regression tests
+│   ├── 09_DEPLOY_PLAN.md         # Rollout strategy + rollback playbook
+│   ├── 10_OBSERVABILITY.md       # Metrics, logging, alerts, dashboards
+│   └── 11_RETROSPECTIVE.md       # Lessons learned
 ```
 
 ### Stack Auto-Detection
-The `/discover` command automatically scans the project to detect languages, frameworks, cloud providers, and quality tooling. Detection results are stored in `DISCOVERY.md` and `STATUS.md`, making relevant expert commands available throughout the workflow.
+The `/discover` command automatically scans the project to detect languages, frameworks, cloud providers, and quality tooling. Detection results are stored in `01_DISCOVERY.md` and `00_STATUS.md`, making relevant expert commands available throughout the workflow.
 
 ### Expert Commands (language, cloud, quality)
 ```bash
@@ -185,10 +203,10 @@ The `/discover` command automatically scans the project to detect languages, fra
 /perf-test {issue-name}                # Performance testing + benchmarks
 ```
 
-### STATUS.md — Progress Dashboard
-All commands update `STATUS.md` as the single source of truth:
+### 00_STATUS.md — Progress Dashboard
+All commands update `00_STATUS.md` as the single source of truth:
 ```bash
-cat .claude/planning/{issue-name}/STATUS.md
+cat .claude/planning/{issue-name}/00_STATUS.md
 ```
 
 ---
@@ -393,7 +411,7 @@ Before submitting PR:
 - **Incremental changes**: Prefer small, testable changes over large refactors
 - **Documentation**: Always suggest updating docs when making changes
 - **Team coordination**: Note when changes require team notification
-- **Workflow tracking**: Use the development workflow commands for non-trivial changes to maintain traceability via STATUS.md
+- **Workflow tracking**: Use the development workflow commands for non-trivial changes to maintain traceability via 00_STATUS.md
 - **Secret scanning**: Always run secret detection before committing; add false positives to exclusion files
 - **README preservation**: When a README exists, patch it — never wipe existing content
 
@@ -458,7 +476,7 @@ ansible-inventory --graph                   # Show inventory tree
 ### Workflow
 ```bash
 # Check workflow status for an issue
-cat .claude/planning/{issue-name}/STATUS.md
+cat .claude/planning/{issue-name}/00_STATUS.md
 
 # Full DevSecOps workflow
 /discover [description]              # Phase 1: Scope + stack detection

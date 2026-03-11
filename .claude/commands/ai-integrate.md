@@ -3,13 +3,13 @@
 You are adding AI/LLM capabilities to issue: `$ARGUMENTS`
 
 ### Pre-Conditions
-- Read `STATUS.md` — confirm Design phase is complete (or in progress)
-- Read `ARCHITECTURE.md` for system context
-- Read `PROJECT_SPEC.md` for requirements
+- Read `00_STATUS.md` — confirm Design phase is complete (or in progress)
+- Read `03_ARCHITECTURE.md` for system context
+- Read `03_PROJECT_SPEC.md` for requirements
 
 ### Instructions
 
-Design the AI/LLM integration. Add an `AI_INTEGRATION.md` to `.claude/planning/$ARGUMENTS/`:
+Design the AI/LLM integration. Add a `03b_AI_INTEGRATION.md` to `.claude/planning/$ARGUMENTS/`:
 
 #### 1. Use Case Analysis
 
@@ -102,7 +102,7 @@ For each LLM-powered feature:
 - Token budget management
 
 ### Post-Actions
-- Add `AI_INTEGRATION.md` to the artifacts list in `STATUS.md`
+- Add `03b_AI_INTEGRATION.md` to the artifacts list in `00_STATUS.md`
 - Feed the prompt designs into the Planning phase tasks
 - Suggest incorporating eval tasks into the test strategy
 
