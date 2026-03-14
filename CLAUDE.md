@@ -198,6 +198,10 @@ The `/discover` command automatically scans the project to detect languages, fra
 /visual/generate-visual-plan [feature]  # Visual implementation plan with state machines
 /visual/share [html-file]              # Deploy HTML page to Vercel for sharing
 
+# n8n Workflow Automation:
+/n8n/setup                              # Interactive setup wizard (hosting, capabilities, credentials)
+/n8n [request]                          # Search nodes, browse templates, build & manage workflows
+
 # Bonus:
 /ai-integrate {issue-name}             # LLM/AI integration patterns
 /perf-test {issue-name}                # Performance testing + benchmarks

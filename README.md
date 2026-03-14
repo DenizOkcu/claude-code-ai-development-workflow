@@ -13,6 +13,7 @@ This project synthesizes and extends several open-source tools, each bringing di
 | [**Shannon**](https://github.com/KeygraphHQ/shannon) by KeygraphHQ | Autonomous AI pentester — proves exploits with working PoCs, not just flags theoretical risks. Runs as an MCP server in Docker | `/security/pentest` |
 | [**OBLITERATUS**](https://github.com/elder-plinius/OBLITERATUS) by elder-plinius | Mechanistic interpretability toolkit for AI model alignment analysis — reveals jailbreak surfaces and self-repair robustness in self-hosted LLMs | `/security/redteam-ai` |
 | [**visual-explainer**](https://github.com/nicobailon/visual-explainer) by nicobailon | Generates self-contained HTML pages with Mermaid diagrams, interactive zoom/pan, dark/light themes, KPI dashboards, slide decks, and anti-AI-slop guardrails. Turns markdown artifacts into browser-quality visualizations | `/visual/*` (8 commands) |
+| [**n8n-MCP**](https://github.com/czlonkowski/n8n-mcp) by czlonkowski | MCP server bridging n8n workflow automation with Claude Code — access 1,084+ nodes, 2,709 templates, and optionally manage a live n8n instance (CRUD workflows, trigger executions). Self-hosted or hosted | `/n8n`, `/n8n/setup` |
 
 Extended with: Discovery, Architecture/ADR, DevSecOps security layer, Deployment, Observability, Retrospective phases, performance testing, hotfix workflow, multi-agent orchestration, and self-improving CLAUDE.md via automated retrospectives.
 
@@ -171,6 +172,42 @@ OBLITERATUS requires a GPU. See the [OBLITERATUS repo](https://github.com/elder-
 | `/perf-test {issue}` | Performance testing — benchmarks, profiling, load tests |
 | `/hotfix [description]` | Compressed emergency workflow (research → fix → review → deploy) |
 
+## n8n Workflow Automation
+
+Integrate with [n8n](https://n8n.io/) via the [n8n-MCP](https://github.com/czlonkowski/n8n-mcp) server. Supports self-hosted (npx, Docker) or hosted service, with basic (docs-only) or full (instance management) capabilities.
+
+| Command | Purpose |
+|---------|---------|
+| `/n8n/setup` | Interactive setup wizard — choose hosting, capabilities, configure credentials |
+| `/n8n [request]` | Work with n8n — search nodes, browse templates, build & manage workflows |
+
+**Setup options:**
+
+| Option | Requirements | Best For |
+|--------|-------------|----------|
+| **Hosted service** | None (sign up at dashboard.n8n-mcp.com) | Quick start, no infra |
+| **npx** (recommended) | Node.js 18+ | Most users, fastest local setup |
+| **Docker** | Docker installed | Isolated environments |
+| **Local dev** | Clone + build from source | Contributors, custom mods |
+
+**Capabilities:**
+
+| Mode | Tools | Requires |
+|------|-------|----------|
+| **Basic** | Search 1,084+ nodes, browse 2,709 templates, validate workflows | Nothing (docs only) |
+| **Full** | Basic + create/edit/delete/trigger workflows on your n8n instance | n8n API URL + API key |
+
+```bash
+# First time: run the setup wizard
+/n8n/setup
+
+# Then use n8n commands:
+/n8n search for Slack nodes
+/n8n find templates for email automation
+/n8n create a workflow that posts GitHub issues to Slack   # (full mode)
+/n8n show all my active workflows                          # (full mode)
+```
+
 ## Visualization Commands
 
 Generate rich HTML pages from any technical content — architecture diagrams, diff reviews, project recaps, slide decks. Powered by [visual-explainer](https://github.com/nicobailon/visual-explainer). Output goes to `~/.agent/diagrams/` and opens in the browser.
@@ -277,6 +314,9 @@ your-project/
 │   │   │   ├── generate-slides.md       # Slide deck generation
 │   │   │   ├── generate-visual-plan.md  # Visual implementation plan
 │   │   │   └── share.md                 # Deploy HTML to Vercel
+│   │   ├── n8n.md                     # n8n workflow assistant
+│   │   ├── n8n/
+│   │   │   └── setup.md              # n8n-MCP setup wizard
 │   │   └── devops/
 │   │       └── ci-pipeline.md       # CI/CD pipeline generation
 │   ├── planning/                    # Auto-generated per issue

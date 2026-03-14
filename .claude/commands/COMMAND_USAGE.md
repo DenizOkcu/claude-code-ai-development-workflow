@@ -149,6 +149,52 @@ Phase 8 — Aggregate findings, prioritize, and implement fixes.
 
 ---
 
+## n8n Workflow Automation
+
+### `/n8n/setup`
+
+Interactive setup wizard for n8n-MCP integration.
+
+```bash
+/n8n/setup
+```
+
+**What it does:**
+1. Checks if n8n-MCP is already configured
+2. Asks hosting preference: hosted service, npx, Docker, or local dev
+3. Asks capability level: basic (docs only) or full (instance management)
+4. Collects n8n API URL + key (full mode only)
+5. Updates `.claude/settings.json` with MCP server config
+6. Optionally disables telemetry
+
+**Hosting options:**
+
+| Option | Requirements | Best For |
+|--------|-------------|----------|
+| Hosted service | None | Quick start, no infra |
+| npx (recommended) | Node.js 18+ | Most users |
+| Docker | Docker installed | Isolated environments |
+| Local dev | Clone + build | Contributors |
+
+### `/n8n [request]`
+
+Work with n8n — search nodes, browse templates, build & manage workflows.
+
+```bash
+/n8n search for Slack nodes
+/n8n how does the HTTP Request node work
+/n8n find templates for email automation
+/n8n create a workflow that posts GitHub issues to Slack   # full mode
+/n8n show all my active workflows                          # full mode
+```
+
+**Requires:** `/n8n/setup` completed first. If not configured, prompts to run setup.
+
+**Basic mode tools:** search_nodes, get_node, validate_node, validate_workflow, search_templates, get_template
+**Full mode adds:** list/create/update/delete/trigger workflows, list/get executions
+
+---
+
 ## Architecture
 
 ```
