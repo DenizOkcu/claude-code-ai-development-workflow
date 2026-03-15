@@ -37,7 +37,8 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 | No performance/load testing phase | `/perf-test` generates benchmarks, profiles, and load scripts |
 | No deployment automation guidance | `/deploy-plan` creates rollout strategy + rollback playbook |
 | No post-deploy observability | `/observe` sets up logging, metrics, alerts, and dashboards |
-| No knowledge capture / retrospective | `/retro` generates lessons-learned docs and updates CLAUDE.md |
+| No knowledge capture / retrospective | `/retro` generates lessons-learned docs and updates CLAUDE.md + `.claude/LEARNINGS.md` |
+| CLAUDE.md bloat wastes tokens every conversation | Tiered architecture: lean always-on CLAUDE.md (~90 lines) + on-demand reference files (learnings, quick reference) — saves ~17K tokens/conversation |
 | No multi-feature orchestration | Parallel issue tracking via `00_STATUS.md` per feature |
 | No LLM/AI-specific development patterns | `/ai-integrate` for prompt engineering, RAG, eval, and guardrails |
 | No visual output for artifacts | `/visual/*` generates HTML pages with Mermaid diagrams, KPI dashboards, slide decks |
@@ -121,7 +122,7 @@ cp -r .claude/ /path/to/your/project/.claude/
 | 8 | **Harden** | `/security/harden {issue}` | `08_HARDEN_PLAN.md`, P0 patches, GitHub issues |
 | 9 | **Deploy** | `/deploy-plan {issue}` | `09_DEPLOY_PLAN.md`, rollback playbook |
 | 10 | **Observe** | `/observe {issue}` | `10_OBSERVABILITY.md`, alert definitions |
-| 11 | **Retro** | `/retro {issue}` | `11_RETROSPECTIVE.md`, CLAUDE.md updates |
+| 11 | **Retro** | `/retro {issue}` | `11_RETROSPECTIVE.md`, `.claude/LEARNINGS.md`, CLAUDE.md updates |
 
 ---
 
@@ -491,10 +492,12 @@ your-project/
 │   │       ├── references/          # CSS patterns, libraries, slide patterns (~120KB)
 │   │       ├── templates/           # HTML reference templates (architecture, table, mermaid, slides)
 │   │       └── scripts/share.sh    # Vercel deployment script
+│   ├── LEARNINGS.md                  # Full retro learnings archive (on-demand, not always loaded)
+│   ├── QUICK_REFERENCE.md           # Tool cheat sheets — terraform, docker, kubectl, ansible (on-demand)
 │   ├── scripts/
 │   │   └── shannon-mcp-wrapper.sh  # OAuth token wrapper for Shannon MCP server
 │   └── settings.json                # Claude Code project settings + Shannon MCP config
-├── CLAUDE.md                        # Project-level AI instructions
+├── CLAUDE.md                        # Project-level AI instructions (~91 lines, token-optimized)
 └── docs/
     └── guides/
         ├── ai-integration-guide.md  # How to add LLM features
@@ -568,22 +571,26 @@ The `model:` field is officially supported in both commands and skills. Valid va
 
 ---
 
-## Memory System
+## Memory & Token Optimization
 
-The workflow includes a two-tier memory system for cross-session knowledge retention:
+The workflow includes a three-tier memory system designed to minimize always-on token cost while retaining full knowledge:
 
-| Tier | Location | Scope | How It Works |
-|------|----------|-------|-------------|
-| **Tier 1: Repo-shared** | `CLAUDE.md ## Learnings` | Team-visible, versioned in git | `/retro` appends specific, actionable learnings |
-| **Tier 2: Project-personal** | `~/.claude/projects/{hash}/memory/` | Per-user, auto-loaded | MEMORY.md (index, always loaded) + topic files (on demand) |
+| Tier | Location | Scope | Loaded When | Est. Tokens |
+|------|----------|-------|-------------|-------------|
+| **Tier 0: Always-on** | `CLAUDE.md` (project) | Essential rules + 2 most recent retro blocks | Every conversation | ~300 |
+| **Tier 1: On-demand repo** | `.claude/LEARNINGS.md`, `.claude/QUICK_REFERENCE.md` | Full learnings archive, tool cheat sheets | When `/retro` or commands need them | ~600 |
+| **Tier 2: Project-personal** | `~/.claude/projects/{hash}/memory/` | Per-user, auto-loaded index | MEMORY.md always; topic files on demand | ~200 |
 
-**Auto-memory files:**
-- `MEMORY.md` — Index with quick reference, links to topic files (max 200 lines, auto-loaded every session)
-- `patterns.md` — Stable workflow patterns confirmed across sessions
-- `decisions.md` — Key architectural decisions
-- `learnings.md` — Detailed lessons from `/retro`
+**Token savings:** The project CLAUDE.md was reduced from **555 lines to 91 lines** (~83%). Combined with a leaner global `~/CLAUDE.md` (552→98 lines), this saves **~17K tokens per conversation** — meaningful cost and latency reduction, especially on Opus.
 
-The `/retro` command writes to both tiers automatically.
+**How it works:**
+- `CLAUDE.md` (project root) — Lean: project-specific SDLC workflow rules + abbreviated 2 most recent retro blocks
+- `~/CLAUDE.md` (global) — Lean: shared guidelines (repo types, security, naming, code review) — no learnings or command catalogs
+- `.claude/LEARNINGS.md` — Full learnings archive from all retros, read on-demand by `/retro` and `/research`
+- `.claude/QUICK_REFERENCE.md` — Tool cheat sheets (terraform, docker, kubectl, ansible, workflow), read on-demand
+- `~/.claude/projects/{hash}/memory/` — Per-user auto-memory: `MEMORY.md` (index), `patterns.md`, `decisions.md`, `learnings.md`
+
+The `/retro` command writes to all relevant tiers automatically.
 
 ---
 
@@ -751,33 +758,18 @@ Not every change needs all phases. Use judgment:
 
 ---
 
-## CLAUDE.md — Project Intelligence
+## CLAUDE.md — Token-Optimized Project Intelligence
 
-The `CLAUDE.md` file at your project root is a living document. The `/retro` command appends lessons learned automatically:
+The `CLAUDE.md` files are designed to minimize always-on token cost. The project CLAUDE.md contains only essential workflow rules (~91 lines), while reference material lives in on-demand files:
 
-```markdown
-# Project: MyApp
-
-## Architecture
-- Next.js 15 App Router + TypeScript
-- Prisma + PostgreSQL
-- Tailwind CSS + shadcn/ui
-
-## Commands
-- `npm run dev` — development server
-- `npm run build` — production build
-- `npm run test` — test suite (vitest)
-- `npm run lint` — ESLint
-
-## Conventions
-- Use `interface` over `type` for object shapes
-- Error boundaries on all async components
-- All API routes return `{ data, error, meta }` envelope
-
-## Learnings (auto-updated by /retro)
-- 2026-02-15: Always invalidate JWT on password change (add-jwt-rbac)
-- 2026-02-10: Use connection pooling for WebSocket scaling (add-realtime-collab)
 ```
+CLAUDE.md (project root, ~91 lines)     ← Always loaded: SDLC workflow, session checks, 2 recent retro blocks
+~/CLAUDE.md (global, ~98 lines)          ← Always loaded: shared repo guidelines, security, naming
+.claude/LEARNINGS.md                     ← On-demand: full retro learnings archive
+.claude/QUICK_REFERENCE.md              ← On-demand: terraform, docker, kubectl, ansible cheat sheets
+```
+
+The `/retro` command writes **abbreviated** learnings to CLAUDE.md (max 2 recent blocks) and **full detail** to `.claude/LEARNINGS.md`. Older blocks are automatically rotated out of CLAUDE.md to keep the token budget lean.
 
 ---
 
