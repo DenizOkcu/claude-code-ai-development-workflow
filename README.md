@@ -300,6 +300,52 @@ Enhance the `/research` and `/implement` phases with semantic code search powere
 
 ## Code Intelligence Layer
 
+### Why This Matters
+
+When you ask an AI coding assistant to work on a feature in a large codebase, it faces the same challenge a new developer does on their first day: *"Where do I even start?"*
+
+Without guidance, the AI reads files at random, runs dozens of searches hoping to find relevant code, and burns through its context window (the amount of text it can "hold in memory" at once) on files that turn out to be irrelevant. This is slow, expensive, and often leads to incomplete or incorrect answers because the AI missed a critical file it didn't know to look for.
+
+**The Code Intelligence Layer solves this by teaching the AI to navigate your codebase the way a senior developer would:**
+
+1. **Start with the big picture.** Before diving into code, get a map of the entire repository — what files exist, what's in them, how they're organized. A senior dev would browse the folder structure and skim key files. The AI does the same via the **Repo Map + Symbol Index**.
+
+2. **Understand relationships.** Code doesn't exist in isolation. File A imports File B, which is tested by File C. A senior dev traces these connections mentally. The AI builds a **Dependency Graph** by scanning import statements — now it knows "if I change this file, these other files are affected."
+
+3. **Search smart, not broad.** Instead of searching the entire codebase for a keyword (which returns noise), the AI searches only within the files the map and graph identified as relevant. If semantic search is available (`/retrieval`), it finds conceptually related code even when naming conventions differ.
+
+4. **Rank by relevance.** Not all search results are equally useful. The **Reranker** scores each result on three factors — does it match the task keywords? Is it connected to files we already care about? Is it source code (most useful) or a config file (less useful)? — and surfaces the best matches first.
+
+5. **Assemble a focused reading list.** Instead of dumping 15+ files into context, the **Context Pack Builder** picks the top files, adds their direct dependencies and test files, and caps at 8 files total. This is the minimum context needed to understand and work on the feature — no waste.
+
+**The result:** The AI reads fewer files, makes fewer searches, and produces better answers — because every file it reads was chosen for a reason, not found by accident.
+
+### Impact at a Glance
+
+| Without Code Intelligence | With Code Intelligence |
+|---------------------------|----------------------|
+| AI searches the entire repo blindly | AI navigates from structural overview to specific files |
+| 15-20 tool calls to find relevant code | 10-13 targeted calls guided by the pipeline |
+| Context window filled with irrelevant files | ≤8 precisely chosen files with dependency context |
+| No understanding of file relationships | Import graph reveals what depends on what |
+| All search results treated equally | 3-factor relevance scoring surfaces the best matches |
+| Same overhead whether repo has 10 or 10,000 files | Smart activation — simple repos get a simple process |
+| Every session starts from scratch | Repo map + symbol index persist across sessions |
+
+### The Analogy
+
+Think of it like GPS navigation vs. driving without a map:
+
+- **Level 1 (Repo Map + Symbol Index)** = Satellite view of the city — you see every street and landmark at a glance
+- **Level 1b (Dependency Graph)** = Knowing which roads connect to which — one-way streets, highways, dead ends
+- **Level 2 (Search)** = Searching for a specific address
+- **Level 2b (Reranking)** = The GPS ranking multiple routes by traffic, distance, and toll cost
+- **Level 3 (Context Pack)** = The final turn-by-turn directions — exactly the roads you need, nothing extra
+
+Without the GPS, you'd drive around guessing. With it, you take the optimal route every time.
+
+### Technical Details
+
 Reduce token waste and improve code reasoning with a multi-level context pipeline. Instead of searching blindly, the LLM navigates through structural overview → dependency graph → semantic search → relevance ranking → assembled context pack.
 
 **How it works:**
