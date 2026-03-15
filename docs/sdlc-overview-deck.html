@@ -7,7 +7,7 @@
 <!--
   Slide deck: overview of the AI-Powered Software Development Lifecycle.
   Theme: Blueprint Teal — DM Sans + Fira Code, teal/amber accents on dark slate.
-  16 slides covering: problem, predictable AI, pipeline, security, tools, integrations, visualization, quick start.
+  17 slides covering: problem, predictable AI, pipeline, security, tools, integrations, visualization, retrieval, quick start.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -793,9 +793,9 @@ flowchart LR
         <div class="slide__kpi-trend" style="color:var(--text-dim);">research, plan, code, review...</div>
       </div>
       <div class="slide__kpi reveal">
-        <div class="slide__kpi-val" style="color:var(--blue);">7</div>
+        <div class="slide__kpi-val" style="color:var(--blue);">8</div>
         <div class="slide__kpi-label">Integrated Tools</div>
-        <div class="slide__kpi-trend" style="color:var(--text-dim);">Shannon, n8n, Firecrawl...</div>
+        <div class="slide__kpi-trend" style="color:var(--text-dim);">Shannon, n8n, Firecrawl, claude-context...</div>
       </div>
       <div class="slide__kpi reveal">
         <div class="slide__kpi-val" style="color:var(--accent);">~50%</div>
@@ -923,6 +923,11 @@ flowchart LR
               <td>Web scraping &amp; crawling &mdash; fallback when WebFetch fails on complex pages</td>
               <td><code>/firecrawl</code>, <code>/firecrawl/setup</code></td>
             </tr>
+            <tr>
+              <td><strong>claude-context</strong></td>
+              <td>Semantic code retrieval &mdash; hybrid BM25 + vector search over AST-indexed codebases</td>
+              <td><code>/retrieval</code>, <code>/retrieval/setup</code></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -1028,7 +1033,41 @@ flowchart LR
     </div>
   </section>
 
-  <!-- SLIDE 13: CODE — QUICK START -->
+  <!-- SLIDE 13: SPLIT — SEMANTIC CODE RETRIEVAL -->
+  <section class="slide slide--split">
+    <div class="slide__panels">
+      <div class="slide__panel slide__panel--primary">
+        <p class="slide__label reveal" style="color:var(--accent);">Semantic Context</p>
+        <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px);">Code Retrieval via claude-context</h2>
+        <ul class="slide__bullets" style="margin-top:16px;">
+          <li class="reveal"><strong>Hybrid search</strong>: BM25 keyword + dense vector semantic matching</li>
+          <li class="reveal">Tree-sitter <strong>AST chunking</strong> &mdash; functions, classes, methods as units</li>
+          <li class="reveal"><strong>Merkle tree</strong> incremental indexing &mdash; only re-embeds changed files</li>
+          <li class="reveal">Local-first: <strong>Ollama</strong> embeddings + <strong>Docker Milvus</strong> storage</li>
+          <li class="reveal"><strong>~40% token savings</strong> &mdash; ranked chunks vs. iterative Glob/Grep rounds</li>
+          <li class="reveal">Auto-enhances <code style="font-family:var(--font-mono);font-size:0.85em;background:var(--accent-dim);color:var(--accent);padding:1px 5px;border-radius:3px;">/research</code> and <code style="font-family:var(--font-mono);font-size:0.85em;background:var(--accent-dim);color:var(--accent);padding:1px 5px;border-radius:3px;">/implement</code> &mdash; finds code you didn&rsquo;t know to search for</li>
+        </ul>
+      </div>
+      <div class="slide__panel slide__panel--secondary">
+        <p class="slide__label reveal" style="color:var(--accent2);">Setup &amp; Use</p>
+        <div style="margin-top:12px;">
+          <pre class="reveal" style="background:var(--code-bg);color:var(--code-text);padding:16px;border-radius:8px;font-family:var(--font-mono);font-size:clamp(11px,1.2vw,14px);line-height:1.6;overflow-x:auto;"><code><span style="color:var(--text-dim);"># One-time setup</span>
+<span style="color:var(--accent);">/retrieval/setup</span>
+
+<span style="color:var(--text-dim);"># Index your codebase</span>
+<span style="color:var(--accent);">/retrieval</span> index
+
+<span style="color:var(--text-dim);"># Search semantically</span>
+<span style="color:var(--accent);">/retrieval</span> search "auth middleware"
+
+<span style="color:var(--text-dim);"># Or just use /research</span>
+<span style="color:var(--text-dim);"># &mdash; it queries automatically</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14: CODE — QUICK START -->
   <section class="slide slide--code" style="background-image:radial-gradient(ellipse at 50% 80%, var(--accent-dim) 0%, transparent 40%);">
     <h2 class="slide__heading reveal" style="text-align:center;">Quick Start</h2>
     <div class="slide__code-block reveal" style="margin-top:clamp(12px,2vh,24px);">

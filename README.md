@@ -19,7 +19,7 @@ This project synthesizes and extends several open-source tools, each bringing di
 
 Extended with: Discovery, Architecture/ADR, DevSecOps security layer, Deployment, Observability, Retrospective phases, performance testing, hotfix workflow, multi-agent orchestration, and self-improving CLAUDE.md via automated retrospectives.
 
-**[View the interactive slide deck overview](https://ai-sdlc.andersonleite.me/sdlc-overview-deck.html)** — a 13-slide visual summary of the entire workflow, built with the integrated visual-explainer. ([local](docs/sdlc-overview-deck.html))
+**[View the interactive slide deck overview](https://ai-sdlc.andersonleite.me/sdlc-overview-deck.html)** — a 17-slide visual summary of the entire workflow, built with the integrated visual-explainer. ([local](docs/sdlc-overview-deck.html))
 
 ---
 
@@ -41,6 +41,7 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 | No multi-feature orchestration | Parallel issue tracking via `00_STATUS.md` per feature |
 | No LLM/AI-specific development patterns | `/ai-integrate` for prompt engineering, RAG, eval, and guardrails |
 | No visual output for artifacts | `/visual/*` generates HTML pages with Mermaid diagrams, KPI dashboards, slide decks |
+| No semantic code understanding | `/retrieval` adds hybrid BM25 + vector search — finds conceptually related code, saves ~40% context tokens |
 
 ---
 
@@ -251,6 +252,15 @@ Integrate with [Firecrawl](https://github.com/firecrawl/firecrawl) for powerful 
 ## Semantic Code Retrieval
 
 Enhance the `/research` and `/implement` phases with semantic code search powered by [claude-context](https://github.com/zilliztech/claude-context) MCP. This adds hybrid BM25 + vector search over AST-indexed codebases — the agent finds relevant code semantically, not just by keyword.
+
+**Why it matters:**
+
+| Benefit | Without Retrieval | With Retrieval |
+|---------|-------------------|----------------|
+| **Context discovery** | Agent must know what to search for (keyword-dependent) | Agent finds conceptually related code it didn't know to look for |
+| **Token efficiency** | Multiple Glob/Grep rounds consume context window (~15-20 files read) | Ranked chunks surface the right code first (~40% token savings) |
+| **Research speed** | O(n) iterative search — more rounds for larger codebases | O(1) indexed query — instant results regardless of codebase size |
+| **Cross-file awareness** | No understanding of semantic relationships between files | Finds related code even when naming conventions differ |
 
 | Command | Purpose |
 |---------|---------|
