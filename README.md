@@ -19,7 +19,7 @@ This project synthesizes and extends several open-source tools, each bringing di
 
 Extended with: Discovery, Architecture/ADR, DevSecOps security layer, Deployment, Observability, Retrospective phases, performance testing, hotfix workflow, multi-agent orchestration, and self-improving CLAUDE.md via automated retrospectives.
 
-**[View the interactive slide deck overview](https://ai-sdlc.andersonleite.me/sdlc-overview-deck.html)** — a 17-slide visual summary of the entire workflow, built with the integrated visual-explainer. ([local](docs/sdlc-overview-deck.html))
+**[View the interactive slide deck overview](https://ai-sdlc.andersonleite.me/sdlc-overview-deck.html)** — an 18-slide visual summary of the entire workflow, built with the integrated visual-explainer. ([local](docs/sdlc-overview-deck.html))
 
 ---
 
@@ -42,6 +42,7 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 | No LLM/AI-specific development patterns | `/ai-integrate` for prompt engineering, RAG, eval, and guardrails |
 | No visual output for artifacts | `/visual/*` generates HTML pages with Mermaid diagrams, KPI dashboards, slide decks |
 | No semantic code understanding | `/retrieval` adds hybrid BM25 + vector search — finds conceptually related code, saves ~40% context tokens |
+| LLM searches blindly with no repo structure | `/repo-map` + `/discover` auto-generates a compact structural overview (file tree + symbols, ≤2K tokens) — hierarchical context loading guides research to the right files first |
 
 ---
 
@@ -108,7 +109,7 @@ cp -r .claude/ /path/to/your/project/.claude/
 
 | # | Phase | Command | Artifacts Produced |
 |---|-------|---------|-------------------|
-| 1 | **Discover** | `/discover [description]` | Issue name, `01_DISCOVERY.md`, `00_STATUS.md` |
+| 1 | **Discover** | `/discover [description]` | Issue name, `01_DISCOVERY.md` (with repo map), `00_STATUS.md` |
 | 2 | **Research** | `/research {issue}` | `02_CODE_RESEARCH.md`, updated `00_STATUS.md` |
 | 3 | **Design** | `/design-system {issue}` | `03_ARCHITECTURE.md`, `03_ADR-*.md`, `03_PROJECT_SPEC.md` |
 | 4 | **Plan** | `/plan {issue}` | `04_IMPLEMENTATION_PLAN.md`, test strategy |
@@ -296,6 +297,44 @@ Enhance the `/research` and `/implement` phases with semantic code search powere
 /retrieval status
 ```
 
+## Hierarchical Repo Context Engine
+
+Reduce token waste and improve code reasoning with a two-level context system inspired by [Aider's repo map](https://aider.chat/docs/repomap.html). Instead of searching blindly, the LLM first sees a compact structural overview, then dives into relevant files only.
+
+**How it works:**
+
+```
+Level 1: Repo Map (≤2K tokens)              Level 2: Targeted Detail
+┌──────────────────────────┐                 ┌──────────────────────────┐
+│ src/                     │   identifies    │ Read specific files      │
+│   auth/                  │──────────────▶  │ Grep within candidate    │
+│     middleware.ts — Auth  │   candidate     │   directories only       │
+│     types.ts — User      │   files         │ search_code MCP (if      │
+│   api/                   │                 │   configured)             │
+│     routes.ts — Router   │                 │                          │
+└──────────────────────────┘                 └──────────────────────────┘
+```
+
+| Command | Purpose |
+|---------|---------|
+| `/repo-map [path]` | Generate structural overview on demand — file tree + top-level symbols |
+| `/discover` (Step 3) | Auto-generates and embeds repo map in `01_DISCOVERY.md` — users never forget |
+
+**Key features:**
+- **6 language patterns**: TypeScript/JS, Python, Go, PHP, Rust + generic fallback
+- **Progressive truncation**: 4 tiers by repo size (<100, 100–200, 200–500, >500 files) — graceful degradation from full symbols → directory summaries
+- **No dependencies**: Uses built-in Glob + Grep — works without MCP, Docker, or any external tools
+- **Enhances `/research`**: The `researching-code` skill reads the map first (Level 1), then does targeted searches on candidate files only (Level 2)
+
+```bash
+# Standalone use
+/repo-map                    # Full repo overview
+/repo-map src/auth           # Focused on a subdirectory
+
+# Automatic (recommended) — runs as part of /discover
+/discover Add OAuth2 login   # Repo map auto-generated in 01_DISCOVERY.md
+```
+
 ## Visualization Commands
 
 Generate rich HTML pages from any technical content — architecture diagrams, diff reviews, project recaps, slide decks. Powered by [visual-explainer](https://github.com/nicobailon/visual-explainer). Output goes to `~/.agent/diagrams/` and opens in the browser.
@@ -408,6 +447,10 @@ your-project/
 │   │   ├── firecrawl.md              # Firecrawl web scraping assistant
 │   │   ├── firecrawl/
 │   │   │   └── setup.md              # Firecrawl MCP setup wizard
+│   │   ├── repo-map.md                # Structural repo overview (file tree + symbols)
+│   │   ├── retrieval.md               # Semantic code retrieval assistant
+│   │   ├── retrieval/
+│   │   │   └── setup.md              # claude-context MCP setup wizard
 │   │   └── devops/
 │   │       └── ci-pipeline.md       # CI/CD pipeline generation
 │   ├── planning/                    # Auto-generated per issue
@@ -590,6 +633,8 @@ The `/discover` command automatically scans your project to detect:
 **Quality Tooling:** ESLint, Prettier, Vitest/Jest, PHPStan, Ruff, pre-commit hooks, CI/CD pipelines — reports what's configured and what's missing.
 
 This detection feeds into `01_DISCOVERY.md` and `00_STATUS.md`, so every subsequent phase knows which expert commands (`/language/*-pro`) and quality commands (`/quality/*`) are relevant. If quality tooling gaps are found, the discovery phase recommends fixing them before proceeding to implementation.
+
+Additionally, `/discover` now auto-generates a **Repository Map** (Step 3) — a compact structural overview of the codebase (file tree + top-level symbols, ≤2K tokens) embedded directly in `01_DISCOVERY.md`. This map powers the hierarchical context loading in `/research`, ensuring the LLM navigates to relevant files instead of searching blindly.
 
 ---
 

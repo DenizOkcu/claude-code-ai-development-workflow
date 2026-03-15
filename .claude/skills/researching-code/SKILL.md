@@ -20,15 +20,29 @@ Find the minimum context needed to answer:
 
 ## Instructions
 
-### Step 0: Semantic Retrieval (if available)
+### Step 0: Hierarchical Context Loading
 
-If the `claude-context` MCP server is configured (check if `search_code` tool is available), query it before manual search:
+Load context in two levels — structural overview first, then targeted detail.
 
-1. Call `search_code` with the project's absolute path and a natural language description of the feature/issue
-2. Review the ranked results — note the top 5 file paths, their relevance scores, and code snippets
-3. Use these results to inform your Glob/Grep searches in Step 2
+**Level 1 — Repo Map (structural overview):**
 
-If `claude-context` is not configured or returns an error, skip this step and proceed with Step 1 as before. Retrieval is an enhancement, not a requirement.
+Check if `01_DISCOVERY.md` exists for this issue (in `.claude/planning/{issue-name}/`) and contains a `## Repository Map` section.
+
+- **If the map exists:** Read it. Use it to identify which directories and files are likely relevant to the feature. Note the key entry points and the overall structure.
+- **If no discovery doc exists** (user jumped straight to `/research`): Generate a quick repo map on-the-fly using Glob + Grep:
+  1. Run `Glob` for source files (exclude `node_modules/`, `vendor/`, `dist/`, `build/`, `.git/`, `*.lock`, `*.min.js`)
+  2. Auto-detect the primary language from file extensions
+  3. Run `Grep` with the appropriate language pattern to extract top-level symbols (classes, functions, exports)
+  4. Mentally note the repo structure and candidate files — you don't need to write this down, just use it to guide your searches
+
+**Level 2 — Targeted Detail (for candidate files only):**
+
+From the repo map, identify 5-15 candidate files most relevant to the feature. Then:
+
+- **If `search_code` MCP is available:** Call `search_code` with the project path and a natural language description of the feature. Cross-reference results with your candidate list from the map. This gives you both structural relevance (from the map) and semantic relevance (from the search).
+- **If MCP is not available:** Use `Grep` for feature-related terms scoped to the candidate directories identified from the map, then `Read` the top matches.
+
+The key insight: the map tells you *where* to look, the detail search tells you *what's there*. Don't search the entire repo when the map narrows it down.
 
 ### Step 1: Think Deeply Before Searching
 
@@ -40,6 +54,8 @@ Before creating artifacts, think deeply about:
 Use phrases like "think deeper", "think about edge cases" to trigger extended thinking.
 
 ### Step 2: Quick Discovery (5-15 files max)
+
+Use the repo map from Step 0 to narrow your Glob/Grep searches to relevant directories. Don't search the entire repo when the map tells you where to look.
 
 Use Glob/Grep/Read to answer the three questions:
 
@@ -121,7 +137,8 @@ Update `docs/{issue_name}/STATUS.md` to reflect research completion.
 
 ## Quality Check
 
-- [ ] Checked semantic retrieval (if available)?
+- [ ] Used repo map (Level 1) to identify candidate files?
+- [ ] Used targeted search (Level 2) for candidate files only?
 - [ ] Answered: What files to touch?
 - [ ] Answered: What patterns to follow?
 - [ ] Answered: What are the risks?
@@ -133,3 +150,4 @@ Update `docs/{issue_name}/STATUS.md` to reflect research completion.
 - **Over-researching:** Don't document the entire architecture. Don't trace full data flows. Don't analyze git history (rarely needed). Don't create 30+ file analyses.
 - **Wrong artifact name:** Create RESEARCH.md, not CODE_RESEARCH.md + RESEARCH_SUMMARY.md.
 - **Too many files:** Limit discovery to 5-15 files maximum.
+- **Ignoring the repo map:** Don't skip the map and go straight to broad Grep. The map exists to narrow your search — use it to identify candidate directories before searching.

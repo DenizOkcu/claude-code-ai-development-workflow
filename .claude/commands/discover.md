@@ -70,11 +70,47 @@ Scan for these markers:
 | `.pre-commit-config.yaml` | Pre-commit hooks configured |
 | `.github/workflows/` | CI/CD configured |
 
-#### 3. Create Planning Directory
+#### 3. Generate Repository Map
+
+After detecting the tech stack, generate a compact structural overview of the repository. This gives downstream phases (`/research`, `/implement`) a navigation aid to avoid blind searching.
+
+**Use the detected language from Step 2 to select the appropriate symbol extraction pattern:**
+
+| Language | Grep Pattern |
+|----------|-------------|
+| TypeScript/JavaScript | `^export (default )?(function\|class\|const\|type\|interface\|enum)\s+\w+` |
+| Python | `^(class \|def \|async def )\w+` |
+| Go | `^(func \|type \w+ (struct\|interface))` |
+| PHP | `^(class \|function \|interface \|trait )\w+` |
+| Rust | `^(pub )?(fn \|struct \|enum \|trait \|impl )\w+` |
+| Generic fallback | `^(class \|function \|def \|export \|pub fn \|func )\w+` |
+
+**Steps:**
+1. Run `Glob` to list source files, excluding: `node_modules/**`, `vendor/**`, `dist/**`, `build/**`, `.git/**`, `.next/**`, `__pycache__/**`, `.terraform/**`, `.claude/planning/**`, `*.lock`, `*.min.js`, `*.min.css`, `*.map`, `*.pyc`, binary/image files
+2. Run `Grep` with the detected-language pattern to extract top-level symbols from source files
+3. Format as a compact tree — file path with inline symbols:
+   ```
+   src/
+     auth/
+       middleware.ts — AuthMiddleware, validateToken(), refreshSession()
+       types.ts — User, Session, AuthConfig
+     api/
+       routes.ts — createRouter(), healthCheck()
+   tests/ — {N} test files
+   ```
+4. Apply token budget (≤2K tokens / ~8K characters):
+   - **<100 source files:** full tree with symbols
+   - **100–200 files:** full symbols for primary dirs (`src/`, `lib/`, `app/`, `pkg/`), file-only for others
+   - **200–500 files:** symbols for primary dirs only, summarize others as `{dir}/ — {N} files`
+   - **>500 files:** directory-level summary only, max 50 files with symbols
+
+**Formatting rules:** 2-space indent, `()` after function names, group by directory, alphabetical sort. For files with >8 symbols show first 6 + `... +{N} more`.
+
+#### 4. Create Planning Directory
 
 Create `.claude/planning/{issue-name}/`
 
-#### 4. Create `01_DISCOVERY.md`
+#### 5. Create `01_DISCOVERY.md`
 
 ```markdown
 # Discovery: {issue-name}
@@ -134,6 +170,16 @@ What problem does this solve? Who is affected?
 | CI/CD | ✓ Configured / ✗ Missing |
 | Pre-commit Hooks | ✓ Configured / ✗ Missing |
 
+## Repository Map
+
+{paste the compact repo map generated in Step 3 here}
+
+**Files:** {N} source | {M} test | {K} config
+**Primary language:** {language}
+**Key entry points:** {list 1-3 likely entry point files}
+
+> Generated automatically during discovery. Run `/repo-map` to refresh.
+
 ### Missing Quality Tooling Recommendations
 If any quality tooling is missing, recommend:
 - Missing linter → "Run `/quality/lint-setup` to configure"
@@ -149,7 +195,7 @@ If the detected language or cloud provider does NOT match any specific expert:
 Always assign at least one expert command. If nothing specific matches, these two generics cover any stack.
 ```
 
-#### 5. Create `00_STATUS.md`
+#### 6. Create `00_STATUS.md`
 
 ```markdown
 # Status: {issue-name}
@@ -184,14 +230,15 @@ Always assign at least one expert command. If nothing specific matches, these tw
 - 01_DISCOVERY.md
 ```
 
-#### 6. Output to User
+#### 7. Output to User
 
 Present:
 1. **Generated issue name**
 2. **Detected tech stack** (table format)
-3. **Missing quality tooling** (with recommended commands to fix)
-4. **Applicable expert commands** for this stack
-5. **Recommended next steps:**
+3. **Repository map** (compact structural overview from Step 3)
+4. **Missing quality tooling** (with recommended commands to fix)
+5. **Applicable expert commands** for this stack
+6. **Recommended next steps:**
    - If quality tooling is missing: suggest running `/quality/lint-setup` or `/quality/test-strategy` first
    - Always: suggest `/research {issue-name}` as the main next step
    - If the feature involves AI/LLM: note that `/ai-integrate {issue-name}` is available
@@ -199,7 +246,8 @@ Present:
 ### Quality Gates
 - Issue name follows kebab-case convention
 - Tech stack detection scanned at least: package.json/composer.json/pyproject.toml, tsconfig, *.tf files, Dockerfile, CI config
-- 01_DISCOVERY.md has all required sections filled including the full stack table
+- Repository map generated and embedded in 01_DISCOVERY.md (≤2K tokens)
+- 01_DISCOVERY.md has all required sections filled including the full stack table and repository map
 - 00_STATUS.md includes detected stack and applicable expert commands
 - Missing quality tooling is explicitly called out with fix commands
 - Success criteria are measurable, not vague

@@ -105,7 +105,8 @@ This is a one-time suggestion per session — do not repeat if the user ignores 
 /sdlc/continue                       # Auto-detect and continue next phase
 
 # Full workflow for complex features:
-/discover [description]              # Phase 1: Scope + detect tech stack
+/discover [description]              # Phase 1: Scope + detect tech stack + repo map
+/repo-map [path]                     # Generate compact repo structural overview (standalone)
 /research {issue-name}               # Phase 2: Deep codebase analysis
 /design-system {issue-name}          # Phase 3: Architecture + ADRs
 /plan {issue-name}                   # Phase 4: Implementation plan
@@ -499,7 +500,8 @@ ansible-inventory --graph                   # Show inventory tree
 cat .claude/planning/{issue-name}/00_STATUS.md
 
 # Full DevSecOps workflow
-/discover [description]              # Phase 1: Scope + stack detection
+/discover [description]              # Phase 1: Scope + stack detection + repo map
+/repo-map [path]                     # Generate compact repo structural overview (standalone)
 /research {issue-name}               # Phase 2: Codebase analysis
 /design-system {issue-name}          # Phase 3: Architecture + ADRs
 /plan {issue-name}                   # Phase 4: Implementation plan
@@ -526,6 +528,14 @@ cat .claude/planning/{issue-name}/00_STATUS.md
 
 ## Learnings (auto-updated by /retro)
 <!-- The /retro command appends lessons learned here automatically -->
+
+### 2026-03-15 — add-repo-context-engine
+
+- **Embed mandatory workflow tools in existing phase entry points, not as optional standalone commands.** Users follow the happy path — they won't run `/repo-map` manually, but they will run `/discover`. Integrate the tool into the phase they already use.
+- **For prompt-engineering projects, CLAUDE.md updates belong in the implementation phase, not the deploy phase.** Deferring them means they get forgotten. Add "update CLAUDE.md" as an explicit task in the implementation acceptance criteria for any workflow tooling change.
+- **Exclusion lists that exist in multiple prompt files will drift.** If two commands need the same exclusion list (e.g., `repo-map.md` and `discover.md`), add a cross-reference note to one pointing to the other as canonical. Prevents silent divergence over time.
+- **Progressive truncation with named tiers (< 100 / 100–200 / 200–500 / > 500 files) is better than a hard token cutoff for LLM output budget management.** Hard cutoffs lose structural information unpredictably; tiered degradation (symbols → files → directories → summary) preserves the most useful information at each tier.
+- **The Design phase can be skipped for M-sized prompt-only changes; the Observe phase is always skippable for prompt-only changes.** No metrics, dashboards, or alerting to configure. But the Security phase (7a) is still valuable even with no runtime code — STRIDE analysis reliably catches prompt injection and artifact tampering risks.
 
 ### 2026-03-15 — add-semantic-retrieval
 

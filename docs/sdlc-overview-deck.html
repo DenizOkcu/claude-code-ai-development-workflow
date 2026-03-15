@@ -7,7 +7,7 @@
 <!--
   Slide deck: overview of the AI-Powered Software Development Lifecycle.
   Theme: Blueprint Teal — DM Sans + Fira Code, teal/amber accents on dark slate.
-  17 slides covering: problem, predictable AI, pipeline, security, tools, integrations, visualization, retrieval, quick start.
+  18 slides covering: problem, predictable AI, pipeline, security, tools, integrations, visualization, retrieval, hierarchical context, quick start.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1067,7 +1067,44 @@ flowchart LR
     </div>
   </section>
 
-  <!-- SLIDE 14: CODE — QUICK START -->
+  <!-- SLIDE 14: SPLIT — HIERARCHICAL REPO CONTEXT -->
+  <section class="slide slide--split">
+    <div class="slide__panels">
+      <div class="slide__panel slide__panel--primary">
+        <p class="slide__label reveal" style="color:var(--accent);">Context Engine</p>
+        <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px);">Hierarchical Repo Map</h2>
+        <ul class="slide__bullets" style="margin-top:16px;">
+          <li class="reveal"><strong>Level 1 &mdash; Repo Map</strong>: compact file tree + top-level symbols in &le;2K tokens</li>
+          <li class="reveal"><strong>Level 2 &mdash; Targeted Detail</strong>: search only candidate files identified from the map</li>
+          <li class="reveal"><strong>Auto-generated</strong> during <code style="font-family:var(--font-mono);font-size:0.85em;background:var(--accent-dim);color:var(--accent);padding:1px 5px;border-radius:3px;">/discover</code> Step 3 &mdash; users never forget</li>
+          <li class="reveal"><strong>6 language patterns</strong>: TS/JS, Python, Go, PHP, Rust + generic fallback</li>
+          <li class="reveal"><strong>Progressive truncation</strong>: 4 tiers degrade from full symbols &rarr; directory summaries</li>
+          <li class="reveal"><strong>Zero dependencies</strong> &mdash; uses built-in Glob + Grep (no MCP required)</li>
+        </ul>
+      </div>
+      <div class="slide__panel slide__panel--secondary">
+        <p class="slide__label reveal" style="color:var(--accent2);">How It Works</p>
+        <div style="margin-top:12px;">
+          <pre class="reveal" style="background:var(--code-bg);color:var(--code-text);padding:16px;border-radius:8px;font-family:var(--font-mono);font-size:clamp(11px,1.2vw,14px);line-height:1.6;overflow-x:auto;"><code><span style="color:var(--text-dim);">Level 1: Repo Map (&le;2K tokens)</span>
+src/
+  auth/
+    middleware.ts &mdash; <span style="color:var(--accent);">Auth</span>, <span style="color:var(--accent);">validateToken()</span>
+    types.ts &mdash; <span style="color:var(--accent);">User</span>, <span style="color:var(--accent);">Session</span>
+  api/
+    routes.ts &mdash; <span style="color:var(--accent);">createRouter()</span>
+        &darr; <span style="color:var(--accent2);">identifies candidate files</span>
+<span style="color:var(--text-dim);">Level 2: Targeted search</span>
+  <span style="color:var(--accent);">/retrieval</span> search (if MCP)
+  <span style="color:var(--accent);">Grep/Read</span> (fallback)</code></pre>
+        </div>
+        <div class="reveal" style="margin-top:16px;padding:12px;background:var(--accent-dim);border-radius:8px;border-left:3px solid var(--accent);">
+          <div style="font-family:var(--font-mono);font-size:clamp(11px,1.2vw,13px);color:var(--text-dim);">Inspired by Aider&rsquo;s repo map &mdash; simpler (Glob + Grep) but always available without external deps.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15: CODE — QUICK START -->
   <section class="slide slide--code" style="background-image:radial-gradient(ellipse at 50% 80%, var(--accent-dim) 0%, transparent 40%);">
     <h2 class="slide__heading reveal" style="text-align:center;">Quick Start</h2>
     <div class="slide__code-block reveal" style="margin-top:clamp(12px,2vh,24px);">
