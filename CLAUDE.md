@@ -202,6 +202,10 @@ The `/discover` command automatically scans the project to detect languages, fra
 /n8n/setup                              # Interactive setup wizard (hosting, capabilities, credentials)
 /n8n [request]                          # Search nodes, browse templates, build & manage workflows
 
+# Firecrawl Web Scraping (fallback for WebFetch):
+/firecrawl/setup                        # Interactive setup wizard (self-hosted Docker or cloud API)
+/firecrawl [request]                    # Scrape, crawl, search, map, or extract web content
+
 # Bonus:
 /ai-integrate {issue-name}             # LLM/AI integration patterns
 /perf-test {issue-name}                # Performance testing + benchmarks

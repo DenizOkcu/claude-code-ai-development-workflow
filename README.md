@@ -14,6 +14,7 @@ This project synthesizes and extends several open-source tools, each bringing di
 | [**OBLITERATUS**](https://github.com/elder-plinius/OBLITERATUS) by elder-plinius | Mechanistic interpretability toolkit for AI model alignment analysis — reveals jailbreak surfaces and self-repair robustness in self-hosted LLMs | `/security/redteam-ai` |
 | [**visual-explainer**](https://github.com/nicobailon/visual-explainer) by nicobailon | Generates self-contained HTML pages with Mermaid diagrams, interactive zoom/pan, dark/light themes, KPI dashboards, slide decks, and anti-AI-slop guardrails. Turns markdown artifacts into browser-quality visualizations | `/visual/*` (8 commands) |
 | [**n8n-MCP**](https://github.com/czlonkowski/n8n-mcp) by czlonkowski | MCP server bridging n8n workflow automation with Claude Code — access 1,084+ nodes, 2,709 templates, and optionally manage a live n8n instance (CRUD workflows, trigger executions). Self-hosted or hosted | `/n8n`, `/n8n/setup` |
+| [**Firecrawl**](https://github.com/firecrawl/firecrawl) by firecrawl | Web scraping, crawling, and structured data extraction via MCP. Fallback when built-in `WebFetch` fails on JS-rendered or anti-bot protected pages. Self-hosted (Docker) or cloud API | `/firecrawl`, `/firecrawl/setup` |
 
 Extended with: Discovery, Architecture/ADR, DevSecOps security layer, Deployment, Observability, Retrospective phases, performance testing, hotfix workflow, multi-agent orchestration, and self-improving CLAUDE.md via automated retrospectives.
 
@@ -208,6 +209,44 @@ Integrate with [n8n](https://n8n.io/) via the [n8n-MCP](https://github.com/czlon
 /n8n show all my active workflows                          # (full mode)
 ```
 
+## Firecrawl Web Scraping
+
+Integrate with [Firecrawl](https://github.com/firecrawl/firecrawl) for powerful web scraping and crawling — especially useful as a fallback when Claude Code's built-in `WebFetch` fails on JavaScript-rendered pages, anti-bot protected sites, or when you need structured data extraction.
+
+| Command | Purpose |
+|---------|---------|
+| `/firecrawl/setup` | Interactive setup wizard — choose self-hosted (Docker) or cloud API |
+| `/firecrawl [request]` | Scrape, crawl, search, map, or extract web content |
+
+**Setup options:**
+
+| Option | Requirements | Best For |
+|--------|-------------|----------|
+| **Self-hosted Docker** (recommended) | Docker installed | Full control, no API limits |
+| **Self-hosted via npx** | Node.js 18+ + self-hosted instance | Lightweight MCP client |
+| **Cloud API** | API key from firecrawl.dev | Quick start, no infra |
+
+**Available tools (after setup):**
+
+| Tool | Purpose |
+|------|---------|
+| `firecrawl_scrape` | Scrape a single URL to clean markdown |
+| `firecrawl_crawl` | Recursively crawl a website |
+| `firecrawl_search` | Web search + content extraction |
+| `firecrawl_map` | Discover all URLs on a site |
+| `firecrawl_extract` | LLM-powered structured data extraction |
+
+```bash
+# First time: run the setup wizard
+/firecrawl/setup
+
+# Then use firecrawl:
+/firecrawl scrape https://docs.example.com/api
+/firecrawl crawl https://docs.example.com --depth 2
+/firecrawl search "React 19 migration guide"
+/firecrawl extract product prices from https://store.example.com
+```
+
 ## Visualization Commands
 
 Generate rich HTML pages from any technical content — architecture diagrams, diff reviews, project recaps, slide decks. Powered by [visual-explainer](https://github.com/nicobailon/visual-explainer). Output goes to `~/.agent/diagrams/` and opens in the browser.
@@ -317,6 +356,9 @@ your-project/
 │   │   ├── n8n.md                     # n8n workflow assistant
 │   │   ├── n8n/
 │   │   │   └── setup.md              # n8n-MCP setup wizard
+│   │   ├── firecrawl.md              # Firecrawl web scraping assistant
+│   │   ├── firecrawl/
+│   │   │   └── setup.md              # Firecrawl MCP setup wizard
 │   │   └── devops/
 │   │       └── ci-pipeline.md       # CI/CD pipeline generation
 │   ├── planning/                    # Auto-generated per issue
