@@ -147,6 +147,31 @@ Each skill lives in `.claude/skills/{name}/SKILL.md` with YAML frontmatter (`nam
 | generate-visual-plan | Visual implementation plan | opus |
 | share | Deploy to Vercel | — |
 
+### Retrieval Layer (Optional)
+
+**claude-context MCP (`@zilliz/claude-context-mcp`):**
+- Adopted package — not custom-built (see ADR-001)
+- Provides hybrid BM25 + dense vector search over AST-indexed code
+- Tree-sitter parses code into semantic chunks (functions, classes, methods)
+- Merkle tree tracks file hashes for incremental re-indexing
+- Embedding via Ollama (`nomic-embed-text`) or cloud providers (OpenAI, Voyage, Gemini)
+- Storage via Docker Milvus (local) or Zilliz Cloud (managed)
+
+| Tool | Purpose |
+|------|---------|
+| `search_code` | Hybrid semantic + keyword search over code chunks |
+| `index_codebase` | Build or incrementally update the code index |
+| `get_indexing_status` | Check index health, progress, file/chunk counts |
+| `clear_index` | Remove index for a codebase |
+
+**Integration points:**
+- `researching-code` skill: Step 0 queries retrieval before manual Glob/Grep
+- `implementing-code` skill: Optional pattern discovery via `search_code`
+- `/retrieval` command: Manual search, index management, status checks
+- `/retrieval/setup` command: Interactive setup wizard (Ollama + Milvus, Zilliz Cloud, etc.)
+
+**Graceful degradation:** All skills work identically without retrieval. If `claude-context` is not configured or services are down, skills fall back to Glob/Grep/Read.
+
 ### Security Layer
 
 **Security Analyst Agent (`security-analyst.md`):**

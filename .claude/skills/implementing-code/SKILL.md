@@ -26,6 +26,8 @@ Read `PLAN.md` and understand:
 
 **Count phases explicitly:** "I see {N} phases in the plan. I will implement all {N}."
 
+**Pattern Discovery (if retrieval available):** If `search_code` tool is available, query it to find similar implementations or related test files before starting each phase. This helps discover existing patterns to follow and dependencies to account for. Skip if not configured.
+
 ### Step 2: Implement Phase by Phase
 
 For each phase:
@@ -143,6 +145,7 @@ Built {brief description of what was implemented}.
 
 ## Quality Check
 
+- [ ] Queried for related files (if retrieval available)?
 - [ ] Read PLAN.md and counted phases?
 - [ ] Implemented ALL phases?
 - [ ] Ran validation for EACH phase from PLAN.md?

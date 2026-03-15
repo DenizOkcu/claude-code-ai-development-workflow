@@ -11,7 +11,11 @@
       "Bash(find *)",
       "Bash(docker *)",
       "Bash(./shannon/*)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "mcp__claude-context__search_code",
+      "mcp__claude-context__index_codebase",
+      "mcp__claude-context__get_indexing_status",
+      "mcp__claude-context__clear_index"
     ]
   },
   "mcpServers": {

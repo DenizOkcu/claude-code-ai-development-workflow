@@ -91,6 +91,14 @@ When starting a new session in this repository, proactively check if `.claude/pl
 
 This is a suggestion only — do not auto-resume without user confirmation.
 
+### Session Start: Semantic Retrieval Check
+
+Also check if `claude-context` exists in `.claude/settings.json` under `mcpServers`. If it is **not configured**, suggest:
+
+> Semantic code retrieval is not configured. Run `/retrieval/setup` to enable hybrid BM25 + vector search over your codebase — enhances `/research` and `/implement` phases.
+
+This is a one-time suggestion per session — do not repeat if the user ignores it.
+
 ### Quick Start
 ```bash
 # Resume an incomplete workflow:
@@ -205,6 +213,10 @@ The `/discover` command automatically scans the project to detect languages, fra
 # Firecrawl Web Scraping (fallback for WebFetch):
 /firecrawl/setup                        # Interactive setup wizard (self-hosted Docker or cloud API)
 /firecrawl [request]                    # Scrape, crawl, search, map, or extract web content
+
+# Semantic Code Retrieval (optional, enhances /research and /implement):
+/retrieval/setup                        # Interactive setup wizard (Ollama + Milvus local, or Zilliz Cloud)
+/retrieval [request]                    # Search, index, status, or clear the code search index
 
 # Bonus:
 /ai-integrate {issue-name}             # LLM/AI integration patterns
@@ -514,6 +526,14 @@ cat .claude/planning/{issue-name}/00_STATUS.md
 
 ## Learnings (auto-updated by /retro)
 <!-- The /retro command appends lessons learned here automatically -->
+
+### 2026-03-15 — add-semantic-retrieval
+
+- **Pin MCP server versions in setup wizard config blocks** (`@0.1.6`, not `@latest`). `@latest` is convenient but creates supply chain risk — a compromised update is silently fetched on next session start. The setup wizard should pin with a comment explaining how to upgrade.
+- **Docker `-p PORT:PORT` binds to `0.0.0.0` by default** — network-accessible from all interfaces. Always use `-p 127.0.0.1:PORT:PORT` in setup wizard Docker commands for local dev tooling. Caught via STRIDE network-listener analysis.
+- **Ollama embedding dimension auto-detection is unreliable for batch processing** (issue #235). Always set `EMBEDDING_DIMENSION` explicitly (e.g., `768` for nomic-embed-text) and keep `EMBEDDING_BATCH_SIZE=5` when configuring MCP servers with Ollama.
+- **Milvus Lite (in-process SQLite) is Python-only** — the Node.js SDK (`@zilliz/milvus2-sdk-node`) does not support it. If an MCP package depends on Milvus in Node.js, Docker is the minimum for local operation. Validate embedded-mode availability per runtime during research.
+- **The implicit feature flag pattern (MCP config presence) is the right default for optional enhancements.** No code-level flag needed; the feature is off unless the user runs `/setup`. Session-start checks close the discoverability gap without forcing adoption.
 
 ### 2026-02-28 — add-memory-improve-skills
 

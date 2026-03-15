@@ -20,6 +20,16 @@ Find the minimum context needed to answer:
 
 ## Instructions
 
+### Step 0: Semantic Retrieval (if available)
+
+If the `claude-context` MCP server is configured (check if `search_code` tool is available), query it before manual search:
+
+1. Call `search_code` with the project's absolute path and a natural language description of the feature/issue
+2. Review the ranked results — note the top 5 file paths, their relevance scores, and code snippets
+3. Use these results to inform your Glob/Grep searches in Step 2
+
+If `claude-context` is not configured or returns an error, skip this step and proceed with Step 1 as before. Retrieval is an enhancement, not a requirement.
+
 ### Step 1: Think Deeply Before Searching
 
 Before creating artifacts, think deeply about:
@@ -111,6 +121,7 @@ Update `docs/{issue_name}/STATUS.md` to reflect research completion.
 
 ## Quality Check
 
+- [ ] Checked semantic retrieval (if available)?
 - [ ] Answered: What files to touch?
 - [ ] Answered: What patterns to follow?
 - [ ] Answered: What are the risks?

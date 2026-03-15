@@ -15,6 +15,7 @@ This project synthesizes and extends several open-source tools, each bringing di
 | [**visual-explainer**](https://github.com/nicobailon/visual-explainer) by nicobailon | Generates self-contained HTML pages with Mermaid diagrams, interactive zoom/pan, dark/light themes, KPI dashboards, slide decks, and anti-AI-slop guardrails. Turns markdown artifacts into browser-quality visualizations | `/visual/*` (8 commands) |
 | [**n8n-MCP**](https://github.com/czlonkowski/n8n-mcp) by czlonkowski | MCP server bridging n8n workflow automation with Claude Code — access 1,084+ nodes, 2,709 templates, and optionally manage a live n8n instance (CRUD workflows, trigger executions). Self-hosted or hosted | `/n8n`, `/n8n/setup` |
 | [**Firecrawl**](https://github.com/firecrawl/firecrawl) by firecrawl | Web scraping, crawling, and structured data extraction via MCP. Fallback when built-in `WebFetch` fails on JS-rendered or anti-bot protected pages. Self-hosted (Docker) or cloud API | `/firecrawl`, `/firecrawl/setup` |
+| [**claude-context**](https://github.com/zilliztech/claude-context) by Zilliz | Semantic code retrieval via MCP — hybrid BM25 + vector search over AST-indexed codebases. Tree-sitter parsing, Merkle tree incremental indexing, multiple embedding providers (Ollama, OpenAI, Voyage, Gemini). Enhances `/research` and `/implement` with semantic search | `/retrieval`, `/retrieval/setup` |
 
 Extended with: Discovery, Architecture/ADR, DevSecOps security layer, Deployment, Observability, Retrospective phases, performance testing, hotfix workflow, multi-agent orchestration, and self-improving CLAUDE.md via automated retrospectives.
 
@@ -245,6 +246,44 @@ Integrate with [Firecrawl](https://github.com/firecrawl/firecrawl) for powerful 
 /firecrawl crawl https://docs.example.com --depth 2
 /firecrawl search "React 19 migration guide"
 /firecrawl extract product prices from https://store.example.com
+```
+
+## Semantic Code Retrieval
+
+Enhance the `/research` and `/implement` phases with semantic code search powered by [claude-context](https://github.com/zilliztech/claude-context) MCP. This adds hybrid BM25 + vector search over AST-indexed codebases — the agent finds relevant code semantically, not just by keyword.
+
+| Command | Purpose |
+|---------|---------|
+| `/retrieval/setup` | Interactive setup wizard — choose local (Ollama + Docker Milvus) or cloud (Zilliz Cloud) |
+| `/retrieval [request]` | Search, index, check status, or clear the code search index |
+
+**How it works:**
+- **Indexing**: Tree-sitter parses your code into semantic chunks (functions, classes, methods), generates embeddings via Ollama, stores in Milvus
+- **Search**: Hybrid BM25 (keyword) + dense vector (semantic) search returns ranked code chunks
+- **Incremental**: Merkle tree tracks file changes — only modified files are re-indexed
+- **Graceful**: All workflow commands work without retrieval. When configured, `/research` and `/implement` automatically query the index before manual Glob/Grep
+
+**Setup options:**
+
+| Option | Requirements | Best For |
+|--------|-------------|----------|
+| **Fully local** (recommended) | Ollama + Docker | Privacy, offline use, no API costs |
+| **Zilliz Cloud + Ollama** | Ollama + Zilliz account | Local embeddings, managed storage |
+| **Zilliz Cloud + OpenAI** | API keys | Easiest setup, no local infra |
+
+```bash
+# First time: run the setup wizard
+/retrieval/setup
+
+# Index your codebase
+/retrieval index
+
+# Search semantically
+/retrieval search "authentication middleware"
+/retrieval search "database connection pooling"
+
+# Check index status
+/retrieval status
 ```
 
 ## Visualization Commands
