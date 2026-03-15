@@ -106,6 +106,8 @@ After detecting the tech stack, generate a compact structural overview of the re
 
 **Formatting rules:** 2-space indent, `()` after function names, group by directory, alphabetical sort. For files with >8 symbols show first 6 + `... +{N} more`.
 
+**Also generate a Symbol Index** using the same Grep results: format each extracted symbol as `type:name:file:line` (one per line), applying the type vocabulary from `/repo-map` Step 7 (`function`→`func`, `class`→`class`, `interface`→`iface`, etc.). Budget: ≤1K tokens (~80 entries). Apply the same progressive truncation tiers as the repo map.
+
 #### 4. Create Planning Directory
 
 Create `.claude/planning/{issue-name}/`
@@ -180,6 +182,12 @@ What problem does this solve? Who is affected?
 
 > Generated automatically during discovery. Run `/repo-map` to refresh.
 
+## Symbol Index
+
+{paste the symbol index generated alongside the repo map — see /repo-map Step 7}
+
+> Generated alongside repo map. Run `/repo-map` to refresh.
+
 ### Missing Quality Tooling Recommendations
 If any quality tooling is missing, recommend:
 - Missing linter → "Run `/quality/lint-setup` to configure"
@@ -247,7 +255,8 @@ Present:
 - Issue name follows kebab-case convention
 - Tech stack detection scanned at least: package.json/composer.json/pyproject.toml, tsconfig, *.tf files, Dockerfile, CI config
 - Repository map generated and embedded in 01_DISCOVERY.md (≤2K tokens)
-- 01_DISCOVERY.md has all required sections filled including the full stack table and repository map
+- Symbol index generated and embedded in 01_DISCOVERY.md (≤1K tokens)
+- 01_DISCOVERY.md has all required sections filled including the full stack table, repository map, and symbol index
 - 00_STATUS.md includes detected stack and applicable expert commands
 - Missing quality tooling is explicitly called out with fix commands
 - Success criteria are measurable, not vague

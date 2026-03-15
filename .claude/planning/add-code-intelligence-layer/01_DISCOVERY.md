@@ -1,0 +1,146 @@
+# Discovery: add-code-intelligence-layer
+
+## Summary
+Evolve the existing two-level hierarchical context engine into a full "Code Intelligence Layer" by adding a symbol index (AST-parsed), a repository dependency graph, a reranking stage for retrieval results, a context pack builder that expands results via the dependency graph, and a session-level context cache. The goal is to dramatically improve the relevance of context assembled for any coding task while reducing redundant token usage across a session.
+
+## Problem Statement
+The current context engine (Level 1 repo map + Level 2 semantic retrieval) is a solid foundation but has three gaps:
+1. **No structural code understanding** — the repo map lists files and top-level symbols but doesn't know which symbols call which, which modules depend on which, or which tests cover which functions.
+2. **No reranking** — retrieved results from `search_code` are returned as-is; there is no second-pass that scores results against task context to surface the most relevant files/symbols first.
+3. **No session cache** — every new task re-generates the repo map and re-queries the index; repeated token spending on the same repository structure.
+
+This limits agents' ability to reliably identify the *minimum* correct context for complex, cross-file tasks (e.g., tracing a data flow, finding all callers of a changed function, or identifying which tests need to run).
+
+## Success Criteria
+- [ ] A symbol index data structure is defined (schema + population procedure) capturing: functions, classes, interfaces, exports, with file/line references
+- [ ] A dependency graph schema is defined capturing: module imports, function call edges, affected components
+- [ ] A reranking procedure is specified that scores retrieved files/symbols against task description and re-orders results before context pack assembly
+- [ ] A context pack builder procedure is specified that: (a) takes seed files from retrieval, (b) expands via dependency graph (imports, callers, tests), (c) stays within a token budget
+- [ ] A session context cache design is specified (what to cache, when to invalidate, how to load on session start)
+- [ ] All components integrate cleanly with the existing `researching-code` skill and `claude-context` MCP without breaking current behavior
+- [ ] Design is implemented as Markdown prompt files (no new runtime code or MCP servers required)
+
+## Scope
+
+### In Scope
+- Symbol index: schema definition + population procedure in `researching-code` / `repo-map` skill
+- Dependency graph: schema + extraction procedure (import/export tracing via Grep)
+- Reranking stage: scoring procedure added to `researching-code` Step 0 Level 2
+- Context pack builder: expanded context assembly procedure (seed + deps + tests)
+- Session cache: session-level caching of repo map + symbol index in `01_DISCOVERY.md` or a companion `.claude/cache/` structure
+- Updated `researching-code` skill to orchestrate all 5 new components
+- Updated `ARCHITECTURE.md` to document the new Code Intelligence Layer
+
+### Out of Scope
+- Building a new MCP server or runtime binary
+- IDE integrations or file watchers
+- Cross-repository dependency tracking
+- Embedding-based reranking (keep it lightweight: keyword + structural scoring)
+- Changes to planning artifact schema (STATUS.md, etc.)
+
+## Stakeholders
+- Users: Developers using `/research`, `/implement`, `/sdlc` on medium-to-large codebases
+- Systems: `researching-code` skill, `repo-map` command, `claude-context` MCP, `implementing-code` skill
+
+## Risk Assessment
+**Level:** Low
+**Justification:** All changes are additive prompt-engineering in Markdown. No runtime code. Graceful degradation is the baseline: if any new component isn't available or populated, the skill falls back to existing Level 1→Level 2 behavior. The dependency graph and symbol index are only built on demand (during research), not as a required prerequisite.
+
+## Dependencies
+- Existing: `researching-code` skill (will be extended with new steps)
+- Existing: `repo-map` command (will gain symbol index population)
+- Existing: `claude-context` MCP (Level 2 detail source — reranking post-processes its output)
+- New: Symbol index schema (defined in skill, stored in session)
+- New: Dependency graph schema (defined in skill, built on demand via Grep)
+- New: Context pack builder procedure (new step in `researching-code`)
+- New: Session cache design (cache spec in skill + storage path)
+
+## Estimated Complexity
+**Size:** M
+**Reasoning:** Pure prompt engineering — no code changes. Touches 2–3 existing Markdown files (`researching-code/SKILL.md`, `repo-map.md`, `ARCHITECTURE.md`) and may add 1–2 new reference files. The design work (schemas, procedures) is the primary effort. Implementation is updating existing skill instructions.
+
+---
+
+## Current Architecture (Extension Points)
+
+### Existing Context Engine
+```
+Level 1: Repo Map (Glob + Grep → file tree + symbols, ≤2K tokens)
+  Generated by: /discover or /repo-map
+  Stored in:    01_DISCOVERY.md ## Repository Map
+
+Level 2: Targeted Detail (search_code MCP or Grep/Read fallback)
+  Scoped to:    candidate files from Level 1
+  Contains:     code chunks, implementations
+```
+
+### Extension Points
+| Component | Extension Point |
+|-----------|----------------|
+| Symbol Index | Add population step to `repo-map` command + output to `01_DISCOVERY.md` |
+| Dependency Graph | Add build step to `researching-code` Step 0, stored in session |
+| Reranking | Add reranking pass after Level 2 retrieval in `researching-code` |
+| Context Pack Builder | New Step 3 in `researching-code` (replaces ad-hoc file reading) |
+| Session Cache | Session-scoped storage in `.claude/cache/{issue-name}/` |
+
+---
+
+## Detected Tech Stack
+
+### Languages & Frameworks
+| Technology | Version | Expert Command |
+|------------|---------|----------------|
+| Markdown + YAML frontmatter | — | `/language/software-engineer-pro` |
+| Claude Code skills/commands (prompt engineering) | — | `/language/software-engineer-pro` |
+
+### Infrastructure
+| Technology | Expert Command |
+|------------|----------------|
+| Claude Code CLI (skills, commands, agents) | — |
+| MCP (Model Context Protocol) — claude-context | — |
+
+### Quality Tooling
+| Tool | Status |
+|------|--------|
+| Linter | ✗ Not applicable (Markdown/prompt-engineering project) |
+| Formatter | ✗ Not applicable |
+| Test Runner | ✗ Not applicable |
+| CI/CD | ✗ Not configured |
+| Pre-commit Hooks | ✗ Not configured |
+
+### Missing Quality Tooling Recommendations
+- Prompt-engineering project — traditional tooling doesn't apply
+- Quality enforced via skill Quality Check checklists (already present)
+- Consider `/quality/code-audit` if scripting components are added
+
+### Applicable Expert Commands
+- `/language/software-engineer-pro` — design patterns, system thinking, clean architecture
+
+---
+
+## Repository Map
+
+.claude/
+  ARCHITECTURE.md — (architecture overview)
+  LEARNINGS.md — (accumulated learnings)
+  QUICK_REFERENCE.md — (tool cheat sheets)
+  commands/
+    discover.md — (discover skill prompt)
+    repo-map.md — (repo map generator)
+    research.md — (research command)
+    retrieval.md — (retrieval command)
+    retrieval/setup.md — (retrieval setup wizard)
+  skills/
+    researching-code/SKILL.md — (Level 1→2 hierarchical context loading)
+    implementing-code/SKILL.md — (implementation skill)
+    planning-solutions/SKILL.md — (planning skill)
+    reviewing-code/SKILL.md — (review skill)
+    review-fix/SKILL.md — (fix skill)
+    visual-explainer/SKILL.md — (HTML visualization)
+  planning/
+    add-repo-context-engine/ — (prior issue: repo map + Level 1→2 pattern)
+    add-semantic-retrieval/ — (prior issue: claude-context MCP integration)
+
+**Files:** ~80 source (Markdown) | 0 test | 0 config
+**Primary language:** Markdown (prompt engineering)
+**Key entry points:** `.claude/skills/researching-code/SKILL.md`, `.claude/commands/repo-map.md`, `.claude/ARCHITECTURE.md`

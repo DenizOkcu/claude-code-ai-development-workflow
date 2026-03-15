@@ -1067,38 +1067,37 @@ flowchart LR
     </div>
   </section>
 
-  <!-- SLIDE 14: SPLIT — HIERARCHICAL REPO CONTEXT -->
+  <!-- SLIDE 14: SPLIT — CODE INTELLIGENCE LAYER -->
   <section class="slide slide--split">
     <div class="slide__panels">
       <div class="slide__panel slide__panel--primary">
         <p class="slide__label reveal" style="color:var(--accent);">Context Engine</p>
-        <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px);">Hierarchical Repo Map</h2>
+        <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px);">Code Intelligence Layer</h2>
         <ul class="slide__bullets" style="margin-top:16px;">
-          <li class="reveal"><strong>Level 1 &mdash; Repo Map</strong>: compact file tree + top-level symbols in &le;2K tokens</li>
-          <li class="reveal"><strong>Level 2 &mdash; Targeted Detail</strong>: search only candidate files identified from the map</li>
-          <li class="reveal"><strong>Auto-generated</strong> during <code style="font-family:var(--font-mono);font-size:0.85em;background:var(--accent-dim);color:var(--accent);padding:1px 5px;border-radius:3px;">/discover</code> Step 3 &mdash; users never forget</li>
-          <li class="reveal"><strong>6 language patterns</strong>: TS/JS, Python, Go, PHP, Rust + generic fallback</li>
-          <li class="reveal"><strong>Progressive truncation</strong>: 4 tiers degrade from full symbols &rarr; directory summaries</li>
-          <li class="reveal"><strong>Zero dependencies</strong> &mdash; uses built-in Glob + Grep (no MCP required)</li>
+          <li class="reveal"><strong>Level 1</strong>: Repo Map + Symbol Index &le;3K tokens (<code style="font-family:var(--font-mono);font-size:0.85em;background:var(--accent-dim);color:var(--accent);padding:1px 5px;border-radius:3px;">type:name:file:line</code>)</li>
+          <li class="reveal"><strong>Level 1b</strong>: Dependency graph &mdash; Grep-based import tracing (repos &ge;50 files)</li>
+          <li class="reveal"><strong>Level 2</strong>: Targeted search via <code style="font-family:var(--font-mono);font-size:0.85em;background:var(--accent-dim);color:var(--accent);padding:1px 5px;border-radius:3px;">/retrieval</code> MCP or Grep</li>
+          <li class="reveal"><strong>Level 2b</strong>: 3-factor reranking &mdash; keyword (40%) + proximity (35%) + file-type (25%)</li>
+          <li class="reveal"><strong>Level 3</strong>: Context Pack &mdash; &le;8 files (seeds + 1-hop deps + tests)</li>
+          <li class="reveal"><strong>Smart activation</strong> &mdash; skips graph &amp; reranking for small repos (&lt;50 files)</li>
         </ul>
       </div>
       <div class="slide__panel slide__panel--secondary">
-        <p class="slide__label reveal" style="color:var(--accent2);">How It Works</p>
+        <p class="slide__label reveal" style="color:var(--accent2);">Pipeline</p>
         <div style="margin-top:12px;">
-          <pre class="reveal" style="background:var(--code-bg);color:var(--code-text);padding:16px;border-radius:8px;font-family:var(--font-mono);font-size:clamp(11px,1.2vw,14px);line-height:1.6;overflow-x:auto;"><code><span style="color:var(--text-dim);">Level 1: Repo Map (&le;2K tokens)</span>
-src/
-  auth/
-    middleware.ts &mdash; <span style="color:var(--accent);">Auth</span>, <span style="color:var(--accent);">validateToken()</span>
-    types.ts &mdash; <span style="color:var(--accent);">User</span>, <span style="color:var(--accent);">Session</span>
-  api/
-    routes.ts &mdash; <span style="color:var(--accent);">createRouter()</span>
-        &darr; <span style="color:var(--accent2);">identifies candidate files</span>
-<span style="color:var(--text-dim);">Level 2: Targeted search</span>
-  <span style="color:var(--accent);">/retrieval</span> search (if MCP)
-  <span style="color:var(--accent);">Grep/Read</span> (fallback)</code></pre>
+          <pre class="reveal" style="background:var(--code-bg);color:var(--code-text);padding:16px;border-radius:8px;font-family:var(--font-mono);font-size:clamp(11px,1.2vw,14px);line-height:1.6;overflow-x:auto;"><code><span style="color:var(--text-dim);">L1: Repo Map + Symbol Index</span>
+<span style="color:var(--accent);">func</span>:validateToken:src/auth/mw.ts:15
+<span style="color:var(--accent);">class</span>:AuthService:src/auth/svc.ts:8
+        &darr; <span style="color:var(--accent2);">identify candidates</span>
+<span style="color:var(--text-dim);">L1b: Dependency Graph</span>
+  mw.ts &rarr; imports [svc.ts, types.ts]
+        &darr; <span style="color:var(--accent2);">enrich with relationships</span>
+<span style="color:var(--text-dim);">L2: Search &rarr; L2b: Rerank &rarr; top-8</span>
+        &darr; <span style="color:var(--accent2);">expand + assemble</span>
+<span style="color:var(--text-dim);">L3: Context Pack (&le;8 files)</span></code></pre>
         </div>
         <div class="reveal" style="margin-top:16px;padding:12px;background:var(--accent-dim);border-radius:8px;border-left:3px solid var(--accent);">
-          <div style="font-family:var(--font-mono);font-size:clamp(11px,1.2vw,13px);color:var(--text-dim);">Inspired by Aider&rsquo;s repo map &mdash; simpler (Glob + Grep) but always available without external deps.</div>
+          <div style="font-family:var(--font-mono);font-size:clamp(11px,1.2vw,13px);color:var(--text-dim);">Zero external deps &mdash; all prompt-based (Glob + Grep). Cross-session cache via 01_DISCOVERY.md; intra-session via context window.</div>
         </div>
       </div>
     </div>

@@ -26,6 +26,13 @@
 - **Quick-reference command cheat sheets (terraform, kubectl, etc.) don't belong in CLAUDE.md.** They're consulted rarely but loaded every conversation. Move to `.claude/QUICK_REFERENCE.md` and add a one-liner pointer.
 - **Run `/retro` even for conversational (non-SDLC) changes.** Lessons from ad-hoc improvements are as valuable as formal SDLC retros. The right abbreviated workflow for prompt-only tooling changes is: analyze → implement directly → retro (skip Discovery, Design, Observe).
 
+### 2026-03-15 — add-code-intelligence-layer
+
+- **Template placeholders require a paired generation instruction in the step that produces the data.** A placeholder in the `01_DISCOVERY.md` template (`## Symbol Index`) is silent if the Step 3 generation instructions don't explicitly invoke symbol index generation. Caught by code review; fix: add the instruction in the generation step, not just the template.
+- **Multi-level activation conditions keep skill pipelines fast on trivial inputs.** Use `if repo >= N files` and `if candidates > M` gates to skip expensive steps (dependency graph, reranking) on small repos. The pipeline enriches only when enrichment can help.
+- **Compact `type:name:file:line` format is ~5x more token-efficient than human-readable tables for LLM-consumed structured data.** Use compact formats for any data embedded in planning artifacts that downstream LLMs will parse.
+- **The context window IS the intra-session cache.** Don't add `.claude/cache/` directories for intermediate LLM computation results — ephemeral state (dependency graph, reranked list) lives in the context window naturally; only cross-session state (symbol index) needs file persistence.
+
 ### 2026-02-28 — add-memory-improve-skills
 
 - **The `model:` frontmatter field is officially supported in Claude Code skills and commands (values: `sonnet`, `opus`, `haiku`, `inherit`).** Use it for cost-optimized model routing: Opus for deep reasoning phases (research, design, plan, implement), Sonnet for checklist/template phases (discover, review, security, deploy, observe, retro). Saves ~40-60% on a full SDLC run.

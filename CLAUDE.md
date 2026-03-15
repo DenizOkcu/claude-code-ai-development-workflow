@@ -78,14 +78,14 @@ Full command list: run `/COMMAND_USAGE` or see `.claude/QUICK_REFERENCE.md`.
 <!-- The /retro command appends lessons learned here. Full history: .claude/LEARNINGS.md -->
 <!-- Keep only the 2 most recent retro blocks here; older ones live in .claude/LEARNINGS.md -->
 
-### 2026-03-15 — add-semantic-retrieval
+### 2026-03-15 — add-repo-context-engine
 
-- **Pin MCP server versions in setup wizard config blocks** (`@0.1.6`, not `@latest`).
-- **Docker `-p PORT:PORT` binds to `0.0.0.0` by default** — always use `-p 127.0.0.1:PORT:PORT` for local dev tooling.
-- **The implicit feature flag pattern (MCP config presence) is the right default for optional enhancements.**
+- **Embed mandatory workflow tools in existing phase entry points, not as optional standalone commands.** Users follow the happy path — they won't run `/repo-map` manually, but they will run `/discover`.
+- **Exclusion lists that exist in multiple prompt files will drift.** Add a cross-reference note pointing to the canonical list. Prevents silent divergence.
+- **The Design phase can be skipped for M-sized prompt-only changes; the Observe phase is always skippable for prompt-only changes.**
 
-### 2026-03-15 — optimize-token-usage
+### 2026-03-15 — add-code-intelligence-layer
 
-- **Split CLAUDE.md into always-on (rules) vs on-demand (reference).** Cheat sheets → `.claude/QUICK_REFERENCE.md`. Full learnings → `.claude/LEARNINGS.md`. CLAUDE.md stays under ~100 lines.
-- **Deduplicate global `~/CLAUDE.md` and project `CLAUDE.md` — zero overlap.** Global owns universal behavioral rules; project owns workflow-specific rules only.
-- **`/retro` rotation rule: keep max 2 most recent blocks in CLAUDE.md; rotate older blocks to LEARNINGS.md only.** Prevents unbounded growth.
+- **Template placeholders require a paired generation instruction.** A `## Symbol Index` placeholder in the `01_DISCOVERY.md` template does nothing unless Step 3 explicitly instructs generating the symbol index. Always pair template sections with their generation step.
+- **Multi-level activation conditions keep skill pipelines fast on trivial inputs.** Gate expensive steps (`if repo >= 50 files`, `if candidates > 5`) to skip dependency graph and reranking on small repos.
+- **The context window IS the intra-session cache.** Don't add `.claude/cache/` directories — ephemeral computation (dependency graph, reranked list) lives in context naturally; only cross-session data (symbol index) needs file persistence.

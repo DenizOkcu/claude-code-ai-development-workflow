@@ -28,6 +28,8 @@ Read `PLAN.md` and understand:
 
 **Pattern Discovery (if retrieval available):** If `search_code` tool is available, query it to find similar implementations or related test files before starting each phase. This helps discover existing patterns to follow and dependencies to account for. Skip if not configured.
 
+**Impact Analysis (if dependency graph available):** If the research phase built a dependency graph (visible in RESEARCH.md's "Key Dependencies" section), use it to identify callers and downstream consumers of files you're modifying. This helps catch unintended breakage.
+
 ### Step 2: Implement Phase by Phase
 
 For each phase:

@@ -114,8 +114,52 @@ After the map, add:
 **Key entry points:** {list 1-3 likely entry point files: index.ts, main.py, cmd/main.go, etc.}
 ```
 
+#### 7. Generate Symbol Index
+
+Using the same Grep results from Step 3, generate a structured symbol index in compact `type:name:file:line` format. This gives downstream tools (like `researching-code`) a queryable symbol list.
+
+**Type vocabulary mapping:**
+
+| Grep Match Keyword | Index Type |
+|--------------------|-----------|
+| `function`, `def`, `async def`, `fn` | `func` |
+| `class` | `class` |
+| `interface` | `iface` |
+| `type` | `type` |
+| `const` | `const` |
+| `export` (standalone) | `export` |
+| `enum` | `enum` |
+| `trait` | `trait` |
+| `struct` | `struct` |
+| `impl` | `impl` |
+
+**Format:** One symbol per line, sorted by file path then line number:
+```
+## Symbol Index
+
+<!-- type:name:file:line -->
+func:calculateTotal:src/billing/calculator.ts:15
+class:PaymentService:src/billing/service.ts:8
+iface:PaymentConfig:src/billing/types.ts:3
+```
+
+**Token budget: ≤1K tokens** (~4K characters, ~80 entries max). Apply progressive truncation:
+
+| Repo Size | Symbol Index Scope |
+|-----------|-------------------|
+| < 100 files | All source file symbols |
+| 100–200 files | Primary source dirs only (`src/`, `lib/`, `app/`, `pkg/`, `internal/`, `cmd/`) |
+| 200–500 files | Top 50 files by directory priority |
+| > 500 files | Top 30 files from primary source dirs + note: `<!-- Partial index: {N} files indexed of {M} total -->` |
+
+**Rules:**
+- Skip test files and config files (they're already marked in the repo map)
+- If a symbol name can't be cleanly extracted from the Grep match, skip it
+- Present the symbol index after the repo map output and summary
+
 ### Quality Gates
 - Map stays within ~2K token budget (~8K characters)
+- Symbol index stays within ~1K token budget (~4K characters)
 - All listed file paths are real (verified via Glob)
 - Symbol extraction used the correct language pattern
 - Large repo truncation applied appropriately

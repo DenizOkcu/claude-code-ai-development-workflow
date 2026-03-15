@@ -43,7 +43,7 @@ Most AI-assisted coding workflows stop at "write code → review code." Real sof
 | No LLM/AI-specific development patterns | `/ai-integrate` for prompt engineering, RAG, eval, and guardrails |
 | No visual output for artifacts | `/visual/*` generates HTML pages with Mermaid diagrams, KPI dashboards, slide decks |
 | No semantic code understanding | `/retrieval` adds hybrid BM25 + vector search — finds conceptually related code, saves ~40% context tokens |
-| LLM searches blindly with no repo structure | `/repo-map` + `/discover` auto-generates a compact structural overview (file tree + symbols, ≤2K tokens) — hierarchical context loading guides research to the right files first |
+| LLM searches blindly with no repo structure | Code Intelligence Layer — `/discover` auto-generates repo map + symbol index; `/research` builds dependency graphs, reranks by relevance, and assembles an 8-file context pack |
 
 ---
 
@@ -110,7 +110,7 @@ cp -r .claude/ /path/to/your/project/.claude/
 
 | # | Phase | Command | Artifacts Produced |
 |---|-------|---------|-------------------|
-| 1 | **Discover** | `/discover [description]` | Issue name, `01_DISCOVERY.md` (with repo map), `00_STATUS.md` |
+| 1 | **Discover** | `/discover [description]` | Issue name, `01_DISCOVERY.md` (with repo map + symbol index), `00_STATUS.md` |
 | 2 | **Research** | `/research {issue}` | `02_CODE_RESEARCH.md`, updated `00_STATUS.md` |
 | 3 | **Design** | `/design-system {issue}` | `03_ARCHITECTURE.md`, `03_ADR-*.md`, `03_PROJECT_SPEC.md` |
 | 4 | **Plan** | `/plan {issue}` | `04_IMPLEMENTATION_PLAN.md`, test strategy |
@@ -298,42 +298,54 @@ Enhance the `/research` and `/implement` phases with semantic code search powere
 /retrieval status
 ```
 
-## Hierarchical Repo Context Engine
+## Code Intelligence Layer
 
-Reduce token waste and improve code reasoning with a two-level context system inspired by [Aider's repo map](https://aider.chat/docs/repomap.html). Instead of searching blindly, the LLM first sees a compact structural overview, then dives into relevant files only.
+Reduce token waste and improve code reasoning with a multi-level context pipeline. Instead of searching blindly, the LLM navigates through structural overview → dependency graph → semantic search → relevance ranking → assembled context pack.
 
 **How it works:**
 
 ```
-Level 1: Repo Map (≤2K tokens)              Level 2: Targeted Detail
-┌──────────────────────────┐                 ┌──────────────────────────┐
-│ src/                     │   identifies    │ Read specific files      │
-│   auth/                  │──────────────▶  │ Grep within candidate    │
-│     middleware.ts — Auth  │   candidate     │   directories only       │
-│     types.ts — User      │   files         │ search_code MCP (if      │
-│   api/                   │                 │   configured)             │
-│     routes.ts — Router   │                 │                          │
-└──────────────────────────┘                 └──────────────────────────┘
+Level 1: Repo Map + Symbol Index (≤3K tokens)
+  file tree + symbols + type:name:file:line index
+       │
+       ▼ identifies candidates
+Level 1b: Dependency Graph (repos ≥50 files)
+  Grep-based import/export tracing → adjacency list
+       │
+       ▼ enriches with relationships
+Level 2: Targeted Search
+  search_code MCP (if available) or Grep/Read
+       │
+       ▼ raw results
+Level 2b: Reranking (>5 candidates)
+  keyword overlap (40%) + dep proximity (35%) + file-type (25%)
+       │
+       ▼ ranked results
+Level 3: Context Pack (≤8 files)
+  seed files + 1-hop imports + test files → progressive read depth
 ```
 
 | Command | Purpose |
 |---------|---------|
-| `/repo-map [path]` | Generate structural overview on demand — file tree + top-level symbols |
-| `/discover` (Step 3) | Auto-generates and embeds repo map in `01_DISCOVERY.md` — users never forget |
+| `/repo-map [path]` | Generate structural overview + symbol index on demand |
+| `/discover` (Step 3) | Auto-generates and embeds repo map + symbol index in `01_DISCOVERY.md` |
 
 **Key features:**
+- **5-component pipeline**: symbol index, dependency graph, semantic search, reranking, context pack builder
+- **Smart activation**: dependency graph + reranking skip on small repos (<50 files); reranking skips with ≤5 candidates
 - **6 language patterns**: TypeScript/JS, Python, Go, PHP, Rust + generic fallback
-- **Progressive truncation**: 4 tiers by repo size (<100, 100–200, 200–500, >500 files) — graceful degradation from full symbols → directory summaries
+- **Progressive truncation**: 4 tiers by repo size — graceful degradation from full symbols → directory summaries
 - **No dependencies**: Uses built-in Glob + Grep — works without MCP, Docker, or any external tools
-- **Enhances `/research`**: The `researching-code` skill reads the map first (Level 1), then does targeted searches on candidate files only (Level 2)
+- **8-file context pack cap**: seeds + 1-hop dependency imports + test files, with progressive read depth (full/partial/sections)
+- **Session persistence**: cross-session via `01_DISCOVERY.md`; intra-session via Claude Code context window (no file cache)
 
 ```bash
 # Standalone use
-/repo-map                    # Full repo overview
+/repo-map                    # Full repo overview + symbol index
 /repo-map src/auth           # Focused on a subdirectory
 
 # Automatic (recommended) — runs as part of /discover
-/discover Add OAuth2 login   # Repo map auto-generated in 01_DISCOVERY.md
+/discover Add OAuth2 login   # Repo map + symbol index auto-generated in 01_DISCOVERY.md
 ```
 
 ## Visualization Commands
@@ -641,7 +653,7 @@ The `/discover` command automatically scans your project to detect:
 
 This detection feeds into `01_DISCOVERY.md` and `00_STATUS.md`, so every subsequent phase knows which expert commands (`/language/*-pro`) and quality commands (`/quality/*`) are relevant. If quality tooling gaps are found, the discovery phase recommends fixing them before proceeding to implementation.
 
-Additionally, `/discover` now auto-generates a **Repository Map** (Step 3) — a compact structural overview of the codebase (file tree + top-level symbols, ≤2K tokens) embedded directly in `01_DISCOVERY.md`. This map powers the hierarchical context loading in `/research`, ensuring the LLM navigates to relevant files instead of searching blindly.
+Additionally, `/discover` now auto-generates a **Repository Map + Symbol Index** (Step 3) — a compact structural overview (file tree + symbols, ≤2K tokens) plus a structured symbol index (`type:name:file:line`, ≤1K tokens) embedded directly in `01_DISCOVERY.md`. These power the Code Intelligence Layer in `/research`: dependency graph building, 3-factor relevance reranking, and context pack assembly (≤8 files), ensuring the LLM navigates to the most relevant files instead of searching blindly.
 
 ---
 
