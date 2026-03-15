@@ -17,6 +17,15 @@
 - **Milvus Lite (in-process SQLite) is Python-only** — the Node.js SDK (`@zilliz/milvus2-sdk-node`) does not support it. If an MCP package depends on Milvus in Node.js, Docker is the minimum for local operation. Validate embedded-mode availability per runtime during research.
 - **The implicit feature flag pattern (MCP config presence) is the right default for optional enhancements.** No code-level flag needed; the feature is off unless the user runs `/setup`. Session-start checks close the discoverability gap without forcing adoption.
 
+### 2026-03-15 — optimize-token-usage
+
+- **Measure token cost before optimizing.** Line count × ~3.5 gives a rough token estimate for markdown. Two CLAUDE.md files totalling 1,108 lines ≈ 18K tokens loaded every conversation is the baseline to beat.
+- **"Always-on" vs "on-demand" is the key split for CLAUDE.md content.** Behavioral rules belong always-on. Reference material (cheat sheets, historical learnings, command catalogs) should be on-demand — readable by commands when needed, not injected into every conversation.
+- **Deduplication of global + project CLAUDE.md is a one-time win with compounding savings.** Every conversation in a repo with both files loaded pays the duplication tax. Global file = universal behavioral rules. Project file = project-specific workflow only. Zero overlap.
+- **A `/retro` rotation rule prevents CLAUDE.md learnings from bloating.** Constraint: keep only 2 most recent retro blocks in CLAUDE.md; full history in `.claude/LEARNINGS.md`. The file never grows past ~120 lines in the Learnings section regardless of retro count.
+- **Quick-reference command cheat sheets (terraform, kubectl, etc.) don't belong in CLAUDE.md.** They're consulted rarely but loaded every conversation. Move to `.claude/QUICK_REFERENCE.md` and add a one-liner pointer.
+- **Run `/retro` even for conversational (non-SDLC) changes.** Lessons from ad-hoc improvements are as valuable as formal SDLC retros. The right abbreviated workflow for prompt-only tooling changes is: analyze → implement directly → retro (skip Discovery, Design, Observe).
+
 ### 2026-02-28 — add-memory-improve-skills
 
 - **The `model:` frontmatter field is officially supported in Claude Code skills and commands (values: `sonnet`, `opus`, `haiku`, `inherit`).** Use it for cost-optimized model routing: Opus for deep reasoning phases (research, design, plan, implement), Sonnet for checklist/template phases (discover, review, security, deploy, observe, retro). Saves ~40-60% on a full SDLC run.

@@ -69,7 +69,7 @@ Full command list: run `/COMMAND_USAGE` or see `.claude/QUICK_REFERENCE.md`.
 
 - **Workflow tracking**: Use SDLC commands for non-trivial changes to maintain traceability via `00_STATUS.md`
 - **README preservation**: When a README exists, patch it — never wipe existing content
-- **Learnings**: Retro learnings go to `.claude/LEARNINGS.md` AND both CLAUDE.md files
+- **Learnings**: Full detail → `.claude/LEARNINGS.md`; abbreviated (max 2 recent blocks) → project `CLAUDE.md`
 - **Stack auto-detection**: `/discover` scans for languages, frameworks, cloud providers — results in `01_DISCOVERY.md`
 
 ---
@@ -78,14 +78,14 @@ Full command list: run `/COMMAND_USAGE` or see `.claude/QUICK_REFERENCE.md`.
 <!-- The /retro command appends lessons learned here. Full history: .claude/LEARNINGS.md -->
 <!-- Keep only the 2 most recent retro blocks here; older ones live in .claude/LEARNINGS.md -->
 
-### 2026-03-15 — add-repo-context-engine
-
-- **Embed mandatory workflow tools in existing phase entry points, not as optional standalone commands.**
-- **For prompt-engineering projects, CLAUDE.md updates belong in the implementation phase, not the deploy phase.**
-- **Progressive truncation with named tiers is better than a hard token cutoff for LLM output budget management.**
-
 ### 2026-03-15 — add-semantic-retrieval
 
 - **Pin MCP server versions in setup wizard config blocks** (`@0.1.6`, not `@latest`).
 - **Docker `-p PORT:PORT` binds to `0.0.0.0` by default** — always use `-p 127.0.0.1:PORT:PORT` for local dev tooling.
 - **The implicit feature flag pattern (MCP config presence) is the right default for optional enhancements.**
+
+### 2026-03-15 — optimize-token-usage
+
+- **Split CLAUDE.md into always-on (rules) vs on-demand (reference).** Cheat sheets → `.claude/QUICK_REFERENCE.md`. Full learnings → `.claude/LEARNINGS.md`. CLAUDE.md stays under ~100 lines.
+- **Deduplicate global `~/CLAUDE.md` and project `CLAUDE.md` — zero overlap.** Global owns universal behavioral rules; project owns workflow-specific rules only.
+- **`/retro` rotation rule: keep max 2 most recent blocks in CLAUDE.md; rotate older blocks to LEARNINGS.md only.** Prevents unbounded growth.
