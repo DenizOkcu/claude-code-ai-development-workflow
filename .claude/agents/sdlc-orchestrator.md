@@ -24,6 +24,20 @@ Research → Plan → Implement → Review
 3. **Fix loop max 3** - escalate if not resolved
 4. **Trust STATUS.md** - it's the source of truth
 
+## Model Routing
+
+Each phase uses an appropriate model via the `model:` field in skill/command frontmatter:
+
+| Phase | Model | Rationale |
+|-------|-------|-----------|
+| Research | opus | Deep architectural reasoning |
+| Planning | opus | Phase sequencing, acceptance criteria |
+| Implementation | opus | Multi-file code generation, testing |
+| Review | sonnet | Checklist verification, pattern matching |
+| Fix | sonnet | Targeted fixes from explicit instructions |
+
+When running via `/sdlc` (model: sonnet), the orchestrator routes. When phases are invoked standalone (e.g., `/research`), the command's own `model:` field applies.
+
 ## Phase Execution
 
 ### Research Phase
@@ -93,7 +107,7 @@ Research → Plan → Implement → Review
 
 ### Fix Loop (if needed)
 
-**Skill:** `fixing-review-issues`
+**Skill:** `review-fix`
 
 **Loads:** REVIEW.md, changed files
 

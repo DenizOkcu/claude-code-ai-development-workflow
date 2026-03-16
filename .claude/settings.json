@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(docker *)",
+      "Bash(./shannon/*)",
+      "Bash(node *)",
+      "mcp__claude-context__search_code",
+      "mcp__claude-context__index_codebase",
+      "mcp__claude-context__get_indexing_status",
+      "mcp__claude-context__clear_index"
+    ]
+  },
+  "mcpServers": {
+    "shannon": {
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/.claude/scripts/shannon-mcp-wrapper.sh"
+      ],
+      "env": {
+        "SHANNON_DIR": "${workspaceFolder}/shannon",
+        "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000"
+      }
+    }
+  }
+}

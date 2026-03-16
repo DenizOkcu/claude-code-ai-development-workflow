@@ -1,0 +1,158 @@
+---
+model: sonnet
+---
+
+## Phase 10: Retrospective & Knowledge Capture
+
+You are entering the **Retro** phase for issue: `$ARGUMENTS`
+
+### Pre-Conditions
+- Read `00_STATUS.md` — review the entire journey
+- Read all artifacts in `.claude/planning/$ARGUMENTS/`
+- Read `.claude/LEARNINGS.md` for current learnings
+
+### Instructions
+
+Capture lessons learned and improve future workflows. Create `.claude/planning/$ARGUMENTS/11_RETROSPECTIVE.md` AND update the project's `CLAUDE.md`.
+
+#### 1. `11_RETROSPECTIVE.md`
+
+```markdown
+# Retrospective: {issue-name}
+
+## Summary
+- **Started:** {date}
+- **Completed:** {date}
+- **Complexity:** {actual vs estimated}
+- **Files Changed:** {count}
+- **Tests Added:** {count}
+- **Phases Completed:** {N}/10
+
+## What Went Well
+- ...
+- ...
+
+## What Could Be Improved
+- ...
+- ...
+
+## Surprises / Unknowns Encountered
+- ...
+- ...
+
+## Key Technical Learnings
+- Learning 1: {specific, actionable insight}
+- Learning 2: ...
+
+## Process Learnings
+- Were any phases unnecessary for this type of change?
+- Were any phases missing or insufficient?
+- What would you do differently next time?
+
+## Patterns to Reuse
+- Pattern: {description}
+  - Where: {context}
+  - Why: {benefit}
+
+## Anti-Patterns to Avoid
+- Anti-pattern: {description}
+  - Why: {consequence}
+  - Instead: {better approach}
+
+## Metrics
+- Estimation accuracy: {estimated vs actual effort}
+- Test coverage delta: {before vs after}
+- Review iterations: {count}
+- Security findings: {count and severity}
+```
+
+#### 2. Update Learnings
+
+Append **specific, actionable learnings** to TWO files:
+
+**a) `.claude/LEARNINGS.md`** — Full learnings with detail (the canonical store):
+```markdown
+### {date} — {issue-name}
+- **{Bold summary}.** {Detail and context}
+- **{Bold summary}.** {Detail and context}
+```
+
+**b) Project root `CLAUDE.md`** — Abbreviated learnings (keep only the 2 most recent retro blocks; move older ones to `.claude/LEARNINGS.md` only). Use one-line summaries without full detail to minimize token cost.
+
+**Good learnings:**
+- `2026-02-21: Always use parameterized queries for user input in the reports module (add-report-export)`
+- `2026-02-21: WebSocket reconnection needs exponential backoff with jitter (add-realtime-collab)`
+
+**Bad learnings (too vague):**
+- `Write good tests` (not actionable)
+- `Be careful with security` (not specific)
+
+#### 3. Update Auto-Memory (Project-Personal Knowledge)
+
+After updating CLAUDE.md, also persist learnings to the auto-memory directory for cross-session context. The auto-memory directory is at `~/.claude/projects/{project-hash}/memory/`.
+
+**Append to `memory/learnings.md`:**
+```markdown
+## {date} — {issue-name}
+- {specific, actionable learning from this retro}
+- {specific, actionable learning from this retro}
+```
+
+**Update `memory/MEMORY.md` Session Notes section** — add a one-line entry:
+```markdown
+- {date}: {brief summary of issue and key outcome}
+```
+If MEMORY.md Session Notes section exceeds ~150 lines, prune the oldest entries to stay under 200 lines total.
+
+**If new stable patterns were confirmed**, append to `memory/patterns.md`:
+```markdown
+## Pattern: {name}
+- **Context:** {when this applies}
+- **Solution:** {what to do}
+- **Confirmed:** {date, issue name}
+```
+
+**If new architectural decisions were made**, append to `memory/decisions.md`:
+```markdown
+## Decision: {title}
+- **Date:** {date}
+- **Context:** {why}
+- **Decision:** {what}
+- **Status:** Active
+```
+
+#### 4. Update `00_STATUS.md`
+
+Mark ALL phases as complete:
+
+```markdown
+## Progress
+- [x] Discovery - Completed
+- [x] Research - Completed
+- [x] Design - Completed
+- [x] Planning - Completed
+- [x] Implementation - Completed
+- [x] Review - Completed ✓ APPROVED
+- [x] Security - Completed ✓ PASSED
+- [x] Deploy - Completed (planned)
+- [x] Observe - Completed (configured)
+- [x] Retro - Completed
+
+## Status: ✅ WORKFLOW COMPLETE
+```
+
+### Post-Actions
+- Update `00_STATUS.md`: mark Retro as completed, set status to WORKFLOW COMPLETE
+- Append full learnings to `.claude/LEARNINGS.md`
+- Update `CLAUDE.md` with abbreviated learnings (keep only 2 most recent retro blocks)
+- Summarize the entire workflow journey to the user
+- Suggest: commit, push, and deploy
+
+### Quality Gates
+- Retrospective covers all sections (not just "it went fine")
+- At least 2 learnings added to `.claude/LEARNINGS.md`
+- Abbreviated learnings added to `CLAUDE.md` (max 2 recent blocks)
+- Learnings are specific and reference the issue name
+- Process learnings address whether phase selection was appropriate
+- Auto-memory updated (learnings.md + MEMORY.md Session Notes at minimum)
+- 00_STATUS.md shows complete journey
